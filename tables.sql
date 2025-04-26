@@ -7,7 +7,9 @@ create table user(
 	user_id varchar(10) not null,
     display_name varchar(20) not null,
     email varchar(40) not null,
-    password varchar(100) not null,
+    password varchar(32) not null,
+    salt varchar(32) not null,
+    join_time DATETIME,
     
     primary key(user_id),
     unique(handle),
