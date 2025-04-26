@@ -13,3 +13,21 @@ create table user(
     unique(handle),
     unique(email)
 );
+
+drop table if exists forum;
+create table forum(
+	class_name varchar(10) not null,
+    
+    primary key(class_name)
+    
+);
+
+drop table if exists joined_forum;
+create table joined_forum(
+	user_id varchar(10) not null,
+    class_name varchar(10) not null,
+    
+    primary key(user_id, class_name),
+    foreign key(user_id) references user(user_id) on delete cascade,
+    foreign key(class_name) references forum(class_name) on delete cascade
+);
