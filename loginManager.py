@@ -9,7 +9,7 @@ from mysql.connector import errorcode
 
 from email.message import EmailMessage
 
-SALT_NUM = 300000  # the number of additional times to hash the password, decrease this number if it takes too long
+HASH_ITER = 300000  # the number of iterations to hash the password, decrease this number if it takes too long
 
 send_email = ''
 send_psswrd = ''
@@ -160,7 +160,7 @@ def hash_password(pswrd, salt):
                                   bytes(str(salt), encoding='utf-8') + int(1).to_bytes(4, byteorder='big'),
                                   hashlib.sha256).hexdigest()
     final_xor_result = new_hashed_section
-    for i in range(SALT_NUM):
+    for i in range(HASH_ITER):
         new_hashed_section = hmac.new(bytes(str(pswrd), encoding='utf-8'),
                                       bytes(str(new_hashed_section), encoding='utf-8'), hashlib.sha256).hexdigest()
         final_xor_result = bytes(a ^ b for a, b in zip(str(final_xor_result).encode('utf-8'),
