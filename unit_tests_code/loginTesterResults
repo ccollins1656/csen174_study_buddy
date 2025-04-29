@@ -1,0 +1,38 @@
+C:\Users\Ethan\AppData\Local\Microsoft\WindowsApps\python3.11.exe C:\Users\Ethan\Desktop\Csen174\loginTesterV3.py 
+Starting Unit Tests for loginManager.py. True=passed, False=failed
+Test 1:
+True
+Test 2:
+True
+Test 3:
+True
+Test 4:
+True
+Test 5:
+True
+Input the code sent by email.
+fea9b94e65a35063149080376334d80bb7e22689bfabc75276b381ebe8631e76
+Test 6:
+True
+Test 7:
+True
+Test 8:
+True
+Test 9:
+True
+Test 10:
+True
+Test 11:
+True
+Test 12:
+True
+Test 13:
+True
+Test 14:
+True
+Test 15:
+True
+Test 16:
+True
+
+Process finished with exit code 0
