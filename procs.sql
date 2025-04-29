@@ -1,7 +1,7 @@
 DROP PROCEDURE IF EXISTS insert_into_user;
 @delimiter %%%
 CREATE PROCEDURE insert_into_user(IN in_user_id VARCHAR(10), IN in_display_name VARCHAR(20), 
-IN in_email VARCHAR(40), IN in_password VARCHAR(32), IN in_salt VARCHAR(32), 
+IN in_email VARCHAR(40), IN in_password VARCHAR(64), IN in_salt VARCHAR(64), 
 IN in_join_time DATETIME)
 BEGIN
 	INSERT INTO user (user_id, display_name, email, password, join_time)
