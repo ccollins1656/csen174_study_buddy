@@ -35,7 +35,19 @@ CREATE PROCEDURE send_direct_message(in in_sending_user_id varchar(10), in_recei
 	in_timestamp datetime, in_text varchar(256))
 	BEGIN
 		INSERT INTO direct_message(sending_user_id, receiving_user_id, timestamp, text) 
-		VALUES (in_sending_user_id, in_receiving_user_id, in_timestamp, in_text)
+		VALUES (in_sending_user_id, in_receiving_user_id, in_timestamp, in_text);
+	END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS add_friend;
+@delimiter %%%
+CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10)
+	response tinyint(2))
+	BEGIN
+		SET response = IFNULL(response, 0);
+		INSERT INTO friend_request(user1, user2, response)
+		VALUES (in_sending_user_id, in_receiving_user_id, response);
 	END;
 %%%
 @delimiter ;
