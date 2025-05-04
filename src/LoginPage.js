@@ -4,12 +4,14 @@ import { Input } from './components/ui/input';
 import { Button } from './components/ui/button';
 import { Alert } from './components/ui/alert';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const [cookies, setCookie] = useCookies(['session']);
 
   const handleLogin = () => {
     if (!email.endsWith('@scu.edu')) {
@@ -18,6 +20,7 @@ export default function LoginPage() {
     } else {
       setError('');
       setIsLoggedIn(true);
+      setCookie('session', '16', { path: '/' }) // need to integrate with auth system
       navigate('/welcome');  // Redirect to welcome page after login
     }
   };

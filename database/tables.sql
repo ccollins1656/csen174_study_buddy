@@ -57,3 +57,24 @@ create table direct_message(
 	foreign key(sending_user_id) references user(user_id) on delete cascade,
 	foreign key(receiving_user_id) references user(user_id) on delete cascade
 );
+
+drop table if exists friends;
+create table friends(
+	user1 varchar(10) not null,
+	user2 varchar(10) not null,
+
+	primary key(user1, user2),
+	foreign key(user1) references(user(user_id)) on delete cascade,
+	foreign key(user2) references(user(user_id)) on delete cascade
+);
+
+drop table if exists friend_request;
+create table friend_request(
+	user1 varchar(10) not null,
+	user2 varchar(10) not null,
+	response tinyint(2) not null,
+
+	primary key(user1, user2, response),
+	foreign key(user1) references(user(user_id)) on delete cascade,
+	foreign key(user2) references(user(user_id)) on delete cascade
+)

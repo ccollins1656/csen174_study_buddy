@@ -9,6 +9,7 @@ export default function Navbar() {
         <div>
           <Link to="/add-course" className="text-white mx-4">Add Course</Link>
           <Link to="/messages" className="text-white mx-4">Messages</Link>
+          <Link to="/settings" className="text-white mx-4">Account Settings</Link>
         </div>
       </div>
     </nav>
