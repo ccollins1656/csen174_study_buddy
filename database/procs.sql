@@ -51,3 +51,22 @@ CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user
 	END;
 %%%
 @delimiter ;
+
+DROP PROCEDURE IF EXISTS get_user_by_email;
+@delimiter %%%
+CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
+	BEGIN
+		SELECT * FROM user.view
+        WHERE email = user.email;
+	END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS get_num_users;
+@delimiter %%%
+CREATE PROCEDURE get_num_users(out num_users int)
+	BEGIN
+		SELECT COUNT(*) FROM user.view;
+	END;
+%%%
+@delimiter ;
