@@ -21,7 +21,7 @@ CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
 
 DROP PROCEDURE IF EXISTS create_forum;
 @delimiter %%%
-CREATE PROCEDURE create_forum(in in_class_name(10))
+CREATE PROCEDURE create_forum(in in_class_name varchar(10))
 BEGIN
 	INSERT INTO forum(in_class_name)
 	VALUES (class_name);
@@ -42,7 +42,7 @@ CREATE PROCEDURE send_direct_message(in in_sending_user_id varchar(10), in_recei
 
 DROP PROCEDURE IF EXISTS add_friend;
 @delimiter %%%
-CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10)
+CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10),
 	response tinyint(2))
 	BEGIN
 		SET response = IFNULL(response, 0);

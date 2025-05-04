@@ -12,7 +12,7 @@ create table user(
     join_time DATETIME,
     
     primary key(user_id),
-    unique(handle),
+    unique(display_name),
     unique(email)
 );
 
@@ -36,13 +36,13 @@ create table joined_forum(
 
 drop table if exists forum_message;
 create table forum_message(
-	user_id varchar(10) not null,
-	class_name varchar(10) not null,
+	user_id varchar(10),
+	class_name varchar(10),
 	timestamp datetime not null,
 	text varchar(256) not null,
 
 	primary key(user_id, class_name, timestamp),
-	foreign key(user_id) references user(user_id) on delete set null,
+	foreign key(user_id) references user(user_id) on delete cascade,
 	foreign key(class_name) references forum(class_name) on delete cascade
 );
 
@@ -60,21 +60,21 @@ create table direct_message(
 
 drop table if exists friends;
 create table friends(
-	user1 varchar(10) not null,
-	user2 varchar(10) not null,
+	user1 varchar(10),
+	user2 varchar(10),
 
 	primary key(user1, user2),
-	foreign key(user1) references(user(user_id)) on delete cascade,
-	foreign key(user2) references(user(user_id)) on delete cascade
+	foreign key(user1) references user(user_id) on delete cascade,
+	foreign key(user2) references user(user_id) on delete cascade
 );
 
 drop table if exists friend_request;
 create table friend_request(
-	user1 varchar(10) not null,
-	user2 varchar(10) not null,
+	user1 varchar(10),
+	user2 varchar(10),
 	response tinyint(2) not null,
 
 	primary key(user1, user2, response),
-	foreign key(user1) references(user(user_id)) on delete cascade,
-	foreign key(user2) references(user(user_id)) on delete cascade
+	foreign key(user1) references user(user_id) on delete cascade,
+	foreign key(user2) references user(user_id) on delete cascade
 )
