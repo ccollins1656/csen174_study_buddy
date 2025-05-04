@@ -16,7 +16,7 @@ send_psswrd = ''
 PORT = 465  # for sending emails with SSL encryption protocol
 DATABASE_NAME = "coen174"  # name of database
 TABLE_NAME = "user"  # name of table in database where passwords are stored
-database_info = ("localhost", "root", "TODO: Get Password From Calianna")  # database login info
+database_info = ("localhost", "root", "Passed_Word")  # database login info
 
 """
 This function must be called at start to save the email address and
