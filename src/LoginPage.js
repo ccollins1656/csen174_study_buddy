@@ -20,7 +20,7 @@ export default function LoginPage() {
     } else {
       setError('');
       setIsLoggedIn(true);
-      setCookie('session', '16', { path: '/' }) // need to integrate with auth system
+      setCookie('session', 16, { path: '/' }) // need to integrate with auth system
       navigate('/welcome');  // Redirect to welcome page after login
     }
   };

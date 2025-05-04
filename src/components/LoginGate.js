@@ -7,7 +7,7 @@ import { useCookies } from 'react-cookie';
 
 export default function LoginGate() {
   const [cookies, setCookie] = useCookies([]);
-  const loggedIn = (cookies.session == '16')
+  const loggedIn = (cookies.session === 16);
 
   return (
     <>
