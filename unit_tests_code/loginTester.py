@@ -3,7 +3,7 @@ import loginManager as login
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     login.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    login.set_db_info("coen174", "user", "localhost", "lvanderheijden", "ThisIs110%TheBestPassword")
+    login.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
     login.initialize_database()
 
     print("Starting Unit Tests for loginManager.py. True=passed, False=failed")
