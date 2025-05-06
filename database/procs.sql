@@ -4,8 +4,8 @@ CREATE PROCEDURE insert_into_user(IN in_user_id VARCHAR(10), IN in_display_name 
 IN in_email VARCHAR(40), IN in_password VARCHAR(64), IN in_salt VARCHAR(64), 
 IN in_join_time DATETIME)
 BEGIN
-	INSERT INTO user (user_id, display_name, email, password, join_time)
-    VALUES (in_user_id, in_display_name, in_email, in_password, in_join_time);
+	INSERT INTO user (user_id, display_name, email, password, salt, join_time)
+    VALUES (in_user_id, in_display_name, in_email, in_password, in_salt, in_join_time);
 END;
 %%%
 @delimiter ;
