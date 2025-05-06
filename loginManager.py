@@ -321,6 +321,36 @@ def auth_account(email, auth_code):
 
 
 """
+This function is used to reset the user's password to
+a randomly selected password which is then emailed to them
+Returns True on success, False if no valid account is found.
+
+email is the account's associated email
+"""
+
+
+def reset_password(email):
+    new_password = secrets.token_hex()
+    if change_password(email, new_password):
+
+        context = ssl.create_default_context()
+        msg = EmailMessage()
+        msg.set_content("Your new StudyBuddy password is: " + new_password)
+        with smtplib.SMTP_SSL("smtp.gmail.com", PORT, context=context) as server:
+            server.login(send_email, send_psswrd)
+
+            msg['Subject'] = f'StudyBuddy Password Reset'
+            msg['From'] = send_email
+            msg['To'] = email
+
+            server.sendmail(send_email, str(email), msg.as_string())
+            server.quit()
+        return True
+
+    return False
+
+
+"""
 This function is called to create a new account.
 It sends the authentication email to email_addr.
 
@@ -353,7 +383,7 @@ def create_account(display_name=str, email=str, password=str):
     hashed_password = hash_password(password, auth_code)
 
     msg = EmailMessage()
-    msg.set_content("You StudyBuddy authentication code is: " + auth_code +
+    msg.set_content("Your StudyBuddy authentication code is: " + auth_code +
                     "\nThis code will expire in 24 hours.")
 
     user_id = (0, )
@@ -378,6 +408,6 @@ def create_account(display_name=str, email=str, password=str):
         msg['From'] = send_email
         msg['To'] = email
 
-        server.sendmail(send_email, email, msg.as_string())
+        server.sendmail(send_email, str(email), msg.as_string())
         server.quit()
     return True
