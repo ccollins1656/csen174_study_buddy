@@ -332,7 +332,7 @@ or email already in use
 """
 
 
-def create_account(email_addr=str, display_name=str, email=str, password=str):
+def create_account(display_name=str, email=str, password=str):
     # verify that a scu email is used
     index = str(email).find('@')
     if index == -1:
@@ -376,8 +376,8 @@ def create_account(email_addr=str, display_name=str, email=str, password=str):
 
         msg['Subject'] = f'StudyBuddy Email Authentication'
         msg['From'] = send_email
-        msg['To'] = email_addr
+        msg['To'] = email
 
-        server.sendmail(send_email, email_addr, msg.as_string())
+        server.sendmail(send_email, email, msg.as_string())
         server.quit()
     return True
