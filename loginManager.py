@@ -2,6 +2,7 @@ import hashlib
 import smtplib
 import secrets
 from datetime import datetime
+import time
 import ssl
 import hmac
 import mysql.connector
@@ -269,16 +270,15 @@ def login(email=str, password=str):
     if connection is None:
         return False
 
-    query = ("SELECT password, salt FROM " + TABLE_NAME +
-             " WHERE email = %s and join_time is NULL")
-    connection[1].execute(query, (str(email),))
-    data = connection[1].fetchall()
-    for pwrd, salt in data:
-        hashed_password = hash_password(password, salt)
-        if pwrd == hashed_password:
-            connection[1].close()
-            connection[0].close()
-            return True
+    connection[1].callproc("get_user_by_email", (str(email),))
+    for result in connection[1].stored_results():
+        data = result.fetchall()
+        for id, name, email, pwrd, salt, join_time in data:
+            hashed_password = hash_password(password, salt)
+            if pwrd == hashed_password and join_time is None:
+                connection[1].close()
+                connection[0].close()
+                return True
     connection[1].close()
     connection[0].close()
 
@@ -298,22 +298,22 @@ def auth_account(email, auth_code):
     if connection is None:
         return False
     # get account info
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    query = ("SELECT salt FROM " + TABLE_NAME +
-             " WHERE email = %s AND TIMESTAMPDIFF(SECOND, join_time, %s) <= 86400")
-    connection[1].execute(query, (email, current_time))
-    data = connection[1].fetchall()  # returns list of tuples
-    if data:  # check if empty
-        for salt in data[0]:  # need the [0] when retrieving a single value to iterate over nested tuple in list
-            if auth_code == salt:
-                # update the password
-                update = ("UPDATE " + TABLE_NAME + " SET join_time = NULL " +
-                          "WHERE email = %s")
-                connection[1].execute(update, (email,))
-                connection[0].commit()
-                connection[1].close()
-                connection[0].close()
-                return True
+    current_time = time.time()
+    connection[1].callproc("get_user_by_email", (email, ))
+    for result in connection[1].stored_results():
+        data = result.fetchall()  # returns list of tuples
+        for id, name, email, pwrd, salt, join_time in data:  # need the [0] when retrieving a single value to iterate over nested tuple in list
+            if join_time is not None:
+                join_time_sec = int(join_time.timestamp()) + 86400      # 86400 is 24 hr in seconds
+                if auth_code == salt and join_time_sec >= current_time:
+                    # update the password
+                    update = ("UPDATE " + TABLE_NAME + " SET join_time = NULL " +
+                              "WHERE email = %s")
+                    connection[1].execute(update, (email,))
+                    connection[0].commit()
+                    connection[1].close()
+                    connection[0].close()
+                    return True
 
     connection[1].close()
     connection[0].close()
@@ -343,11 +343,10 @@ def create_account(email_addr=str, display_name=str, email=str, password=str):
     connection = connect_to_db()
     if connection is None:
         return False
-    query = ("SELECT * FROM " + TABLE_NAME +
-             " WHERE email = %s")
-    connection[1].execute(query, (str(email),))
-    if connection[1].fetchall():
-        return False  # email already in use
+    connection[1].callproc("get_user_by_email", (str(email),))
+    for result in connection[1].stored_results():
+        if result.fetchall():
+            return False  # email already in use
 
     context = ssl.create_default_context()
     auth_code = secrets.token_hex()  # This code will double as our password salt
@@ -357,19 +356,17 @@ def create_account(email_addr=str, display_name=str, email=str, password=str):
     msg.set_content("You StudyBuddy authentication code is: " + auth_code +
                     "\nThis code will expire in 24 hours.")
 
-    query = "SELECT COUNT(*) from " + TABLE_NAME  # get number of current users
-    connection[1].execute(query)
-    user_id = str(connection[1].fetchall()[0][0])
+    user_id = (0, )
+    connection[1].callproc("get_num_users", user_id)
+    user_id = user_id[0]
     query = "SELECT * from " + TABLE_NAME + " WHERE user_id = %s"  # check if id is unique
+    connection[1].execute(query, (user_id,))
     while connection[1].fetchall():
-        user_id += 1  # just increment to get a unique user_id
+        user_id += 1  # just increment to get a unique user_id until we get a unique one
         connection[1].execute(query, (user_id,))
 
-    insert = ("INSERT INTO " + TABLE_NAME +
-              " (user_id, display_name, email, password, salt, join_time) "
-              "VALUES (%s, %s, %s, %s, %s, %s)")
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    connection[1].execute(insert, (user_id, display_name, email, hashed_password, auth_code, current_time))
+    connection[1].callproc("insert_into_user", (user_id, display_name, email, hashed_password, auth_code, current_time))
     connection[0].commit()
     connection[1].close()
     connection[0].close()
