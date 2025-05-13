@@ -6,11 +6,13 @@ import WelcomePage from './WelcomePage';
 import AddCoursePage from './AddCoursePage';
 import MessagesPage from './MessagesPage';
 import SettingsPage from './SettingsPage';
+import Navbar from './Navbar';
 
 function App() {
   return (
     <CookiesProvider>
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/welcome" element={<WelcomePage />} />

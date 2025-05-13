@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 
 export default function Navbar() {
   return (
-    <nav className="bg-gray-800 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-white text-xl">Study Helper</h1>
-        <div>
-          <Link to="/add-course" className="text-white mx-4">Add Course</Link>
-          <Link to="/messages" className="text-white mx-4">Messages</Link>
-          <Link to="/settings" className="text-white mx-4">Account Settings</Link>
+    <nav className="bg-gray-800 py-4">
+      <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
+        <h1 className="text-white text-2xl font-bold mb-2">Study Helper</h1>
+        <div className="flex flex-wrap justify-center gap-6">
+          <Link to="/welcome" className="text-white hover:underline">Home</Link>
+          <Link to="/add-course" className="text-white hover:underline">Add Course</Link>
+          <Link to="/messages" className="text-white hover:underline">Messages</Link>
+          <Link to="/settings" className="text-white hover:underline">Account Settings</Link>
         </div>
       </div>
     </nav>
