@@ -156,7 +156,7 @@ CREATE EVENT clear_friend_requests
     DO BEGIN
 		DELETE FROM friend_request
         WHERE create_time < DATE_SUB(NOW(), INTERVAL 1 DAY);
-    END
+    END;
 %%%
 @delimiter ;
 
