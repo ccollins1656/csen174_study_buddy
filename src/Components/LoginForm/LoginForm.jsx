@@ -3,22 +3,6 @@ import './LoginForm.css';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
-import axios from 'axios';
-
-async function tryLogin(email, password) {
-    const response = await axios.post('http://localhost:5000/login', {
-        "email": email,
-        "password": password
-    }).catch(function (e) {
-        console.log(e);
-        return false;
-    });
-    if (response.status === 204) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -26,7 +10,7 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         // Check if email ends with @scu.edu
@@ -35,17 +19,22 @@ const LoginForm = () => {
             return;
         }
 
-        let loggedIn = await tryLogin(email, password);
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const matchingUser = users.find(
+        (user) => user.email === email && user.password === password
+        );
 
-        if (loggedIn) {
-            // Proceed with login logic here
-            setError('Login succesful!');
-            //alert('Login successful!');
-            navigate('/welcome', { state: { email } });
-        } else {
+        if (!matchingUser) {
             setError('Invalid email or password.');
+            return;
         }
 
+
+        // Proceed with login logic here
+        setError('');
+        //alert('Login successful!');
+        localStorage.setItem('currentUser', JSON.stringify({ email }));
+        navigate('/welcome', { state: { email } });
     };
 
     return (
