@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
-function tryLogin(email, password) {
-    const response = axios.post('http://localhost:5000/login', {
+async function tryLogin(email, password) {
+    const response = await axios.post('http://localhost:5000/login', {
         "email": email,
         "password": password
     }).catch(function (e) {
@@ -39,13 +39,13 @@ const LoginForm = () => {
 
         if (loggedIn) {
             // Proceed with login logic here
-            setError('');
+            setError('Login succesful!');
             //alert('Login successful!');
             navigate('/welcome', { state: { email } });
         } else {
             setError('Invalid email or password.');
         }
-        
+
     };
 
     return (

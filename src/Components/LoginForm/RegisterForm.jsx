@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
-function tryRegister(displayName, email, password) {
-    const response = axios.post('http://localhost:5000/create-account', {
+async function tryRegister(displayName, email, password) {
+    const response = await axios.post('http://localhost:5000/create-account', {
         "display_name": displayName,
         "email": email,
         "password": password
