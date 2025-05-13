@@ -155,7 +155,7 @@ CREATE EVENT clear_friend_requests
     STARTS '2025-05-07 00:03:00' ON COMPLETION PRESERVE ENABLE
     DO BEGIN
 		DELETE FROM friend_request
-        WHERE create_time <= date < DATE_SUB(NOW(), INTERVAL 1 DAY);
+        WHERE create_time < DATE_SUB(NOW(), INTERVAL 1 DAY);
     END
 %%%
 @delimiter ;
