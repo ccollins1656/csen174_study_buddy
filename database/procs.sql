@@ -107,7 +107,8 @@ CREATE PROCEDURE get_direct_messages(in in_user1 varchar(10), in_user2 varchar(1
         AND (sending_user_id = in_user1
         AND receiving_user_id = in_user2)
         OR (sending_user_id = in_user2
-        AND receiving_user_id = in_user1);
+        AND receiving_user_id = in_user1)
+        order by timestamp desc limit 50;
 	END;
 %%%
 @delimiter ;
