@@ -113,6 +113,18 @@ CREATE PROCEDURE get_direct_messages(in in_user1 varchar(10), in_user2 varchar(1
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS get_users_in_forum;
+@delimiter %%%
+CREATE PROCEDURE get_users_in_forum(in in_class_name varchar(10))
+	BEGIN
+		SELECT U.display_name FROM user U
+        WHERE U.user_id = 
+			(SELECT user_id FROM joined_forum
+				WHERE class_name = in_class_name);
+	END;
+%%%
+@delimiter ;
+
 DROP EVENT IF EXISTS clear_friend_requests;
 @delimiter %%%
 CREATE EVENT clear_friend_requests
