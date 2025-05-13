@@ -72,6 +72,7 @@ drop table if exists friend_request;
 create table friend_request(
 	user1 varchar(10),
 	user2 varchar(10),
+    create_time DATETIME,
 	response tinyint(2) not null,
 
 	primary key(user1, user2, response),

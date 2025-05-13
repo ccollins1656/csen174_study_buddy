@@ -1,3 +1,8 @@
+SET GLOBAL event_scheduler = ON;
+SET @@global.event_scheduler = ON;
+SET GLOBAL event_scheduler = 1;
+SET @@global.event_scheduler = 1;
+
 DROP PROCEDURE IF EXISTS insert_into_user;
 @delimiter %%%
 CREATE PROCEDURE insert_into_user(IN in_user_id VARCHAR(10), IN in_display_name VARCHAR(20), 
@@ -70,3 +75,36 @@ CREATE PROCEDURE get_num_users(out num_users int)
 	END;
 %%%
 @delimiter ;
+
+DROP PROCEDURE IF EXISTS send_forum_message;
+@delimiter %%%
+CREATE PROCEDURE send_forum_message (in in_user_id varchar(10), in_class_name varchar(10), in_timestamp DATETIME, in_text varchar(256))
+	BEGIN
+		INSERT INTO forum_message(user_id, class_name, timestamp, text)
+        VALUES (in_user_id, in_class_name, in_timestamp, in_text);
+	END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS get_messages_by_class;
+@delimiter %%%
+CREATE PROCEDURE get_messages_by_class(in in_class_name varchar(10))
+	BEGIN
+		SELECT * FROM forum_messages_index
+        WHERE class_name = in_class_name;
+	END;
+%%%
+@delimiter ;
+
+DROP EVENT IF EXISTS clear_friend_requests;
+@delimiter %%%
+CREATE EVENT clear_friend_requests
+	ON SCHEDULE EVERY 1 DAY
+    STARTS '2025-05-07 00:03:00' ON COMPLETION PRESERVE ENABLE
+    DO BEGIN
+		DELETE FROM friend_request
+        WHERE create_time <= date < DATE_SUB(NOW(), INTERVAL 1 DAY);
+    END
+%%%
+@delimiter ;
+
