@@ -5,8 +5,10 @@ CREATE INDEX forum_message_index ON forum_message(class_name) USING BTREE;
 CREATE VIEW user_view(user_id,
 	display_name,
 	email,
+    password,
+    salt,
 	join_time)
-	AS SELECT user.user_id, user.display_name, user.email, user.join_time
+	AS SELECT user.user_id, user.display_name, user.email, user.password, user.salt, user.join_time
     FROM user;
     
 

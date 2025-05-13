@@ -273,6 +273,7 @@ def login(email=str, password=str):
     connection[1].callproc("get_user_by_email", (str(email),))
     for result in connection[1].stored_results():
         data = result.fetchall()
+        print(data)
         for id, name, email, pwrd, salt, join_time in data:
             hashed_password = hash_password(password, salt)
             if pwrd == hashed_password and join_time is None:
