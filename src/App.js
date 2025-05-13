@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginForm from './Components/LoginForm/LoginForm';
-import RegisterForm from './Components/LoginForm/RegisterForm';
-import WelcomePage from './Components/LoginForm/WelcomePage';
+import LoginForm from './components/LoginForm/LoginForm';
+import RegisterForm from './components/LoginForm/RegisterForm';
+import WelcomePage from './components/LoginForm/WelcomePage';
 //import WelcomePage from './WelcomePage';
 //import AddCoursePage from './AddCoursePage';
 //import MessagesPage from './MessagesPage';
