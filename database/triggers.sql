@@ -6,10 +6,9 @@ CREATE TRIGGER remove_friend_request
 	AFTER UPDATE ON friend_request
     FOR EACH ROW BEGIN
 		IF NEW.response = 1 THEN 
-			CALL add_friend(OLD.user1, OLD.user2);
-		ELSE
-			CALL delete_friend_req(OLD.user1, OLD.user2);
+			CALL add_friend(NEW.user1, NEW.user2);
 		END IF;
+		CALL delete_friend_req(NEW.user1, NEW.user2);
 	END;
 %%%
 @delimiter ;
