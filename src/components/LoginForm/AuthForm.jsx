@@ -5,7 +5,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
 async function tryAuth(email, authCode) {
-    const response = await axios.post('http://localhost:5000/auth', {
+    const response = await axios.post('http://localhost:5000/auth-account', {
         "email": email,
         "auth_code": authCode
     }).catch(function (e) {

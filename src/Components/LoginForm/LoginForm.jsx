@@ -12,11 +12,11 @@ async function tryLogin(email, password) {
         console.log(e);
         return false;
     });
-    if (response.status === 204) {
-        return true;
-    } else {
-        return false;
+    if (response.status === 200) {
+        if (response.data && response.data.token) return response.data;
     }
+    
+    return false;
 }
 
 const LoginForm = () => {
@@ -39,6 +39,9 @@ const LoginForm = () => {
         if (loggedIn) {
             // Proceed with login logic here
             setError('Login succesful!');
+            console.log(loggedIn.token);
+            localStorage.setItem('currentUser', JSON.stringify({ email }));
+            localStorage.setItem('session', loggedIn.token);
             navigate('/welcome', { state: { email } });
         } else {
             setError('Invalid email or password.');
