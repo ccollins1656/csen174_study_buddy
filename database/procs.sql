@@ -50,16 +50,17 @@ DROP PROCEDURE IF EXISTS add_friend_request;
 CREATE PROCEDURE add_friend_request(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10), in in_create_time DATETIME,
 	in_response tinyint(2))
 	BEGIN
-		SET response = IFNULL(in_response, 0);
+		
+		SET in_response = IFNULL(in_response, 0);
 		INSERT INTO friend_request(user1, user2, create_time, response)
-		VALUES (in_sending_user_id, in_receiving_user_id, in_create_time, in_esponse);
+		VALUES (in_sending_user_id, in_receiving_user_id, in_create_time, in_response);
 	END;
 %%%
 @delimiter ;
 
 DROP PROCEDURE IF EXISTS add_friend;
 @delimiter %%%
-CREATE PROCEDURE add_friend_request(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10))
+CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10))
 	BEGIN
 		INSERT INTO friends (user1, user2)
         VALUES (in_sending_user_id, in_receiving_user_id);
