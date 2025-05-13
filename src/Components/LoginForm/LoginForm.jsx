@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
@@ -40,7 +39,6 @@ const LoginForm = () => {
         if (loggedIn) {
             // Proceed with login logic here
             setError('Login succesful!');
-            //alert('Login successful!');
             navigate('/welcome', { state: { email } });
         } else {
             setError('Invalid email or password.');

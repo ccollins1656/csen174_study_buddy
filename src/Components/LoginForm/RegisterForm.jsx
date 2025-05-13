@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
@@ -21,6 +21,7 @@ async function tryRegister(displayName, email, password) {
 }
 
 const RegisterForm = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -56,6 +57,8 @@ const RegisterForm = () => {
             setEmail('');
             setPassword('');
             setConfirmPassword('');
+            // Navigate to auth page
+            navigate('/auth');
         } else {
             setError('Could not complete registration. If you have already created an account, sign in instead.');
         }

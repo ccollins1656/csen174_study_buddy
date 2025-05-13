@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
@@ -33,7 +32,7 @@ const AuthForm = () => {
 
         if (authed) {
             setError('Account verified!');
-            navigate('/');
+            navigate('/login');
         } else {
             setError('Account authentication could not be completed. Try again or request a new code.');
         }
