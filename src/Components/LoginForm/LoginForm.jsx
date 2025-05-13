@@ -26,7 +26,7 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Check if email ends with @scu.edu
@@ -35,7 +35,7 @@ const LoginForm = () => {
             return;
         }
 
-        let loggedIn = tryLogin(email, password);
+        let loggedIn = await tryLogin(email, password);
 
         if (loggedIn) {
             // Proceed with login logic here
