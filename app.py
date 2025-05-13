@@ -1,8 +1,9 @@
 from flask import Flask, request
-from markupsafe import escape
+from flask_cors import CORS
 import loginManager as loginManager;
 
 app = Flask(__name__)
+CORS(app)
 
 
 """
@@ -57,6 +58,7 @@ Expects:
 def create_account():
     r = request.get_json()
     response = loginManager.create_account(r["display_name"], r["email"], r["password"])
+    print(response)
     if response:
         return '', 204
     else:

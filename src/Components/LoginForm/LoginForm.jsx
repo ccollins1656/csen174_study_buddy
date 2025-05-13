@@ -3,6 +3,22 @@ import './LoginForm.css';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
+import axios from 'axios';
+
+function tryLogin(email, password) {
+    const response = axios.post('http://localhost:5000/login', {
+        "email": email,
+        "password": password
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 204) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -19,21 +35,17 @@ const LoginForm = () => {
             return;
         }
 
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const matchingUser = users.find(
-        (user) => user.email === email && user.password === password
-        );
+        let loggedIn = tryLogin(email, password);
 
-        if (!matchingUser) {
+        if (loggedIn) {
+            // Proceed with login logic here
+            setError('');
+            //alert('Login successful!');
+            navigate('/welcome', { state: { email } });
+        } else {
             setError('Invalid email or password.');
-            return;
         }
-
-
-        // Proceed with login logic here
-        setError('');
-        //alert('Login successful!');
-        navigate('/welcome', { state: { email } });
+        
     };
 
     return (

@@ -2,6 +2,23 @@ import React, { useState } from 'react';
 import './LoginForm.css';
 import { Link } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
+import axios from 'axios';
+
+function tryRegister(displayName, email, password) {
+    const response = axios.post('http://localhost:5000/create-account', {
+        "display_name": displayName,
+        "email": email,
+        "password": password
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 204) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 const RegisterForm = () => {
     const [email, setEmail] = useState('');
@@ -22,7 +39,6 @@ const RegisterForm = () => {
             setError('Only SCU email addresses are allowed.');
             return;
         }
-
         
         // Password match check
         if (password !== confirmPassword) {
@@ -30,24 +46,19 @@ const RegisterForm = () => {
             return;
         }
 
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        let registered = tryRegister("dname", email, password);
 
-        const userExists = users.some((user) => user.email === email);
-        if (userExists) {
-            setError('An account with this email already exists.');
-            return;
+        if (registered) {
+            // Proceed with registration logic
+            setSuccess('Registration successful!');
+            // Optionally clear inputs
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
+        } else {
+            setError('Could not complete registration. If you have already created an account, sign in instead.');
         }
-
-        // Save new user (now safe to do)
-        users.push({ email, password });
-        localStorage.setItem('users', JSON.stringify(users));
-
-        // Proceed with registration logic
-        setSuccess('Registration successful!');
-        // Optionally clear inputs
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
+        
     };
 
     return (
