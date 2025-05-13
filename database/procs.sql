@@ -148,6 +148,17 @@ CREATE PROCEDURE get_users_in_forum(in in_class_name varchar(10))
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS drop_user_from_course;
+@delimiter %%%
+CREATE PROCEDURE drop_user_from_course (in in_user_id varchar(10), in_class_name varchar(10))
+	BEGIN
+		DELETE FROM joined_forum
+        WHERE user_id = in_user_id
+        AND class_name = in_class_name;
+	END;
+%%%
+@delimiter ;
+
 DROP EVENT IF EXISTS clear_friend_requests;
 @delimiter %%%
 CREATE EVENT clear_friend_requests
