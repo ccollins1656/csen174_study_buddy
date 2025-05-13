@@ -12,8 +12,8 @@ from email.message import EmailMessage
 
 HASH_ITER = 300000  # the number of iterations to hash the password, decrease this number if it takes too long
 
-send_email = ''
-send_psswrd = ''
+send_email = 'lucas3rocks@gmail.com'
+send_psswrd = 'flpb bmmf xchd mjdx'
 PORT = 465  # for sending emails with SSL encryption protocol
 DATABASE_NAME = "coen174"  # name of database
 TABLE_NAME = "user"  # name of table in database where passwords are stored
@@ -273,6 +273,7 @@ def login(email=str, password=str):
     connection[1].callproc("get_user_by_email", (str(email),))
     for result in connection[1].stored_results():
         data = result.fetchall()
+        print(data)
         for id, name, email, pwrd, salt, join_time in data:
             hashed_password = hash_password(password, salt)
             if pwrd == hashed_password and join_time is None:

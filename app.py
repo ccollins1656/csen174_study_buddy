@@ -58,15 +58,13 @@ Expects:
 def create_account():
     r = request.get_json()
     response = loginManager.create_account(r["display_name"], r["email"], r["password"])
-    print(response)
     if response:
         return '', 204
     else:
         return '', 400
 
 
-if __name__ == '__main__':
-    loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
-    loginManager.initialize_database()
-    print('Setup completed')
+loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
+loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
+loginManager.initialize_database()
+print('Setup completed')

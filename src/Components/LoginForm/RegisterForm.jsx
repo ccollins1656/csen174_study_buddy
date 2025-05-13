@@ -51,6 +51,7 @@ const RegisterForm = () => {
         if (registered) {
             // Proceed with registration logic
             setSuccess('Registration successful!');
+            setError('');
             // Optionally clear inputs
             setEmail('');
             setPassword('');
