@@ -19,10 +19,21 @@ const LoginForm = () => {
             return;
         }
 
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const matchingUser = users.find(
+        (user) => user.email === email && user.password === password
+        );
+
+        if (!matchingUser) {
+            setError('Invalid email or password.');
+            return;
+        }
+
+
         // Proceed with login logic here
         setError('');
         //alert('Login successful!');
-        navigate('/welcome');
+        navigate('/welcome', { state: { email } });
     };
 
     return (
