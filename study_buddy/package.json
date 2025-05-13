@@ -1,22 +1,15 @@
 {
-  "name": "study-buddy-app",
+  "name": "study_buddy",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.503.0",
+    "@testing-library/user-event": "^13.5.0",
     "react": "^19.1.0",
-    "react-cookie": "^8.0.1",
     "react-dom": "^19.1.0",
-    "react-icons": "^5.5.0",
-    "react-router": "^6.30.0",
-    "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
-    "tailwindcss-animate": "^1.0.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -42,8 +35,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@testing-library/user-event": "^14.6.1"
   }
 }

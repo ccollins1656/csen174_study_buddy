@@ -44,28 +44,20 @@ for page in doc:
 
 doc.close()
 
-# Step 1: Find all CSEN courses
 pattern = r"(CSEN\s\d{1,3}[A-Z]?(?:-\d)?)"
 matches = re.findall(pattern, full_text)
 
-# Step 2: Clean the list
 clean_courses = []
 for course in matches:
-    # Skip any courses with 'L' (labs)
     if 'L' in course:
         continue
-    # Remove section numbers like '-1', '-2'
     course = course.split('-')[0]
     clean_courses.append(course)
 
-# Step 3: Keep only unique courses
 unique_courses = sorted(set(clean_courses))
 
-# Step 4: Make DataFrame
 df = pd.DataFrame(unique_courses, columns=["Course"])
 
-# Save to Excel
 df.to_csv("courses_offered.csv", index=False)
 
-# Print to verify
 print(df)
