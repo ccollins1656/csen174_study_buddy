@@ -26,10 +26,10 @@ const AuthForm = () => {
     const [authCode, setAuthCode] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        let authed = tryAuth(email, authCode);
+        let authed = await tryAuth(email, authCode);
 
         if (authed) {
             setError('Account verified!');

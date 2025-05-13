@@ -27,7 +27,7 @@ const RegisterForm = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Reset messages
@@ -46,7 +46,7 @@ const RegisterForm = () => {
             return;
         }
 
-        let registered = tryRegister("dname", email, password);
+        let registered = await tryRegister("dname", email, password);
 
         if (registered) {
             // Proceed with registration logic
