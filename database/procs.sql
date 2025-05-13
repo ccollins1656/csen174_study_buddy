@@ -88,10 +88,26 @@ CREATE PROCEDURE send_forum_message (in in_user_id varchar(10), in_class_name va
 
 DROP PROCEDURE IF EXISTS get_messages_by_class;
 @delimiter %%%
-CREATE PROCEDURE get_messages_by_class(in in_class_name varchar(10))
+CREATE PROCEDURE get_messages_by_class(in in_class_name varchar(10), in_timestamp datetime)
 	BEGIN
-		SELECT * FROM forum_messages_index
-        WHERE class_name = in_class_name;
+		SELECT * FROM forum_message
+        WHERE class_name = in_class_name
+        AND timestamp < in_timestamp
+        order by timestamp desc limit 50;
+	END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS get_direct_messages;
+@delimiter %%%
+CREATE PROCEDURE get_direct_messages(in in_user1 varchar(10), in_user2 varchar(10), in_timestamp datetime)
+	BEGIN
+		SELECT * FROM direct_messages
+        WHERE timestamp < in_timestamp
+        AND (sending_user_id = in_user1
+        AND receiving_user_id = in_user2)
+        OR (sending_user_id = in_user2
+        AND receiving_user_id = in_user1);
 	END;
 %%%
 @delimiter ;
