@@ -23,11 +23,24 @@ const RegisterForm = () => {
             return;
         }
 
+        
         // Password match check
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
+
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+        const userExists = users.some((user) => user.email === email);
+        if (userExists) {
+            setError('An account with this email already exists.');
+            return;
+        }
+
+        // Save new user (now safe to do)
+        users.push({ email, password });
+        localStorage.setItem('users', JSON.stringify(users));
 
         // Proceed with registration logic
         setSuccess('Registration successful!');
@@ -89,3 +102,4 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
