@@ -12,8 +12,8 @@ from email.message import EmailMessage
 
 HASH_ITER = 300000  # the number of iterations to hash the password, decrease this number if it takes too long
 
-send_email = ''
-send_psswrd = ''
+send_email = 'lucas3rocks@gmail.com'
+send_psswrd = 'flpb bmmf xchd mjdx'
 PORT = 465  # for sending emails with SSL encryption protocol
 DATABASE_NAME = "coen174"  # name of database
 TABLE_NAME = "user"  # name of table in database where passwords are stored
