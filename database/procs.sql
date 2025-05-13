@@ -45,17 +45,39 @@ CREATE PROCEDURE send_direct_message(in in_sending_user_id varchar(10), in_recei
 %%%
 @delimiter ;
 
-DROP PROCEDURE IF EXISTS add_friend;
+DROP PROCEDURE IF EXISTS add_friend_request;
 @delimiter %%%
-CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10),
-	response tinyint(2))
+CREATE PROCEDURE add_friend_request(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10), in in_create_time DATETIME,
+	in_response tinyint(2))
 	BEGIN
-		SET response = IFNULL(response, 0);
-		INSERT INTO friend_request(user1, user2, response)
-		VALUES (in_sending_user_id, in_receiving_user_id, response);
+		SET response = IFNULL(in_response, 0);
+		INSERT INTO friend_request(user1, user2, create_time, response)
+		VALUES (in_sending_user_id, in_receiving_user_id, in_create_time, in_esponse);
 	END;
 %%%
 @delimiter ;
+
+DROP PROCEDURE IF EXISTS add_friend;
+@delimiter %%%
+CREATE PROCEDURE add_friend_request(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10))
+	BEGIN
+		INSERT INTO friends (user1, user2)
+        VALUES (in_sending_user_id, in_receiving_user_id);
+	END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS delete_friend_req;
+@delimiter %%%
+CREATE PROCEDURE delete_friend_req(in in_user1 varchar(10), in_user2 varchar(10))
+	BEGIN
+		DELETE FROM friend_request
+        WHERE user1 = in_user1
+        AND user2 = in_user2;
+	END;
+%%%
+@delimiter ;
+
 
 DROP PROCEDURE IF EXISTS get_user_by_email;
 @delimiter %%%
