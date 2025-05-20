@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LoginForm.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
@@ -28,6 +28,11 @@ const AuthForm = () => {
     const [authCode, setAuthCode] = useState('');
     const [error, setError] = useState('');
 
+    const code = searchParams.get('code') || authCode;
+    const userEmail = searchParams.get('email') || email;
+    useEffect(() => {setAuthCode(code);}, []);
+    useEffect(() => {setEmail(userEmail);}, []);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
