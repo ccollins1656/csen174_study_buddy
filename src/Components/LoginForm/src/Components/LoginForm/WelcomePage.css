@@ -1,0 +1,87 @@
+.container {
+    display: flex;
+    height: 100vh;
+    font-family: sans-serif;
+}
+
+.sidebar {
+    width: 220px;
+    background: slateblue;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav li {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar nav .icon {
+    margin-right: 10px;
+}
+
+.main {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f5f5f5;
+    position: relative;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40px;
+}
+
+.user-icon {
+    font-size: 24px;
+    color: slateblue;
+    cursor: pointer;
+}
+
+.content {
+    margin-top: 40px;
+}
+
+.user-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: max-content;
+    max-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    top: -35px;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.user-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}

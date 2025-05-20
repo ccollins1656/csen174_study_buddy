@@ -1,33 +1,13 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
-import axios from 'axios';
 
-async function tryLogin(email, password, remember) {
-    const response = await axios.post('http://localhost:5000/login', {
-        "email": email,
-        "password": password,
-        "remember": false
-    }).catch(function (e) {
-        console.log(e);
-        return false;
-    });
-    if (response.status === 204) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-const LoginForm = () => {
-    const navigate = useNavigate();
+const CreateAccount = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         // Check if email ends with @scu.edu
@@ -36,22 +16,25 @@ const LoginForm = () => {
             return;
         }
 
-        let loggedIn = await tryLogin(email, password);
-
-        if (loggedIn) {
-            // Proceed with login logic here
-            setError('Login succesful!');
-            navigate('/welcome', { state: { email } });
-        } else {
-            setError('Invalid email or password.');
-        }
-
+        // Proceed with login logic here
+        setError('');
+        alert('Login successful!');
     };
 
     return (
         <div className='wrapper'>
             <form onSubmit={handleSubmit}>
-                <h1>Study Buddy Login</h1>
+                <h1>Study Buddy Create an Account</h1>
+
+                <div className="input-box">
+                    <input
+                        type="text"
+                        placeholder='First Name'
+                        id="username"
+                        value={username}
+                        onChange={}
+                    />
+                </div>
 
                 <div className="input-box">
                     <input
@@ -85,11 +68,7 @@ const LoginForm = () => {
                 <button type="submit">Login</button>
 
                 <div className="register-link">
-                    <p>Don't have an account? <Link to="/register" className="link">Register</Link></p>
-                </div>
-
-                <div className="authenticate-link">
-                    <p>Need to authenticate? <Link to="/auth" className="link">Authenticate</Link></p>
+                    <p>Don't have an account? <a href="#">Register</a></p>
                 </div>
             </form>
         </div>
