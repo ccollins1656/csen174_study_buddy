@@ -94,22 +94,6 @@
     text-decoration: underline;
 }
 
-.wrapper .authenticate-link  {
-    font-size: 14.5px;
-    text-align: center;
-    margin: 20px 0 15px;
-}
-
-.authenticate-link  p a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.authenticate-link p a:hover {
-    text-decoration: underline;
-}
-
 .error-message {
     background-color: #ffe6e6;
     color: #d8000c;

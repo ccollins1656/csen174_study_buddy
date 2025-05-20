@@ -1,0 +1,90 @@
+.container {
+    display: flex;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    width: 220px;
+    background-color: slateblue;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin: 15px 0;
+}
+
+.sidebar li a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar li.active a {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.main {
+    flex-grow: 1;
+    padding: 20px;
+    position: relative;
+    background-color: #f9f9f9;
+}
+
+.top-bar {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.user-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.user-icon {
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    position: absolute;
+    top: 35px; 
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.user-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.content {
+    margin-top: 60px;
+}
