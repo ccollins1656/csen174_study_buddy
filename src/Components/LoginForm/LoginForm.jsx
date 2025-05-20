@@ -3,6 +3,7 @@ import './LoginForm.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
+import { useSessionUnauth } from './useSessionAuth.js';
 
 async function tryLogin(email, password, remember) {
     const response = await axios.post('http://localhost:5000/login', {
@@ -21,6 +22,8 @@ async function tryLogin(email, password, remember) {
 }
 
 const LoginForm = () => {
+    useSessionUnauth();
+
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
