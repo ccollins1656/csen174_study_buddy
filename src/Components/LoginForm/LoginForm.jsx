@@ -4,10 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
-async function tryLogin(email, password) {
+async function tryLogin(email, password, remember) {
     const response = await axios.post('http://localhost:5000/login', {
         "email": email,
-        "password": password
+        "password": password,
+        "remember": false
     }).catch(function (e) {
         console.log(e);
         return false;
@@ -23,6 +24,7 @@ const LoginForm = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [remember, setRemember] = useState('');
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
@@ -87,6 +89,10 @@ const LoginForm = () => {
 
                 <div className="register-link">
                     <p>Don't have an account? <Link to="/register" className="link">Register</Link></p>
+                </div>
+
+                <div className="authenticate-link">
+                    <p>Need to authenticate? <Link to="/auth" className="link">Authenticate</Link></p>
                 </div>
             </form>
         </div>

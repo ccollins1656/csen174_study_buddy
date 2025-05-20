@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 import loginManager as loginManager;
 import secrets;
+import time;
 
 app = Flask(__name__)
 CORS(app)
@@ -11,6 +12,7 @@ loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
 loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
 loginManager.initialize_database()
 sessions = {}
+EXPIRY_TIME = 3600 # Session length in seconds if "remember me" not checked
 print('Setup completed')
 
 
@@ -25,11 +27,15 @@ Expects:
 @app.route('/session', methods=['POST'])
 def session():
     r = request.get_json()
-    response = r["token"] in sessions
-    if response:
+    response = sessions[r["token"]]
+    if response and (response["expires"] == -1 or response["expires"] > time.time()):
         return '', 204
+    elif response:
+        # Session is expired
+        sessions.pop(response)
+        return '', 401
     else:
-        return '', 400
+        return '', 401
 
 
 """
@@ -48,10 +54,14 @@ def login():
     response = loginManager.login(r["email"], r["password"])
     if response:
         token = secrets.token_hex()
-        sessions[token] = r["email"]
+        expires = -1 if r["remember"] else int(time.time() + EXPIRY_TIME)
+        sessions[token] = {
+            "email": r["email"],
+            "expires": expires
+        }
         return '{"token": "' + token + '"}', 200
     else:
-        return '', 400
+        return '', 401
 
 
 """
@@ -70,7 +80,7 @@ def auth_account():
     if response:
         return '', 204
     else:
-        return '', 400
+        return '', 401
 
 
 """
@@ -90,4 +100,4 @@ def create_account():
     if response:
         return '', 204
     else:
-        return '', 400
+        return '', 401
