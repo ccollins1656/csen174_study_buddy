@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './LoginForm.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 import { useSessionUnauth } from './useSessionAuth.js';
@@ -24,14 +24,17 @@ const AuthForm = () => {
     useSessionUnauth();
     
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [email, setEmail] = useState('');
     const [authCode, setAuthCode] = useState('');
     const [error, setError] = useState('');
 
-    // const code = searchParams.get('code') || '';
-    // const userEmail = searchParams.get('email') || '';
-    // useEffect(() => {setAuthCode(code);}, []);
-    // useEffect(() => {setEmail(userEmail);}, []);
+    const code = searchParams.get('code') || '';
+    const userEmail = searchParams.get('email') || '';
+    useEffect(() => {
+        setAuthCode(code);
+        setEmail(userEmail);
+    }, []);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
