@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-//import './LoginForm.css'; // reuse same styling
-//import { useLocation } from 'react-router-dom';
-//import './WelcomePage.css';
 import './Layout.css';
 import { FaUser, FaHome, FaBook, FaCog,  FaGraduationCap } from 'react-icons/fa';
 import { MdMessage } from "react-icons/md";
