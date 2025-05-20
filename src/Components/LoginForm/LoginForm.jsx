@@ -8,23 +8,23 @@ async function tryLogin(email, password, remember) {
     const response = await axios.post('http://localhost:5000/login', {
         "email": email,
         "password": password,
-        "remember": false
+        "remember": remember
     }).catch(function (e) {
         console.log(e);
         return false;
     });
-    if (response.status === 204) {
-        return true;
-    } else {
-        return false;
+    if (response.status === 200) {
+        if (response.data && response.data.token) return response.data;
     }
+    
+    return false;
 }
 
 const LoginForm = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState('');
+    const [remember, setRemember] = useState(false);
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
@@ -36,11 +36,13 @@ const LoginForm = () => {
             return;
         }
 
-        let loggedIn = await tryLogin(email, password);
+        let loggedIn = await tryLogin(email, password, remember);
 
         if (loggedIn) {
             // Proceed with login logic here
             setError('Login succesful!');
+            localStorage.setItem('currentUser', JSON.stringify({ email }));
+            localStorage.setItem('session', loggedIn.token);
             navigate('/welcome', { state: { email } });
         } else {
             setError('Invalid email or password.');
