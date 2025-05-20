@@ -50,6 +50,10 @@ const LoginForm = () => {
 
     };
 
+    const handleRemember = () => {
+        setRemember(!remember);
+    };
+
     return (
         <div className='wrapper'>
             <form onSubmit={handleSubmit}>
@@ -80,7 +84,10 @@ const LoginForm = () => {
                 {error && <p className="error-message">{error}</p>}
 
                 <div className="remember-forgot">
-                    <label><input type="checkbox" />Remember me</label>
+                    <label><input
+                        type="checkbox"
+                        onChange={(e) => handleRemember()}
+                    />Remember me</label>
                     <a href="#">Forgot password?</a>
                 </div>
 
