@@ -5,6 +5,7 @@ import { MdMessage } from "react-icons/md";
 import { FaUserGroup } from "react-icons/fa6";
 import { Link, useLocation } from 'react-router-dom';
 import { IoIosLogOut } from "react-icons/io";
+import axios from 'axios';
 
 const Layout = ({ children }) => {
     const [userEmail, setUserEmail] = useState('');
@@ -17,6 +18,15 @@ const Layout = ({ children }) => {
             if (parsed.email) setUserEmail(parsed.email);
         }
     }, []);
+
+    function handleLogout() {
+        const response = axios.post('http://localhost:5000/logout', {
+            "token": localStorage.getItem('session')
+        }).catch(function (e) {
+            console.log(e);
+        });
+        localStorage.removeItem('session');
+    }
 
     return (
         <div className="container">
@@ -40,7 +50,7 @@ const Layout = ({ children }) => {
                             <Link to="/settings"><FaCog className="icon" /> Settings</Link>
                         </li>
                          <li className={location.pathname === '/' ? 'active' : ''}>
-                            <Link to="/"><IoIosLogOut className="icon" /> Logout</Link>
+                            <Link to="/" onClick={handleLogout}><IoIosLogOut className="icon" /> Logout</Link>
                         </li>
                     </ul>
                 </nav>

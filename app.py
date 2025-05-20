@@ -13,6 +13,7 @@ loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
 loginManager.initialize_database()
 sessions = {}
 EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
+EXPIRY_TIME_REMEMBER = EXPIRY_TIME * 7 # If "remember me" is checked
 print('Setup completed')
 
 
@@ -71,7 +72,8 @@ def login():
     response = loginManager.login(r["email"], r["password"])
     if response:
         token = secrets.token_hex()
-        expires = -1 if r["remember"] else int(time.time() + EXPIRY_TIME)
+        lifetime = EXPIRY_TIME if r["remember"] else EXPIRY_TIME_REMEMBER
+        expires = int(time.time() + lifetime)
         sessions[token] = {
             "email": r["email"],
             "expires": expires
@@ -79,6 +81,21 @@ def login():
         return '{"token": "' + token + '"}', 200
     else:
         return '', 401
+
+
+"""
+API request to close a session prematurely.
+Expects:
+{
+    "token": session token
+}
+"""
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    r = request.get_json()
+    sessions.pop(r["token"])
+    return '', 204
 
 
 """
