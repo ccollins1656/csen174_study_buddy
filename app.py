@@ -17,6 +17,25 @@ print('Setup completed')
 
 
 """
+Helper function to verify that a token corresponds to a valid session.
+Will delete the session if it is expired.
+"""
+
+def token_auth(token):
+    response = sessions[token]
+    if response and (response["expires"] == -1 or response["expires"] > time.time()):
+        # Session exists and is current
+        return True
+    elif response:
+        # Session exists but is expired
+        sessions.pop(response)
+        return False
+    else:
+        # Session does not exist
+        return False
+
+
+"""
 Verifies that a specific session is active.
 Expects:
 {
@@ -27,14 +46,21 @@ Expects:
 @app.route('/session', methods=['POST'])
 def session():
     r = request.get_json()
-    response = sessions[r["token"]]
-    if response and (response["expires"] == -1 or response["expires"] > time.time()):
+    # response = sessions[r["token"]]
+    # if response and (response["expires"] == -1 or response["expires"] > time.time()):
+    #     return '', 204
+    # elif response:
+    #     # Session is expired
+    #     sessions.pop(response)
+    #     return '', 401
+    # else:
+    #     return '', 401
+    response = token_auth(r["token"])
+    if response:
+        # Session healthy
         return '', 204
-    elif response:
-        # Session is expired
-        sessions.pop(response)
-        return '', 401
     else:
+        # Could not authenticate
         return '', 401
 
 
