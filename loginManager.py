@@ -375,8 +375,12 @@ def create_account(display_name=str, email=str, password=str):
         return False
     connection[1].callproc("get_user_by_email", (str(email),))
     for result in connection[1].stored_results():
-        if result.fetchall():
-            return False  # email already in use
+        data = result.fetchall()
+        for id, name, email, pwrd, salt, join_time in data:
+            if join_time is None:
+                return False  # email already in use
+            else:
+                delete_account(email)
 
     context = ssl.create_default_context()
     auth_code = secrets.token_hex()  # This code will double as our password salt
