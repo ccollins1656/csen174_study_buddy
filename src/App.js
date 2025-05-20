@@ -1,21 +1,21 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginForm from './Components/LoginForm/LoginForm';
-import RegisterForm from './Components/LoginForm/RegisterForm';
-import WelcomePage from './Components/LoginForm/WelcomePage';
-import AddCourse from './Components/LoginForm/AddCourse';
-import GroupForum from './Components/LoginForm/GroupForum';
-import Message from './Components/LoginForm/Message';
-import Settings from './Components/LoginForm/Settings';
-//import WelcomePage from './WelcomePage';
-//import AddCoursePage from './AddCoursePage';
-//import MessagesPage from './MessagesPage';
+import LoginForm from './components/LoginForm/LoginForm';
+import RegisterForm from './components/LoginForm/RegisterForm';
+import AuthForm from './components/LoginForm/AuthForm';
+import WelcomePage from './components/LoginForm/WelcomePage';
+import AddCourse from './components/LoginForm/AddCourse';
+import GroupForum from './components/LoginForm/GroupForum';
+import Message from './components/LoginForm/Message';
+import Settings from './components/LoginForm/Settings';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginForm />} />
+        <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/auth" element={<AuthForm />} />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/addcourse" element={<AddCourse />} />
         <Route path="/groupforum" element={<GroupForum />} />
@@ -27,6 +27,3 @@ function App() {
 }
 
 export default App;
-
-
-
