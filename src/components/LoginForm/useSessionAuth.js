@@ -12,13 +12,13 @@ export function useSessionAuth() {
       const response = await axios.post('http://localhost:5000/session', {
           "token": token
       }).catch(function (e) {
+          // Can't reach the server, go to login anyways to be safe
           console.log(e);
           navigate('/login');
       });
       if (!response || !(response.status === 204)) {
+          // Empty response or non-OK code
           navigate('/login');
-      }
-      else {
       }
     }
 
