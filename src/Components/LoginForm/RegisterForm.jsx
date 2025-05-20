@@ -1,16 +1,37 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
+import axios from 'axios';
+import { useSessionUnauth } from './useSessionAuth.js';
+
+async function tryRegister(displayName, email, password) {
+    const response = await axios.post('http://localhost:5000/create-account', {
+        "display_name": displayName,
+        "email": email,
+        "password": password
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 204) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 const RegisterForm = () => {
+    useSessionUnauth();
+    
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Reset messages
@@ -22,7 +43,6 @@ const RegisterForm = () => {
             setError('Only SCU email addresses are allowed.');
             return;
         }
-
         
         // Password match check
         if (password !== confirmPassword) {
@@ -30,24 +50,22 @@ const RegisterForm = () => {
             return;
         }
 
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        let registered = await tryRegister("dname", email, password);
 
-        const userExists = users.some((user) => user.email === email);
-        if (userExists) {
-            setError('An account with this email already exists.');
-            return;
+        if (registered) {
+            // Proceed with registration logic
+            setSuccess('Registration successful!');
+            setError('');
+            // Optionally clear inputs
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
+            // Navigate to auth page
+            navigate('/auth');
+        } else {
+            setError('Could not complete registration. If you have already created an account, sign in instead.');
         }
-
-        // Save new user (now safe to do)
-        users.push({ email, password });
-        localStorage.setItem('users', JSON.stringify(users));
-
-        // Proceed with registration logic
-        setSuccess('Registration successful!');
-        // Optionally clear inputs
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
+        
     };
 
     return (
@@ -102,3 +120,4 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
