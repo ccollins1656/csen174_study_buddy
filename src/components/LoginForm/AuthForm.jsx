@@ -28,10 +28,10 @@ const AuthForm = () => {
     const [authCode, setAuthCode] = useState('');
     const [error, setError] = useState('');
 
-    const code = searchParams.get('code') || authCode;
-    const userEmail = searchParams.get('email') || email;
-    useEffect(() => {setAuthCode(code);}, []);
-    useEffect(() => {setEmail(userEmail);}, []);
+    // const code = searchParams.get('code') || '';
+    // const userEmail = searchParams.get('email') || '';
+    // useEffect(() => {setAuthCode(code);}, []);
+    // useEffect(() => {setEmail(userEmail);}, []);
     
     const handleSubmit = async (e) => {
         e.preventDefault();

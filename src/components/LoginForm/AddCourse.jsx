@@ -7,6 +7,8 @@ const AddCourse = () => {
     const onChange = (event) => {
         setValue(event.target.value);
     }
+    let data = {};
+    
     return (
         <Layout>
             <h1>Add a Course!</h1>
