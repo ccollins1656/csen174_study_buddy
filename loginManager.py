@@ -17,7 +17,7 @@ send_psswrd = 'flpb bmmf xchd mjdx'
 PORT = 465  # for sending emails with SSL encryption protocol
 DATABASE_NAME = "coen174"  # name of database
 TABLE_NAME = "user"  # name of table in database where passwords are stored
-database_info = ("localhost", "root", "Passed_Word")  # database login info
+database_info = ("localhost", "root", "100%TheBestMYSQLPassword")  # database login info
 
 """
 This function must be called at start to save the email address and
@@ -383,8 +383,10 @@ def create_account(display_name=str, email=str, password=str):
     hashed_password = hash_password(password, auth_code)
 
     msg = EmailMessage()
+    url = "http://localhost:3000/auth?email="+str(email)+"&code="+str(auth_code)
     msg.set_content("Your StudyBuddy authentication code is: " + auth_code +
-                    "\nThis code will expire in 24 hours.")
+                    "\n\nThis code will expire in 24 hours. You can use the link below to authenticate your account "
+                    "(you may need to copy paste the link into your browser):\n\n" + url)
 
     user_id = (0, )
     connection[1].callproc("get_num_users", user_id)
