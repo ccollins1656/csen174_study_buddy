@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 
 async function tryAuth(email, authCode) {
-    const response = await axios.post('http://localhost:5000/auth', {
+    const response = await axios.post('http://localhost:5000/auth-account', {
         "email": email,
         "auth_code": authCode
     }).catch(function (e) {
@@ -33,7 +32,7 @@ const AuthForm = () => {
 
         if (authed) {
             setError('Account verified!');
-            navigate('/');
+            navigate('/login');
         } else {
             setError('Account authentication could not be completed. Try again or request a new code.');
         }
