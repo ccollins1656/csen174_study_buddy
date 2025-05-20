@@ -12,11 +12,11 @@ async function tryLogin(email, password) {
         console.log(e);
         return false;
     });
-    if (response.status === 200) {
-        if (response.data && response.data.token) return response.data;
+    if (response.status === 204) {
+        return true;
+    } else {
+        return false;
     }
-    
-    return false;
 }
 
 const LoginForm = () => {
@@ -39,9 +39,6 @@ const LoginForm = () => {
         if (loggedIn) {
             // Proceed with login logic here
             setError('Login succesful!');
-            console.log(loggedIn.token);
-            localStorage.setItem('currentUser', JSON.stringify({ email }));
-            localStorage.setItem('session', loggedIn.token);
             navigate('/welcome', { state: { email } });
         } else {
             setError('Invalid email or password.');
@@ -87,6 +84,10 @@ const LoginForm = () => {
 
                 <div className="register-link">
                     <p>Don't have an account? <Link to="/register" className="link">Register</Link></p>
+                </div>
+
+                <div className="authenticate-link">
+                    <p>Need to authenticate? <Link to="/auth" className="link">Authenticate</Link></p>
                 </div>
             </form>
         </div>
