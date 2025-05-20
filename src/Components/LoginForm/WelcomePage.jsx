@@ -1,7 +1,7 @@
 // WelcomePage.jsx
 import React from 'react';
 import { useSessionAuth } from './useSessionAuth.js';
-import Layout from './Layout';
+import Layout from './Layout.jsx';
 
 const WelcomePage = () => {
     useSessionAuth();
