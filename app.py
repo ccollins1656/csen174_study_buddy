@@ -12,7 +12,7 @@ loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
 loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
 loginManager.initialize_database()
 sessions = {}
-EXPIRY_TIME = 3600 # Session length in seconds if "remember me" not checked
+EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
 print('Setup completed')
 
 
@@ -46,15 +46,6 @@ Expects:
 @app.route('/session', methods=['POST'])
 def session():
     r = request.get_json()
-    # response = sessions[r["token"]]
-    # if response and (response["expires"] == -1 or response["expires"] > time.time()):
-    #     return '', 204
-    # elif response:
-    #     # Session is expired
-    #     sessions.pop(response)
-    #     return '', 401
-    # else:
-    #     return '', 401
     response = token_auth(r["token"])
     if response:
         # Session healthy
