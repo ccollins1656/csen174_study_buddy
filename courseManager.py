@@ -89,17 +89,17 @@ def join_group(email=str, groupname=str):
 This function enables a user to leave a group
 Returns True on success, False if cannot connect to database
 
-email is the user's email address
+user_id is the user's user_id
 groupname is the name of the group to leave
 """
 
 
-def leave_group(email=str, groupname=str):
+def leave_group(user_id=str, groupname=str):
     connection = connect_to_db()
     if connection is None:
         return False
 
-    connection[1].callproc("leave_group", (email, groupname))
+    connection[1].callproc("leave_group", (user_id, groupname))
     connection[0].commit()
 
     connection[1].close()
@@ -112,17 +112,18 @@ This function creates a group and inserts it in the database
 Returns True on success, False if group already exists or cannot connect to database
 
 groupname is the name of the group to create
+class_name is the name of the class the group is being created in
 """
 
 
-def create_group(groupname=str):
+def create_group(groupname=str, class_name=str):
     connection = connect_to_db()
     if connection is None:
         return False
 
     groups = list_groups()
     if groupname not in groups:
-        connection[1].callproc("create_group", (groupname, ))
+        connection[1].callproc("create_group", (groupname, class_name))
         connection[0].commit()
 
         connection[1].close()
@@ -138,17 +139,17 @@ def create_group(groupname=str):
 This function creates returns the list of groups a user is in
 Returns None if cannot connect to database
 
-email is email of the user in question
+user_id is user_id of the user in question
 """
 
 
-def find_groups(email=str):
+def find_groups(user_id=str):
     connection = connect_to_db()
     if connection is None:
         return None
 
     groups = []
-    connection[1].callproc("find_groups", (email, ))
+    connection[1].callproc("find_groups", (user_id, ))
     for result in connection[1].stored_results():
         data = result.fetchall()
         for groupname in data:
