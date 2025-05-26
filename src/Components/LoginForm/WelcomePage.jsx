@@ -4,6 +4,8 @@ import { useSessionAuth } from './useSessionAuth.js';
 import Layout from './Layout.jsx';
 import { useEffect, useState } from 'react';
 import "./WelcomePage.css";
+import { Link } from 'react-router-dom';
+
 
 const WelcomePage = () => {
     useSessionAuth();
@@ -34,17 +36,19 @@ const WelcomePage = () => {
         ) : (
             <div className="course-grid">
                 {yourCourses.map(course => (
-                    <div key={course.id} className="course-card">
-                        <button
-                            className="remove-btn"
-                            onClick={() => handleRemove(course.id)}
-                            aria-label="Remove Course"
-                        >
-                            &times;
-                        </button>
-                        <h3>{course.full_name}</h3>
-                        {/* Add more info/buttons here if needed */}
-                    </div>
+                    <Link to={`/chat/${course.id}`} key={course.id} style={{ textDecoration: 'none' }}>
+                        <div key={course.id} className="course-card">
+                            <button
+                                className="remove-btn"
+                                onClick={() => handleRemove(course.id)}
+                                aria-label="Remove Course"
+                            >
+                                &times;
+                            </button>
+                            <h3>{course.full_name}</h3>
+                            {/* Add more info/buttons here if needed */}
+                        </div>
+                    </Link>
                 ))}
             </div>
         )}
