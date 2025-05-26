@@ -1,0 +1,152 @@
+.container {
+    display: flex;
+    height: 100vh;
+    font-family: sans-serif;
+}
+
+.sidebar {
+    width: 220px;
+    background: slateblue;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav li {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar nav .icon {
+    margin-right: 10px;
+}
+
+.main {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f5f5f5;
+    position: relative;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40px;
+}
+
+.user-icon {
+    font-size: 24px;
+    color: slateblue;
+    cursor: pointer;
+}
+
+.content {
+    margin-top: 40px;
+}
+
+.user-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: max-content;
+    max-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    top: -35px;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.user-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+} 
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  
+    align-items: center;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.dropdown {
+    width: 600px; 
+    border: .5px solid #ccc;
+    border-top: none;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    background-color: #fff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    overflow: hidden;
+}
+
+.dropdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: .5px solid lightgray;
+}
+
+.dropdown-row:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown-row:active {
+    background-color: #e0e0e0;
+    transform: scale(0.98);
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 1.4rem;
+    justify-items: center;
+    margin-top: 2rem;
+}
+
+
+.course-card { 
+    border-radius: 16px;
+    padding: 2rem;
+    width: 280px;
+    height: 160px;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.course-card:hover {
+    transform: translateY(-3px);
+}

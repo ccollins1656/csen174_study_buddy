@@ -36,7 +36,7 @@ const WelcomePage = () => {
         ) : (
             <div className="course-grid">
                 {yourCourses.map(course => (
-                    <Link to={`/chat/${course.id}`} key={course.id} style={{ textDecoration: 'none' }}>
+                    <Link to={`/chat/${course.full_name}`} key={course.full_name} style={{ textDecoration: 'none' }}>
                         <div key={course.id} className="course-card">
                             <button
                                 className="remove-btn"

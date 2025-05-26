@@ -7,6 +7,7 @@ import AddCourse from './components/LoginForm/AddCourse';
 import GroupForum from './components/LoginForm/GroupForum';
 import Message from './components/LoginForm/Message';
 import Settings from './components/LoginForm/Settings';
+import ChatRoom from './components/LoginForm/ChatRoom';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/groupforum" element={<GroupForum />} />
         <Route path="/messagepage" element={<Message />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/chat/:courseId" element={<ChatRoom />} />
       </Routes>
     </Router>
   );
