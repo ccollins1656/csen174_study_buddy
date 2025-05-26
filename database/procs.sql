@@ -88,8 +88,18 @@ DROP PROCEDURE IF EXISTS create_forum;
 @delimiter %%%
 CREATE PROCEDURE create_forum(in in_class_name varchar(10))
 BEGIN
-	INSERT INTO forum(in_class_name)
-	VALUES (class_name);
+	INSERT INTO forum(class_name)
+	VALUES (in_class_name);
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS join_forum;
+@delimiter %%%
+CREATE PROCEDURE join_forum(in in_user_id varchar(10), in_class_name varchar(10))
+BEGIN
+	INSERT INTO joined_forum(user_id, class_name)
+    VALUES (in_user_id, in_class_name);
 END;
 %%%
 @delimiter ;

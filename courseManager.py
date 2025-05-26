@@ -173,7 +173,7 @@ def list_groups():
         return None
 
     groups = []
-    connection[1].callproc("list_groups")
+    connection[1].callproc("list_groups")   #   might update to search by class name
     for result in connection[1].stored_results():
         data = result.fetchall()
         for groupname in data:
