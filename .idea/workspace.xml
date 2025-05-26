@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2544ed5-7b82-4fda-b00b-5740bcf21940" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/courseManager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Components/LoginForm/GroupForum.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/procs.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/procs.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/tables.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/tables.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/LoginForm/LoginForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/LoginForm/LoginForm.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/LoginForm/GroupForum.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LoginForm/GroupForum.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +105,7 @@
       <updated>1747777812241</updated>
       <workItem from="1747777814429" duration="3896000" />
       <workItem from="1748269213297" duration="98000" />
-      <workItem from="1748269415481" duration="13492000" />
+      <workItem from="1748269415481" duration="13844000" />
     </task>
     <servers />
   </component>
