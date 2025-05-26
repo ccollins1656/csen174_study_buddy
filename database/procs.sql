@@ -231,7 +231,7 @@ CREATE PROCEDURE drop_user_from_course (in in_user_id varchar(10), in_class_name
 
 DROP PROCEDURE IF EXISTS get_user_forums;
 @delimiter %%%
-CREATE PROCEDURE get_users_forums(in in_user_id varchar(10))
+CREATE PROCEDURE get_user_forums(in in_user_id varchar(10))
 	BEGIN
 		SELECT class_name FROM joined_forum
         WHERE user_id = in_user_id;

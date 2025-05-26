@@ -16,6 +16,14 @@ create table user(
     unique(email)
 );
 
+drop table if exists forum;
+create table forum(
+	class_name varchar(10) not null,
+    
+    primary key(class_name)
+    
+);
+
 drop table if exists groupList;
 create table groupList(
 	group_name varchar(40) not null,
@@ -33,14 +41,6 @@ create table groupMembers(
 	primary key(user_id, group_name),
 	foreign key (user_id) references user(user_id) on delete cascade,
     foreign key (group_name) references groupList(group_name) on delete cascade
-);
-
-drop table if exists forum;
-create table forum(
-	class_name varchar(10) not null,
-    
-    primary key(class_name)
-    
 );
 
 drop table if exists joined_forum;
