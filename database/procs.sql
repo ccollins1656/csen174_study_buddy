@@ -152,7 +152,7 @@ CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
 
 DROP PROCEDURE IF EXISTS get_user_view_by_email;
 @delimiter %%%
-CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
+CREATE PROCEDURE get_user_view_by_email(in user_email varchar(40))
 	BEGIN
 		SELECT * FROM user_view
         WHERE email = user_email;
