@@ -1,7 +1,17 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling */
+    width: 100vw;
+    height: 100vh;
+}
+
 .container {
     display: flex;
-    height: 100vh;
+    width: 100vw;         /* Full viewport width */
+    height: 100vh;        /* Full viewport height */
     font-family: Arial, sans-serif;
+    overflow: hidden;     /* Prevent content from exceeding the screen */
 }
 
 .sidebar {
@@ -11,6 +21,7 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .sidebar h2 {
@@ -40,12 +51,17 @@
     text-decoration: underline;
 }
 
+
 .main {
-    flex-grow: 1;
+    width: calc(100vw - 220px); /* Sidebar is 220px wide */
+    height: 100vh;
     padding: 20px;
     position: relative;
     background-color: #f9f9f9;
+    overflow-y: auto; /* Optional: allows scrolling only in content area */
+    box-sizing: border-box;
 }
+
 
 .top-bar {
     position: absolute;
