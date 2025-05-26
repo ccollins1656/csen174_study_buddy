@@ -24,6 +24,66 @@ CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS create_group;
+@delimiter %%%
+CREATE PROCEDURE create_group(in in_group_name varchar(40))
+BEGIN
+	INSERT INTO groupList(group_name)
+	VALUES (in_group_name);
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS join_group;
+@delimiter %%%
+CREATE PROCEDURE join_group(in in_email varchar(40), in in_group_name varchar(40))
+BEGIN
+	INSERT INTO groupMembers(email, group_name)
+	VALUES (in_email, in_group_name);
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS leave_group;
+@delimiter %%%
+CREATE PROCEDURE leave_group(in in_email varchar(40), in in_group_name varchar(40))
+BEGIN
+	DELETE FROM groupMembers
+    WHERE email = in_email
+    AND group_name = in_group_name;
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS find_groups;
+@delimiter %%%
+CREATE PROCEDURE find_groups(in in_email varchar(40))
+BEGIN
+	SELECT group_name FROM groupMembers
+    WHERE email = in_email;
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS find_group_members;
+@delimiter %%%
+CREATE PROCEDURE find_group_members(in in_group_name varchar(40))
+BEGIN
+	SELECT user_name FROM groupMembers
+    WHERE group_name = in_group_name;
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS list_groups;
+@delimiter %%%
+CREATE PROCEDURE list_groups()
+BEGIN
+	SELECT * FROM groupList;
+END;
+%%%
+@delimiter ;
+
 DROP PROCEDURE IF EXISTS create_forum;
 @delimiter %%%
 CREATE PROCEDURE create_forum(in in_class_name varchar(10))
