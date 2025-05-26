@@ -46,10 +46,10 @@ const Layout = ({ children }) => {
                         <li className={location.pathname === '/messagepage' ? 'active' : ''}>
                             <Link to="/messagepage"><MdMessage className="icon" /> Message Tutor/Student</Link>
                         </li>
-                         <li className={location.pathname === '/settings' ? 'active' : ''}>
+                        <li className={location.pathname === '/settings' ? 'active' : ''}>
                             <Link to="/settings"><FaCog className="icon" /> Settings</Link>
                         </li>
-                         <li className={location.pathname === '/' ? 'active' : ''}>
+                        <li className={location.pathname === '/' ? 'active' : ''}>
                             <Link to="/" onClick={handleLogout}><IoIosLogOut className="icon" /> Logout</Link>
                         </li>
                     </ul>

@@ -85,3 +85,49 @@
     visibility: visible;
     opacity: 1;
 }
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 1.4rem;
+    justify-items: center;
+    margin-top: 2rem;
+}
+
+
+.course-card { 
+    border-radius: 16px;
+    padding: 2rem;
+    width: 280px;
+    height: 160px;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.course-card:hover {
+    transform: translateY(-3px);
+}
+
+.remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: transparent;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.2s ease;
+}
+
+.remove-btn:hover {
+    color: #f02b2b;
+}
