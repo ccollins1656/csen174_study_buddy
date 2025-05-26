@@ -1,8 +1,9 @@
 from flask import Flask, request
 from flask_cors import CORS
-import loginManager as loginManager;
-import secrets;
-import time;
+import loginManager as loginManager
+import courseManager as courseManager
+import secrets
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -10,7 +11,7 @@ CORS(app)
 
 loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
 loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
-loginManager.initialize_database()
+courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
 sessions = {}
 EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
 EXPIRY_TIME_REMEMBER = EXPIRY_TIME * 7 # If "remember me" is checked
@@ -133,5 +134,94 @@ def create_account():
     response = loginManager.create_account(r["display_name"], r["email"], r["password"])
     if response:
         return '', 204
+    else:
+        return '', 401
+
+"""
+API request to courseManager.create_group().
+Expects:
+{
+    "group_name": name of the new group
+}
+"""
+
+@app.route('/create-group', methods=['POST'])
+def create_group():
+    r = request.get_json()
+    response = courseManager.create_group(r["group_name"])
+    if response:
+        return '', 204
+    else:
+        return '', 401
+
+
+"""
+API request to courseManager.join_group().
+Expects:
+{
+    "email": user's email address,
+    "group_name": name of the group
+}
+"""
+
+@app.route('/join-group', methods=['POST'])
+def join_group():
+    r = request.get_json()
+    response = courseManager.join_group(r["email"], r["group_name"])
+    if response:
+        return '', 204
+    else:
+        return '', 401
+
+
+"""
+API request to courseManager.leave_group().
+Expects:
+{
+    "email": user's email address,
+    "group_name": name of the group
+}
+"""
+
+@app.route('/leave-group', methods=['POST'])
+def leave_group():
+    r = request.get_json()
+    response = courseManager.leave_group(r["email"], r["group_name"])
+    if response:
+        return '', 204
+    else:
+        return '', 401
+
+"""
+API request to courseManager.find_groups().
+Expects:
+{
+    "email": user's email address,
+}
+"""
+
+@app.route('/find-groups', methods=['POST'])
+def find_groups():
+    r = request.get_json()
+    response = courseManager.find_groups(r["email"])
+    if response is not None:
+        return response, 204
+    else:
+        return '', 401
+
+
+"""
+API request to courseManager.list_groups().
+Expects:
+{
+    
+}
+"""
+
+@app.route('/list-groups', methods=['POST'])
+def list_groups():
+    response = courseManager.list_groups()
+    if response is not None:
+        return response, 204
     else:
         return '', 401

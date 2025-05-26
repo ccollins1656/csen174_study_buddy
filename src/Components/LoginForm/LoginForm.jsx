@@ -46,7 +46,7 @@ const LoginForm = () => {
             setError('Login succesful!');
             localStorage.setItem('currentUser', JSON.stringify({ email }));
             localStorage.setItem('session', loggedIn.token);
-            navigate('/welcome', { state: { email } });
+            navigate('/Welcome', { state: { email } });
         } else {
             setError('Invalid email or password.');
         }

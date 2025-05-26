@@ -41,7 +41,7 @@ const Layout = ({ children }) => {
                             <Link to="/addcourse"><FaGraduationCap className="icon"/> Add a Course</Link>
                         </li>
                         <li className={location.pathname === '/groupforum' ? 'active' : ''}>
-                            <Link to="/groupforum"><FaUserGroup className="icon" /> Group Forum</Link>
+                            <Link to={{pathname: '/groupforum'}} state={{ userEmail }}><FaUserGroup className="icon" /> Group Forum</Link>
                         </li>
                         <li className={location.pathname === '/messagepage' ? 'active' : ''}>
                             <Link to="/messagepage"><MdMessage className="icon" /> Message Tutor/Student</Link>
