@@ -150,6 +150,16 @@ CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS get_user_view_by_email;
+@delimiter %%%
+CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
+	BEGIN
+		SELECT * FROM user_view
+        WHERE email = user_email;
+	END;
+%%%
+@delimiter ;
+
 DROP PROCEDURE IF EXISTS get_num_users;
 @delimiter %%%
 CREATE PROCEDURE get_num_users(out num_users int)
