@@ -104,3 +104,46 @@ html, body {
 .content {
     margin-top: 60px;
 }
+
+.settings-container {
+  max-width: 400px;
+  margin-top: 40px;
+}
+
+.settings-field {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-field label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.settings-field input {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.settings-button {
+  background-color: slateblue;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.settings-button:hover {
+  background-color: darkslateblue;
+}
+
+.settings-message {
+  margin-top: 10px;
+  color: green;
+  font-weight: bold;
+}

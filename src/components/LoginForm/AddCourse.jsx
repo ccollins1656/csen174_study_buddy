@@ -2,9 +2,34 @@ import Layout from './Layout';
 import { courseData } from './courseData_output';
 import { useEffect, useState } from 'react';
 import "./AddCourse.css";
-import { FaExchangeAlt } from 'react-icons/fa';
+import axios from 'axios';
+import { useSessionAuth } from './useSessionAuth.js';
+
+async function tryUpdateCourses(token, courses) {
+    let course_names = [];
+    JSON.parse(courses).forEach(function(course) {
+        course_names.push(course.full_name);
+    });
+    console.log(course_names);
+    const response = await axios.post('http://localhost:5000/update-courses', {
+        "token": token,
+        "courses": JSON.stringify(course_names)
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 200) {
+        localStorage.setItem('yourCourses', response.data);
+        return true;
+    } else {
+        localStorage.setItem('yourCourses', response.data);
+        return false;
+    }
+}
 
 const AddCourse = () => {
+    useSessionAuth();
+
     const [value, setValue] = useState('');
     const [yourCourses, setYourCourses] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,6 +57,7 @@ const AddCourse = () => {
             const updatedCourses = [...yourCourses, course];
             setYourCourses(updatedCourses);
             localStorage.setItem('yourCourses', JSON.stringify(updatedCourses));
+            tryUpdateCourses(localStorage.getItem('session'), localStorage.getItem('yourCourses'));
         }
         setSearchTerm('');
     };

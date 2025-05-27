@@ -26,41 +26,42 @@ CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
 
 DROP PROCEDURE IF EXISTS create_group;
 @delimiter %%%
-CREATE PROCEDURE create_group(in in_group_name varchar(40))
+CREATE PROCEDURE create_group(in in_group_name varchar(40), in_class_name varchar(10))
 BEGIN
-	INSERT INTO groupList(group_name)
-	VALUES (in_group_name);
+	INSERT INTO groupList(group_name, class_name)
+	VALUES (in_group_name, in_class_name);
 END;
 %%%
 @delimiter ;
 
 DROP PROCEDURE IF EXISTS join_group;
 @delimiter %%%
-CREATE PROCEDURE join_group(in in_email varchar(40), in in_group_name varchar(40))
+CREATE PROCEDURE join_group(in in_user_id varchar(10), in_group_name varchar(40), in_class_name varchar(10))
 BEGIN
-	INSERT INTO groupMembers(email, group_name)
-	VALUES (in_email, in_group_name);
+	INSERT INTO groupMembers(user_id, group_name, class_name)
+	VALUES (in_user_id, in_group_name, in_class_name);
 END;
 %%%
 @delimiter ;
 
 DROP PROCEDURE IF EXISTS leave_group;
 @delimiter %%%
-CREATE PROCEDURE leave_group(in in_email varchar(40), in in_group_name varchar(40))
+CREATE PROCEDURE leave_group(in in_user_id varchar(10), in in_group_name varchar(40), in_class_name varchar(10))
 BEGIN
 	DELETE FROM groupMembers
-    WHERE email = in_email
-    AND group_name = in_group_name;
+    WHERE user_id = in_user_id
+    AND group_name = in_group_name
+    AND class_name = in_class_name;
 END;
 %%%
 @delimiter ;
 
 DROP PROCEDURE IF EXISTS find_groups;
 @delimiter %%%
-CREATE PROCEDURE find_groups(in in_email varchar(40))
+CREATE PROCEDURE find_groups(in in_user_id varchar(10))
 BEGIN
 	SELECT group_name FROM groupMembers
-    WHERE email = in_email;
+    WHERE user_id = in_user_id;
 END;
 %%%
 @delimiter ;
@@ -69,7 +70,7 @@ DROP PROCEDURE IF EXISTS find_group_members;
 @delimiter %%%
 CREATE PROCEDURE find_group_members(in in_group_name varchar(40))
 BEGIN
-	SELECT user_name FROM groupMembers
+	SELECT user_id FROM groupMembers
     WHERE group_name = in_group_name;
 END;
 %%%
@@ -88,8 +89,27 @@ DROP PROCEDURE IF EXISTS create_forum;
 @delimiter %%%
 CREATE PROCEDURE create_forum(in in_class_name varchar(10))
 BEGIN
-	INSERT INTO forum(in_class_name)
-	VALUES (class_name);
+	INSERT INTO forum(class_name)
+	VALUES (in_class_name);
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS list_forums;
+@delimiter %%%
+CREATE PROCEDURE list_forums()
+BEGIN
+	SELECT * FROM forum;
+END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS join_forum;
+@delimiter %%%
+CREATE PROCEDURE join_forum(in in_user_id varchar(10), in_class_name varchar(10))
+BEGIN
+	INSERT INTO joined_forum(user_id, class_name)
+    VALUES (in_user_id, in_class_name);
 END;
 %%%
 @delimiter ;
@@ -145,6 +165,16 @@ DROP PROCEDURE IF EXISTS get_user_by_email;
 CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
 	BEGIN
 		SELECT * FROM user
+        WHERE email = user_email;
+	END;
+%%%
+@delimiter ;
+
+DROP PROCEDURE IF EXISTS get_user_view_by_email;
+@delimiter %%%
+CREATE PROCEDURE get_user_view_by_email(in user_email varchar(40))
+	BEGIN
+		SELECT * FROM user_view
         WHERE email = user_email;
 	END;
 %%%
@@ -221,7 +251,7 @@ CREATE PROCEDURE drop_user_from_course (in in_user_id varchar(10), in_class_name
 
 DROP PROCEDURE IF EXISTS get_user_forums;
 @delimiter %%%
-CREATE PROCEDURE get_users_forums(in in_user_id varchar(10))
+CREATE PROCEDURE get_user_forums(in in_user_id varchar(10))
 	BEGIN
 		SELECT class_name FROM joined_forum
         WHERE user_id = in_user_id;
