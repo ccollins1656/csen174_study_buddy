@@ -27,21 +27,24 @@ const WelcomePage = () => {
             <hr />
             <br />
             <div className="course-grid">
-                {yourCourses.length ? yourCourses.map(course => (
-                    <Link to={`/chat/${course.id}`} key={course.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div key={course.id} className="course-card">
-                            <button
-                                className="remove-btn"
-                                onClick={(e) => handleRemove(e, course.id)}
-                                aria-label="Remove Course"
-                            >
-                                &times;
-                            </button>
-                            <h3>{course.full_name}</h3>
-                            {/* Add more info/buttons here if needed */}
-                        </div>
-                    </Link>
-                )) : <div></div>}
+                {yourCourses.map(course => (
+                    <Link to={`/chat/${course.full_name}`} key={course.full_name} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    {yourCourses.length ? yourCourses.map(course => (
+                        <Link to={`/chat/${course.id}`} key={course.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <div key={course.id} className="course-card">
+                                <button
+                                    className="remove-btn"
+                                    onClick={(e) => handleRemove(e, course.id)}
+                                    aria-label="Remove Course"
+                                >
+                                    &times;
+                                </button>
+                                <h3>{course.full_name}</h3>
+                                {/* Add more info/buttons here if needed */}
+                            </div>
+                        </Link>
+                    ))} : <div></div>                    
+                </Link>
             </div>
         </Layout>
     );
