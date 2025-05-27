@@ -238,21 +238,22 @@ def update_courses(email=str, courses=[str]):
         connection[1].callproc("get_user_forums", (user_id, ))
         old_courses = []
         for result in connection[1].stored_results():
-            old_courses = result.fetchall()
+            old_courses = result.fetchall()[0]
 
         connection[1].callproc("list_forums")
         forums = []
         for result in connection[1].stored_results():
-            forums = result.fetchall()
+            forums = result.fetchall()[0]
         
         # Add courses the user wants to be enrolled in but isn't
         for course in courses:
             if not course in old_courses:
+                # Make sure forum exists before enrolling
                 if not course in forums:
                     connection[1].callproc("create_forum", (course, ))
                     connection[0].commit() # is this skippable?
                     print("Created course forum: " + course)
-                connection[1].callproc("join_forum", (user_id, course, )) # breaking because forum must be made first
+                connection[1].callproc("join_forum", (user_id, course, ))
                 connection[0].commit()
                 print("Added course: " + course)
 
@@ -269,7 +270,7 @@ def update_courses(email=str, courses=[str]):
     # Respond with current course list
     connection[1].callproc("get_user_forums", (user_id, ))
     try:
-        new_courses = next(connection[1].stored_results()).fetchall()
+        new_courses = next(connection[1].stored_results()).fetchall()[0]
     except mysql.connector.Error as err:
         print(err)
         connection[1].close()
