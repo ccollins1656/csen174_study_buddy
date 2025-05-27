@@ -106,8 +106,8 @@ const GroupForum = () => {
 
     const handleCreate = async () => {
         let create = await createGroup(name, className)
-        let join = await joinGroup(name, className)
         if(create) {
+            let join = await joinGroup(name, className)
             if(join)
             {
                 setMessage("Group successfully created and joined!")

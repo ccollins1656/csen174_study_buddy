@@ -192,6 +192,16 @@ def create_group(groupname=str, class_name=str):
 
     groups = list_groups()
     if groupname not in groups:
+        connection[1].callproc("list_forums")
+        forums = []
+        for result in connection[1].stored_results():
+            forums_list = result.fetchall()
+            for seq in forums_list:
+                forums.append(seq[0])
+        
+        if not class_name in forums:
+            connection[1].callproc("create_forum", (class_name, ))
+        
         connection[1].callproc("create_group", (groupname, class_name))
         connection[0].commit()
 
