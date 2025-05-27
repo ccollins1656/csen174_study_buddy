@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Layout from './Layout';
+import courseData from './courseData_output.json' with { type: 'json' };
 import './GroupForum.css';
 import axios from "axios";
 import { Link } from 'react-router-dom';
@@ -73,7 +74,8 @@ async function searchGroups () {
     })
     if (response.status === 200) {
         if (response.data)
-            return Object.values(response.data);
+            // return Object.values(response.data);
+            return response.data;
     }
 
     return false;
@@ -83,7 +85,7 @@ const GroupForum = () => {
     const [name, setName] = useState('');
     const [className, setClass] = useState('');
     const [displayMessage, setMessage] = useState('');
-    const [yourGroups, setGroups] = useState([])
+    const [yourGroups, setYourGroups] = useState([]);
 
     useEffect(() => {
         updateGroupsList();
@@ -97,80 +99,84 @@ const GroupForum = () => {
     };
 
     const updateGroupsList = async () => {
-        let groupList = await getCurrentGroupList()
-        if(groupList !== false)
-        {
-            setGroups(groupList)
+        let groupList = await getCurrentGroupList();
+        if(groupList !== false) {
+            setYourGroups(groupList);
         }
     }
 
     const handleCreate = async () => {
-        let create = await createGroup(name, className)
+        let create = await createGroup(name, className);
         if(create) {
-            let join = await joinGroup(name, className)
-            if(join)
-            {
-                setMessage("Group successfully created and joined!")
+            let join = await joinGroup(name, className);
+            if(join) {
+                setMessage("Group successfully created and joined!");
             }
             else {
-                setMessage("Group created but error joining group")
+                setMessage("Group created but error joining group");
             }
         }
         else
         {
-            setMessage("Error creating group, perhaps a group by that name already exists")
+            setMessage("Error creating group, perhaps a group by that name already exists");
         }
-        await updateGroupsList()
+        await updateGroupsList();
     };
+
     const handleSearch = async () => {
-        let groups = await searchGroups()
-        if(groups === false)
-        {
-            setMessage("Error finding groups")
+        let groups = await searchGroups();
+        if(groups === false) {
+            setMessage("Error finding groups");
         }
         else {
+            console.log(groups);
+            console.log(name);
             setMessage("There is no group by that name")
             for (let i = 0; i < groups.length; i++) {
                 if(groups[i].toString() === name)
-                    setMessage("This group already exists")
+                    setMessage("This group already exists");
             }
         }
     };
+
     const handleJoin = async () => {
-        let join = await joinGroup(name, className)
-        if(join)
-        {
-            setMessage("Group successfully joined!")
+        let join = await joinGroup(name, className);
+        if(join) {
+            setMessage("Group successfully joined!");
         }
         else {
-            setMessage("Error joining group, perhaps the group does not exist or you are already a member")
+            setMessage("Error joining group, perhaps the group does not exist or you are already a member");
         }
-        await updateGroupsList()
+        await updateGroupsList();
     };
+
     const handleLeave = async () => {
-        let join = await leaveGroup(name, className)
-        if(join)
-        {
-            setMessage("Group successfully left!")
+        let join = await leaveGroup(name, className);
+        if(join) {
+            setMessage("Group successfully left!");
         }
         else {
-            setMessage("Error leaving group")
+            setMessage("Error leaving group");
         }
-        await updateGroupsList()
+        await updateGroupsList();
     };
 
     const handleRemove = async (e, groupName, className) => {
         e.preventDefault();
-        let join = await leaveGroup(groupName, className)
-        if(join)
-        {
-            setMessage("Group successfully left!")
+        let join = await leaveGroup(groupName, className);
+        if(join) {
+            setMessage("Group successfully left!");
         }
         else {
-            setMessage("Error leaving group")
+            setMessage("Error leaving group");
         }
-        await updateGroupsList()
+        await updateGroupsList();
     };
+
+    // Filter dropdown list based on input
+    const filteredCourses = courseData.courses.filter((course) =>
+        course.full_name.toLowerCase().includes(className.toLowerCase())
+    );
 
     return (
         <Layout>
@@ -178,18 +184,57 @@ const GroupForum = () => {
             <p>This is the group forum for Study Buddy. Enter a class and group name to get started.</p>
             <div className="search-container">
                 <div className="search-inner">
-                    <input
-                        type="text"
-                        value={className}
-                        onChange={onChangeClass}
-                        placeholder="Enter a class name..."
-                    />
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={onChangeGroup}
-                        placeholder="Enter a group name..."
-                    />
+                    <div className="search-class">
+                        <input
+                            type="text"
+                            value={className}
+                            onChange={onChangeClass}
+                            placeholder="Enter a class name..."
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                fontSize: '1.0rem',
+                                padding: '0.75rem 1rem',
+                                width: '600px',
+                                marginTop: '0rem',
+                                borderRadius: '6px',
+                                border: '1px solid #ccc',
+                            }}
+                        />
+                        {className && (
+                            <div className="dropdown">
+                                {filteredCourses.slice (0, 4).map((item) => (
+                                    <div key={item.id} className="dropdown-row" onClick={() => {setClass(item.full_name)}} style={{ cursor: 'pointer' }}>
+                                        {item.full_name}
+                                    </div>
+                                ))}
+                                {filteredCourses.length === 0 && (
+                                    <div className="dropdown-row">No matching courses</div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <div className="search-group">
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={onChangeGroup}
+                            placeholder="Enter a group name..."
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                fontSize: '1.0rem',
+                                padding: '0.75rem 1rem',
+                                width: '600px',
+                                marginTop: '0.5rem',
+                                borderRadius: '6px',
+                                border: '1px solid #ccc',
+                            }}
+                        />
+                    </div>
+                    <br />
                     <button onClick={handleSearch}>Search</button>
                     <button onClick={handleCreate}>Create</button>
                     <button onClick={handleJoin}>Join</button>
