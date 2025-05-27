@@ -237,8 +237,6 @@ def update_courses(email=str, courses=[str]):
     connection = connect_to_db()
     if connection is None:
         return None
-    
-    print(courses)
 
     user_id = get_user_view_from_email(email, connection)[0]
 
@@ -252,12 +250,17 @@ def update_courses(email=str, courses=[str]):
         connection[1].callproc("get_user_forums", (user_id, ))
         old_courses = []
         for result in connection[1].stored_results():
-            old_courses = result.fetchall()[0]
+            courses_list = result.fetchall()
+            for seq in courses_list:
+                old_courses.append(seq[0])
 
+        # Get the existing forums
         connection[1].callproc("list_forums")
         forums = []
         for result in connection[1].stored_results():
-            forums = result.fetchall()[0]
+            forums_list = result.fetchall()
+            for seq in forums_list:
+                forums.append(seq[0])
         
         # Add courses the user wants to be enrolled in but isn't
         for course in courses:
@@ -265,18 +268,14 @@ def update_courses(email=str, courses=[str]):
                 # Make sure forum exists before enrolling
                 if not course in forums:
                     connection[1].callproc("create_forum", (course, ))
-                    connection[0].commit() # is this skippable?
-                    print("Created course forum: " + course)
                 connection[1].callproc("join_forum", (user_id, course, ))
                 connection[0].commit()
-                print("Added course: " + course)
 
         # Remove courses the user doesn't want to be enrolled in but is
         for course in old_courses:
             if not course in courses:
                 connection[1].callproc("drop_user_from_course", (user_id, course, ))
                 connection[0].commit()
-                print("Dropped course: " + course)
     
     except mysql.connector.Error as err:
         print(err)
@@ -284,7 +283,12 @@ def update_courses(email=str, courses=[str]):
     # Respond with current course list
     connection[1].callproc("get_user_forums", (user_id, ))
     try:
-        new_courses = next(connection[1].stored_results()).fetchall()[0]
+        connection[1].callproc("get_user_forums", (user_id, ))
+        new_courses = []
+        for result in connection[1].stored_results():
+            courses_list = result.fetchall()
+            for seq in courses_list:
+                new_courses.append(seq[0])
     except mysql.connector.Error as err:
         print(err)
         connection[1].close()
@@ -318,7 +322,11 @@ def get_courses(email=str):
             return False
         
         connection[1].callproc("get_user_forums", (user_id, ))
-        forums = next(connection[1].stored_results()).fetchall()[0]
+        forums = []
+        for result in connection[1].stored_results():
+            forums_list = result.fetchall()
+            for seq in forums_list:
+                forums.append(seq[0])
     
     except mysql.connector.Error as err:
         print(err)
@@ -326,5 +334,7 @@ def get_courses(email=str):
         connection[0].close()
         return False
     
+    connection[1].close()
+    connection[0].close()
     return forums
 

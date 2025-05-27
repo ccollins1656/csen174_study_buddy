@@ -276,10 +276,29 @@ def update_courses():
     if not email:
         return '', 401
     
-    new_courses = list(courseManager.update_courses(email, courses))
+    new_courses = courseManager.update_courses(email, courses)
+    course_data = []
+    try:
+        with open('./src/Components/LoginForm/courseData_output.json') as file:
+            course_data = json.load(file)["courses"]
+            file.close()
+    except:
+        return '', 500
+    
+    # Need to return courses in the right format
+    response = []
+    for course in new_courses:
+        r = None
+        for row in course_data:
+            if row["full_name"] == course:
+                r = row
+                break
+        response.append(r)
+        if r == None:
+            return '', 500
 
     if new_courses == courses:
-        return json.dumps(new_courses), 200
+        return json.dumps(response), 200
     elif new_courses == False:
         return '', 400
     elif new_courses != courses:
@@ -306,8 +325,27 @@ def get_courses():
         return '', 401
     
     courses = courseManager.get_courses(email)
-
+    course_data = []
+    try:
+        with open('./src/Components/LoginForm/courseData_output.json') as file:
+            course_data = json.load(file)["courses"]
+            file.close()
+    except:
+        return '', 500
+    
+    # Need to return courses in the right format
+    response = []
+    for course in courses:
+        r = None
+        for row in course_data:
+            if row["full_name"] == course:
+                r = row
+                break
+        response.append(r)
+        if r == None:
+            return '', 500
+    
     if courses:
-        return json.dumps(courses), 200
+        return json.dumps(response), 200
     else:
         return '', 500
