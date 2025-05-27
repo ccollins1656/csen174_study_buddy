@@ -1,11 +1,33 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Layout from './Layout';
 import './GroupForum.css';
-import { useLocation } from 'react-router-dom'
 import axios from "axios";
+
+async function getCurrentGroupList(){
+    const response = await axios.post('http://localhost:5000/find-groups', {
+        "token": localStorage.getItem("session")
+    }).catch(function (e) {
+       console.log(e);
+       return false;
+    });
+    if (response.status === 200) {
+        if (response.data)
+        {
+            let keys = Object.keys(response.data)
+            let values = Object.values(response.data)
+            let result = []
+            for (let i = 0; i < values.length; i++) {
+                result.push({id: keys[i], name: values[i]})
+            }
+            return result;
+        }
+    }
+    return false;
+}
 
 async function createGroup (groupName, nameOfClass) {
     const response = await axios.post('http://localhost:5000/create-group', {
+        "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": nameOfClass
     }).catch(function (e) {
@@ -15,9 +37,9 @@ async function createGroup (groupName, nameOfClass) {
     return response.status === 204;
 }
 
-async function joinGroup (useremail, groupName, nameOfClass) {
+async function joinGroup (groupName, nameOfClass) {
     const response = await axios.post('http://localhost:5000/join-group', {
-        "email": useremail,
+        "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": nameOfClass
     }).catch(function (e) {
@@ -27,9 +49,9 @@ async function joinGroup (useremail, groupName, nameOfClass) {
     return response.status === 204;
 }
 
-async function leaveGroup (useremail, groupName, nameOfClass) {
+async function leaveGroup (groupName, nameOfClass) {
     const response = await axios.post('http://localhost:5000/leave-group', {
-        "email": useremail,
+        "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": nameOfClass
     }).catch(function (e) {
@@ -41,7 +63,7 @@ async function leaveGroup (useremail, groupName, nameOfClass) {
 
 async function searchGroups () {
     const response = await axios.post('http://localhost:5000/list-groups', {
-
+        "token": localStorage.getItem("session")
     }).catch(function (e) {
         console.log(e);
         return false;
@@ -55,11 +77,15 @@ async function searchGroups () {
 }
 
 const GroupForum = () => {
-    const location = useLocation();
-    const data = location.state;
     const [name, setName] = useState('');
     const [className, setClass] = useState('');
     const [displayMessage, setMessage] = useState('');
+    const [yourGroups, setGroups] = useState([])
+
+    useEffect(() => {
+        updateGroupsList();
+    }, []);
+
     const onChangeGroup = (event) => {
         setName(event.target.value);
     };
@@ -67,9 +93,17 @@ const GroupForum = () => {
         setClass(event.target.value);
     };
 
+    const updateGroupsList = async () => {
+        let groupList = await getCurrentGroupList()
+        if(groupList !== false)
+        {
+            setGroups(groupList)
+        }
+    }
+
     const handleCreate = async () => {
         let create = await createGroup(name, className)
-        let join = await joinGroup(data.userEmail, name, className)
+        let join = await joinGroup(name, className)
         if(create) {
             if(join)
             {
@@ -83,7 +117,7 @@ const GroupForum = () => {
         {
             setMessage("Error creating group, perhaps a group by that name already exists")
         }
-
+        await updateGroupsList()
     };
     const handleSearch = async () => {
         let groups = await searchGroups()
@@ -100,7 +134,7 @@ const GroupForum = () => {
         }
     };
     const handleJoin = async () => {
-        let join = await joinGroup(data.userEmail, name, className)
+        let join = await joinGroup(name, className)
         if(join)
         {
             setMessage("Group successfully joined!")
@@ -108,9 +142,10 @@ const GroupForum = () => {
         else {
             setMessage("Error joining group, perhaps the group does not exist or you are already a member")
         }
+        await updateGroupsList()
     };
     const handleLeave = async () => {
-        let join = await leaveGroup(data.userEmail, name, className)
+        let join = await leaveGroup(name, className)
         if(join)
         {
             setMessage("Group successfully left!")
@@ -118,6 +153,7 @@ const GroupForum = () => {
         else {
             setMessage("Error leaving group")
         }
+        await updateGroupsList()
     };
 
     return (
@@ -146,6 +182,23 @@ const GroupForum = () => {
                 <div className="displayMessage">
                     {displayMessage}
                 </div>
+            </div>
+            <div className="current-groups">
+                <h2 style={{ marginTop: '30vh' }}>Your Groups</h2>
+                <hr />
+                <br />
+                {yourGroups.length === 0 ? (
+                    <p></p>
+                ) : (
+                    <div className="group-grid">
+                        {yourGroups.map(group => (
+                            <div key={group.id} className="course-card">
+                                <h3>{group.name}</h3>
+                                {/* Add more info/buttons here if needed */}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </Layout>
     );

@@ -75,7 +75,7 @@ def get_user_view_from_email(email, connection=None):
 
     connection[1].callproc("get_user_view_by_email", (email, ))
     for result in connection[1].stored_results():
-        data = result.fetchall()
+        data = result.fetchone()
         if local_connection:
             connection[1].close()
             connection[0].close()
@@ -106,7 +106,7 @@ def join_group(email=str, groupname=str, class_name=str):
     user_id = get_user_view_from_email(email, connection)[0]
 
     groups = list_groups()
-    current_groups = find_groups(user_id)
+    current_groups = find_groups(email)
     if groupname in groups and groupname not in current_groups:
         connection[1].callproc("join_group", (user_id, groupname, class_name))
         connection[0].commit()
