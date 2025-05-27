@@ -295,12 +295,8 @@ def find_groups():
     
     response = courseManager.find_groups(email)
     if response is not None:
-        data = '{'
-        for i in response:
-            data += f'"{i[0]}": {i[1]}, '
-        if len(response) > 0:
-            data = data[:-2]
-        data += '}'
+        data = json.dumps(response)
+        print(data)
         return data, 200
     else:
         return '', 500
