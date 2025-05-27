@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginForm from './components/LoginForm/LoginForm';
-import RegisterForm from './components/LoginForm/RegisterForm';
-import AuthForm from './components/LoginForm/AuthForm';
-import WelcomePage from './components/LoginForm/WelcomePage';
-import AddCourse from './components/LoginForm/AddCourse';
-import GroupForum from './components/LoginForm/GroupForum';
-import Message from './components/LoginForm/Message';
-import Settings from './components/LoginForm/Settings';
+import LoginForm from './Components/LoginForm/LoginForm';
+import RegisterForm from './Components/LoginForm/RegisterForm';
+import AuthForm from './Components/LoginForm/AuthForm';
+import WelcomePage from './Components/LoginForm/WelcomePage';
+import AddCourse from './Components/LoginForm/AddCourse';
+import GroupForum from './Components/LoginForm/GroupForum';
+import Message from './Components/LoginForm/Message';
+import Settings from './Components/LoginForm/Settings';
 
 function App() {
   return (
