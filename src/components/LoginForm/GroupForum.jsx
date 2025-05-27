@@ -169,6 +169,19 @@ const GroupForum = () => {
         await updateGroupsList()
     };
 
+    const handleRemoveClick = async (event, groupName, nameOfClass) => {
+        event.preventDefault();
+        let join = await leaveGroup(groupName, nameOfClass)
+        if(join)
+        {
+            setMessage("Group successfully left!")
+        }
+        else {
+            setMessage("Error leaving group")
+        }
+        await updateGroupsList()
+    }
+
     return (
         <Layout>
             <h1>Group Forum!</h1>
@@ -207,6 +220,13 @@ const GroupForum = () => {
                         {yourGroups.map(group => (
                             <Link to={'/groupinfo'} key={group.id} style={{ textDecoration: 'none', color: 'inherit' }} state={{groupName: group.groupName, className: group.className}}>
                                 <div key={group.id} className="group-card">
+                                    <button
+                                        className="remove-btn"
+                                        onClick={(e) => handleRemoveClick(e, group.groupName, group.className)}
+                                        aria-label="Remove Course"
+                                    >
+                                        &times;
+                                    </button>
                                     <h3>Class: {group.className}</h3>
                                     <h3>Group: {group.groupName}</h3>
                                     {/* Add more info/buttons here if needed */}

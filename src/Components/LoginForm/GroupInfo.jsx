@@ -2,6 +2,7 @@ import { useLocation} from 'react-router-dom';
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import "./GroupInfo.css"
+import Layout from './Layout';
 
 async function getMembers (groupName, className) {
     const response = await axios.post('http://localhost:5000/find-group-members', {
@@ -71,29 +72,31 @@ const GroupInfo = () => {
     }
 
     return (
-        <div className='info-section'>
-            <div className='title-section'>
-                <h1>This is the info for group: {data.groupName} in class: {data.className}</h1>
-                <div>
-                    <h3>Members of this group:</h3>
+        <Layout>
+            <div className='info-section'>
+                <div className='title-section'>
+                    <h1>This is the info for group: {data.groupName} in class: {data.className}</h1>
+                    <div>
+                        <h3>Members of this group:</h3>
+                    </div>
+                </div>
+                <div className='names-section'>
+                    {members.length === 0 ? (
+                    <p></p>
+                    ) : (
+                    <div className="member-grid">
+                        {members.map(group => (
+                            <div key={group.id} className="member-card">
+                                <div>Name: {group.display_name}</div>
+                                <div>Email: {group.email}</div>
+                                {/* Add more info/buttons here if needed */}
+                            </div>
+                        ))}
+                    </div>
+                )}
                 </div>
             </div>
-            <div className='names-section'>
-                {members.length === 0 ? (
-                <p></p>
-                ) : (
-                <div className="member-grid">
-                    {members.map(group => (
-                        <div key={group.id} className="member-card">
-                            <div>Name: {group.display_name}</div>
-                            <div>Email: {group.email}</div>
-                            {/* Add more info/buttons here if needed */}
-                        </div>
-                    ))}
-                </div>
-            )}
-            </div>
-        </div>
+        </Layout>
     )
 };
 
