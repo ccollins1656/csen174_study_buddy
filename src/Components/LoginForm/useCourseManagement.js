@@ -53,7 +53,7 @@ export function useUpdateCourses(setCourseState) {
         async function updateCourses(courses) {
             // Don't update on init
             if (courses === -1) {
-                return -1;
+                return;
             }
 
             // Filter course names
@@ -68,22 +68,21 @@ export function useUpdateCourses(setCourseState) {
             }).catch(function (e) {
                 // Issue reaching the server or processing request
                 console.log(e);
-                return courses;
+                setCourseState(courses);
+                return;
             });
             if (!response || !(response.status === 200)) {
                 // It broke
-                return courses;
+                setCourseState(courses);
+                return;
             }
             else {
-                console.log(response.data);
-                return response.data;
+                setCourseState(response.data);
+                return;
             }
         }
 
-        const newCourses = updateCourses(coursesLocal);
-        if (newCourses !== -1) {
-            setCourseState(newCourses);
-        }
+        updateCourses(coursesLocal);
     }, [coursesLocal]);
 
     return setCoursesLocal;
