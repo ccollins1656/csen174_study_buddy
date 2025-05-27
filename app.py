@@ -374,7 +374,12 @@ def list_groups():
     
     response = courseManager.list_groups()
     if response is not None:
-        data = json.dumps(response)
+        data = '{'
+        for n, i in enumerate(response):
+            data += f'"{n}": {i}, '
+        if len(response) > 0:
+            data = data[:-2]
+        data += '}'
         return data, 200
     else:
         return '', 500
