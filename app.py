@@ -11,8 +11,8 @@ CORS(app)
 
 
 loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
-courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
+loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
+courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
 sessions = {}
 EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
 EXPIRY_TIME_REMEMBER = EXPIRY_TIME * 7 # If "remember me" is checked
@@ -303,11 +303,11 @@ def update_courses():
         if r == None:
             return '', 500
 
-    if new_courses == courses:
+    if new_courses.sort() == courses.sort():
         return json.dumps(response), 200
     elif new_courses == False:
         return '', 400
-    elif new_courses != courses:
+    else:
         print("new_courses:")
         print(new_courses)
         print("courses:")
@@ -337,6 +337,7 @@ def get_courses():
             course_data = json.load(file)["courses"]
             file.close()
     except:
+        print('Could not load course data')
         return '', 500
     
     # Need to return courses in the right format
@@ -349,9 +350,12 @@ def get_courses():
                 break
         response.append(r)
         if r == None:
+            print('Could not find course in data')
             return '', 500
     
-    if courses:
+    if not courses is None:
         return json.dumps(response), 200
     else:
+        print('No courses')
+        print(courses)
         return '', 500

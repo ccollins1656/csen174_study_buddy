@@ -24,7 +24,7 @@ export function useSessionAuth() {
     }
 
     sessionAuth(token);
-  })
+  }, [])
 }
 
 // Target page is only accessible if not logged in

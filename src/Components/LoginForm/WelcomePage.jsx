@@ -1,28 +1,23 @@
 // WelcomePage.jsx
-import React from 'react';
 import { useSessionAuth } from './useSessionAuth.js';
+import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
 import Layout from './Layout.jsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import "./WelcomePage.css";
 import { Link } from 'react-router-dom';
 
 
 const WelcomePage = () => {
-    useSessionAuth();
-
     const [yourCourses, setYourCourses] = useState([]);
+    
+    useSessionAuth();
+    useGetCourses(setYourCourses);
+    const updateCourses = useUpdateCourses(setYourCourses);
 
-    useEffect(() => {
-        const saved = localStorage.getItem('yourCourses');
-        if (saved) {
-            setYourCourses(JSON.parse(saved));
-        }
-    }, []); 
-
-    const handleRemove = (id) => {
+    const handleRemove = (e, id) => {
+        e.preventDefault();
         const updated = yourCourses.filter((c) => c.id !== id);
-        setYourCourses(updated);
-        localStorage.setItem('yourCourses', JSON.stringify(updated));
+        updateCourses(updated);
     };
 
 
@@ -35,12 +30,12 @@ const WelcomePage = () => {
                 <p></p>
         ) : (
             <div className="course-grid">
-                {yourCourses.map(course => (
+                {yourCourses.length ? yourCourses.map(course => (
                     <Link to={`/chat/${course.id}`} key={course.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <div key={course.id} className="course-card">
                             <button
                                 className="remove-btn"
-                                onClick={() => handleRemove(course.id)}
+                                onClick={(e) => handleRemove(e, course.id)}
                                 aria-label="Remove Course"
                             >
                                 &times;
@@ -49,7 +44,7 @@ const WelcomePage = () => {
                             {/* Add more info/buttons here if needed */}
                         </div>
                     </Link>
-                ))}
+                )) : <div></div>}
             </div>
         )}
         </Layout>

@@ -8,7 +8,7 @@ import { useSessionAuth } from './useSessionAuth.js';
 
 async function tryUpdateCourses(token, courses) {
     let course_names = [];
-    JSON.parse(courses).forEach(function(course) {
+    courses.forEach(function(course) {
         course_names.push(course.full_name);
     });
     const response = await axios.post('http://localhost:5000/update-courses', {
@@ -57,7 +57,7 @@ const AddCourse = () => {
             const updatedCourses = [...yourCourses, course];
             setYourCourses(updatedCourses);
             localStorage.setItem('yourCourses', JSON.stringify(updatedCourses));
-            tryUpdateCourses(localStorage.getItem('session'), localStorage.getItem('yourCourses'));
+            tryUpdateCourses(localStorage.getItem('session'), updatedCourses);
         }
         setSearchTerm('');
     };

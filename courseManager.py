@@ -281,7 +281,6 @@ def update_courses(email=str, courses=[str]):
         print(err)
 
     # Respond with current course list
-    connection[1].callproc("get_user_forums", (user_id, ))
     try:
         connection[1].callproc("get_user_forums", (user_id, ))
         new_courses = []
