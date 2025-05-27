@@ -2,7 +2,7 @@ import mysql.connector
 from mysql.connector import errorcode
 
 DATABASE_NAME = "coen174"  # name of database
-database_info = ("localhost", "root", "Passed_Word")  # database login info
+database_info = ("localhost", "root", "100%TheBestMYSQLPassword")  # database login info
 
 
 """
@@ -56,31 +56,27 @@ def connect_to_db():
 
 
 """
-Helper function to get a user view from their email address.
-Returns the view tuple on success, False if the user does not exist or
-it cannot connect to the database.
+This function returns the user_id given the email account
+Returns None if user is not found
 
-connection is your current connection
 email is the user's email address
 """
 
 
-def get_user_view_from_email(connection, email=str):
+def get_user_id_from_email(email):
+    connection = connect_to_db()
     if connection is None:
         return None
-    
+
     connection[1].callproc("get_user_view_by_email", (email, ))
+    for result in connection[1].stored_results():
+        data = result.fetchall()
+        for user_id, display_name, email, join_time in data:
+            return user_id
 
-    try:
-        user = next(connection[1].stored_results()).fetchall()
-    except mysql.connector.Error as err:
-        print(err)
-        return False
-
-    if user[0]:
-        return user[0]
-    else:
-        return False
+    connection[1].close()
+    connection[0].close()
+    return None
 
 
 """
@@ -88,12 +84,13 @@ This function enables a user to join a group
 Returns True on success, False if the group does not exits, the user is already in the group, 
 or it cannot connect to database
 
-email is the user's email address
+user_id is the user's id
 groupname is the name of the group to join
+classname is the name of the class the group is a part of
 """
 
 
-def join_group(user_id=str, groupname=str, class_name=str):
+def join_group(user_id=str, groupname=str, classname=str):
     connection = connect_to_db()
     if connection is None:
         return False
@@ -101,7 +98,7 @@ def join_group(user_id=str, groupname=str, class_name=str):
     groups = list_groups()
     current_groups = find_groups(user_id)
     if groupname in groups and groupname not in current_groups:
-        connection[1].callproc("join_group", (user_id, groupname, class_name))
+        connection[1].callproc("join_group", (user_id, groupname, classname))
         connection[0].commit()
 
         connection[1].close()
@@ -119,15 +116,16 @@ Returns True on success, False if cannot connect to database
 
 user_id is the user's user_id
 groupname is the name of the group to leave
+classname is the name of the class the group is a part of
 """
 
 
-def leave_group(user_id=str, groupname=str, class_name=str):
+def leave_group(user_id=str, groupname=str, classname=str):
     connection = connect_to_db()
     if connection is None:
         return False
 
-    connection[1].callproc("leave_group", (user_id, groupname, class_name))
+    connection[1].callproc("leave_group", (user_id, groupname, classname))
     connection[0].commit()
 
     connection[1].close()
@@ -211,72 +209,3 @@ def list_groups():
     connection[0].close()
 
     return groups
-
-
-"""
-This function updates a user's course selection.
-
-email is the user's email address
-courses is a list of their enrolled courses
-"""
-
-
-def update_courses(email=str, courses=[str]):
-    connection = connect_to_db()
-    if connection is None:
-        return None
-
-    user_id = get_user_view_from_email(connection, email)[0]
-
-    if user_id is None:
-        connection[1].close()
-        connection[0].close()
-        return None
-    
-    try:
-        # Get the courses the user is already enrolled in
-        connection[1].callproc("get_user_forums", (user_id, ))
-        old_courses = []
-        for result in connection[1].stored_results():
-            old_courses = result.fetchall()[0]
-
-        connection[1].callproc("list_forums")
-        forums = []
-        for result in connection[1].stored_results():
-            forums = result.fetchall()[0]
-        
-        # Add courses the user wants to be enrolled in but isn't
-        for course in courses:
-            if not course in old_courses:
-                # Make sure forum exists before enrolling
-                if not course in forums:
-                    connection[1].callproc("create_forum", (course, ))
-                    connection[0].commit() # is this skippable?
-                    print("Created course forum: " + course)
-                connection[1].callproc("join_forum", (user_id, course, ))
-                connection[0].commit()
-                print("Added course: " + course)
-
-        # Remove courses the user doesn't want to be enrolled in but is
-        for course in old_courses:
-            if not course in courses:
-                connection[1].callproc("drop_user_from_course", (user_id, course, ))
-                connection[0].commit()
-                print("Dropped course: " + course)
-    
-    except mysql.connector.Error as err:
-        print(err)
-
-    # Respond with current course list
-    connection[1].callproc("get_user_forums", (user_id, ))
-    try:
-        new_courses = next(connection[1].stored_results()).fetchall()[0]
-    except mysql.connector.Error as err:
-        print(err)
-        connection[1].close()
-        connection[0].close()
-        return False
-
-    connection[1].close()
-    connection[0].close()
-    return new_courses

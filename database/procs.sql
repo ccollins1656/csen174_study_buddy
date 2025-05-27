@@ -50,7 +50,7 @@ CREATE PROCEDURE leave_group(in in_user_id varchar(10), in in_group_name varchar
 BEGIN
 	DELETE FROM groupMembers
     WHERE user_id = in_user_id
-    AND group_name = in_group_name,
+    AND group_name = in_group_name
     AND class_name = in_class_name;
 END;
 %%%

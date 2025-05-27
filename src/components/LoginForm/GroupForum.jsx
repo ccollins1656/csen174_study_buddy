@@ -1,12 +1,13 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Layout from './Layout';
 import './GroupForum.css';
 import { useLocation } from 'react-router-dom'
 import axios from "axios";
 
-async function createGroup (groupName) {
+async function createGroup (groupName, nameOfClass) {
     const response = await axios.post('http://localhost:5000/create-group', {
-        "group_name": groupName
+        "group_name": groupName,
+        "class_name": nameOfClass
     }).catch(function (e) {
         console.log(e);
         return false;
@@ -14,10 +15,11 @@ async function createGroup (groupName) {
     return response.status === 204;
 }
 
-async function joinGroup (useremail, groupName) {
+async function joinGroup (useremail, groupName, nameOfClass) {
     const response = await axios.post('http://localhost:5000/join-group', {
         "email": useremail,
-        "group_name": groupName
+        "group_name": groupName,
+        "class_name": nameOfClass
     }).catch(function (e) {
         console.log(e);
         return false;
@@ -25,10 +27,11 @@ async function joinGroup (useremail, groupName) {
     return response.status === 204;
 }
 
-async function leaveGroup (useremail, groupName) {
+async function leaveGroup (useremail, groupName, nameOfClass) {
     const response = await axios.post('http://localhost:5000/leave-group', {
         "email": useremail,
-        "group_name": groupName
+        "group_name": groupName,
+        "class_name": nameOfClass
     }).catch(function (e) {
         console.log(e);
         return false;
@@ -44,7 +47,8 @@ async function searchGroups () {
         return false;
     })
     if (response.status === 200) {
-        if (response.data && response.data.token) return response.data;
+        if (response.data)
+            return Object.values(response.data);
     }
 
     return false;
@@ -54,14 +58,18 @@ const GroupForum = () => {
     const location = useLocation();
     const data = location.state;
     const [name, setName] = useState('');
-    const [displayMessage, setMessage] = useState('No group with that name found');
-    const onChange = (event) => {
+    const [className, setClass] = useState('');
+    const [displayMessage, setMessage] = useState('');
+    const onChangeGroup = (event) => {
         setName(event.target.value);
+    };
+    const onChangeClass = (event) => {
+        setClass(event.target.value);
     };
 
     const handleCreate = async () => {
-        let create = await createGroup(name)
-        let join = await joinGroup(data.userEmail, name)
+        let create = await createGroup(name, className)
+        let join = await joinGroup(data.userEmail, name, className)
         if(create) {
             if(join)
             {
@@ -79,10 +87,20 @@ const GroupForum = () => {
     };
     const handleSearch = async () => {
         let groups = await searchGroups()
-        setMessage(groups[0])
+        if(groups === false)
+        {
+            setMessage("Error finding groups")
+        }
+        else {
+            setMessage("There is no group by that name")
+            for (let i = 0; i < groups.length; i++) {
+                if(groups[i].toString() === name)
+                    setMessage("This group already exists")
+            }
+        }
     };
     const handleJoin = async () => {
-        let join = await joinGroup(data.userEmail, name)
+        let join = await joinGroup(data.userEmail, name, className)
         if(join)
         {
             setMessage("Group successfully joined!")
@@ -92,7 +110,7 @@ const GroupForum = () => {
         }
     };
     const handleLeave = async () => {
-        let join = await leaveGroup(data.userEmail, name)
+        let join = await leaveGroup(data.userEmail, name, className)
         if(join)
         {
             setMessage("Group successfully left!")
@@ -110,14 +128,20 @@ const GroupForum = () => {
                 <div className="search-inner">
                     <input
                         type="text"
+                        value={className}
+                        onChange={onChangeClass}
+                        placeholder="Enter a class name..."
+                    />
+                    <input
+                        type="text"
                         value={name}
-                        onChange={onChange}
+                        onChange={onChangeGroup}
                         placeholder="Enter a group name..."
                     />
                     <button onClick={handleSearch}>Search</button>
                     <button onClick={handleCreate}>Create</button>
                     <button onClick={handleJoin}>Join</button>
-                    <button onClick={handleLeave}>leave</button>
+                    <button onClick={handleLeave}>Leave</button>
                 </div>
                 <div className="displayMessage">
                     {displayMessage}

@@ -29,13 +29,13 @@ create table groupList(
 	group_name varchar(40) not null,
     class_name varchar(10) not null,
     
-    primary key (group_name),
+    primary key (group_name, class_name),
     foreign key (class_name) references forum(class_name) on delete cascade
 );
 
 drop table if exists groupMembers;
 create table groupMembers(
-    user_id varchar(40) not null,
+    user_id varchar(10) not null,
 	group_name varchar(40) not null,
     class_name varchar(10) not null,
     

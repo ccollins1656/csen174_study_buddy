@@ -11,8 +11,8 @@ CORS(app)
 
 
 loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
-courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
+loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
+courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
 sessions = {}
 EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
 EXPIRY_TIME_REMEMBER = EXPIRY_TIME * 7 # If "remember me" is checked
@@ -149,7 +149,7 @@ Expects:
 @app.route('/create-group', methods=['POST'])
 def create_group():
     r = request.get_json()
-    response = courseManager.create_group(r["group_name"])
+    response = courseManager.create_group(r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
@@ -160,16 +160,16 @@ def create_group():
 API request to courseManager.join_group().
 Expects:
 {
-    "user_id": users user_id
+    "email": user's email address,
     "group_name": name of the group
-    "class_name": name of class with that group
 }
 """
 
 @app.route('/join-group', methods=['POST'])
 def join_group():
     r = request.get_json()
-    response = courseManager.join_group(r["user_id"], r["group_name"], r["class_name"])
+    user_id = courseManager.get_user_id_from_email(r["email"])
+    response = courseManager.join_group(user_id, r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
@@ -180,16 +180,16 @@ def join_group():
 API request to courseManager.leave_group().
 Expects:
 {
-    "user_id": users user_id
+    "email": user's email address,
     "group_name": name of the group
-    "class_name": name of class with that group
 }
 """
 
 @app.route('/leave-group', methods=['POST'])
 def leave_group():
     r = request.get_json()
-    response = courseManager.leave_group(r["user_id"], r["group_name"], r["class_name"])
+    user_id = courseManager.get_user_id_from_email(r["email"])
+    response = courseManager.leave_group(user_id, r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
@@ -199,16 +199,17 @@ def leave_group():
 API request to courseManager.find_groups().
 Expects:
 {
-    "user_id": users user_id
+    "email": user's email address,
 }
 """
 
 @app.route('/find-groups', methods=['POST'])
 def find_groups():
     r = request.get_json()
-    response = courseManager.find_groups(r["user_id"])
+    user_id = courseManager.get_user_id_from_email(r["email"])
+    response = courseManager.find_groups(user_id)
     if response is not None:
-        return response, 200
+        return response, 204
     else:
         return '', 401
 
@@ -225,7 +226,13 @@ Expects:
 def list_groups():
     response = courseManager.list_groups()
     if response is not None:
-        return response, 200
+        data = '{'
+        for n, i in enumerate(response):
+            data += f'"{n}": {i}, '
+        data = data[:-2]
+        data += '}'
+        print(data)
+        return data, 200
     else:
         return '', 401
 
