@@ -43,8 +43,8 @@ const WelcomePage = () => {
                                 {/* Add more info/buttons here if needed */}
                             </div>
                         </Link>
-                    ))} : <div></div>                    
-                </Link>
+                    )) : <div></div>}
+                </Link>))}
             </div>
         </Layout>
     );
