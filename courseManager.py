@@ -192,14 +192,40 @@ def find_groups(email=str):
     connection[1].callproc("find_groups", (user_id, ))
     for result in connection[1].stored_results():
         data = result.fetchall()
-        for groupname in data:
-            groups.append(groupname[0])     #   we want first (and only) item in tuple
+        for groupname, classname in data:
+            groups.append((groupname, classname))     #   we want first and second item in tuple
 
     connection[1].close()
     connection[0].close()
 
     return groups
 
+
+"""
+This function creates returns the list members in a group
+Returns None if cannot connect to database
+
+group is the name of the group
+class_name is the name of the associated class
+"""
+
+
+def find_group_members(group=str, class_name=str):
+    connection = connect_to_db()
+    if connection is None:
+        return None
+
+    members = []
+    connection[1].callproc("find_group_members", (group, class_name))
+    for result in connection[1].stored_results():
+        data = result.fetchall()
+        for user_id in data:
+            members.append(user_id[0])     #   we want first (and only) item in tuple
+
+    connection[1].close()
+    connection[0].close()
+
+    return members
 
 """
 This function creates returns the list of existing groups

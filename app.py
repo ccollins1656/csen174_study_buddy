@@ -11,8 +11,8 @@ CORS(app)
 
 
 loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
-courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
+loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
+courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
 sessions = {}
 EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
 EXPIRY_TIME_REMEMBER = EXPIRY_TIME * 7 # If "remember me" is checked
@@ -170,6 +170,7 @@ Expects:
 {
     "token": session token
     "group_name": name of the group
+    "class_name": class associated with the group
 }
 """
 
@@ -193,6 +194,7 @@ Expects:
 {
     "token": session token
     "group_name": name of the group
+    "class_name": class associated with the group
 }
 """
 
@@ -202,7 +204,7 @@ def leave_group():
     email = token_auth(r["token"])
     if not email:
         return '', 401
-    
+
     response = courseManager.leave_group(email, r["group_name"], r["class_name"])
     if response:
         return '', 204
@@ -225,6 +227,37 @@ def find_groups():
         return '', 401
     
     response = courseManager.find_groups(email)
+    if response is not None:
+        data = '{'
+        for i in response:
+            data += f'"{i[0]}": {i[1]}, '
+        if len(response) > 0:
+            data = data[:-2]
+        data += '}'
+        return data, 200
+    else:
+        return '', 500
+
+
+"""
+API request to courseManager.find_group_members().
+Expects:
+{
+    "token": session token
+    "group_name": name of the group
+    "class_name": class associated with the group
+}
+"""
+
+
+@app.route('/find-group-members', methods=['POST'])
+def find_group_members():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.find_group_members(r["group_name"], r["class_name"])
     if response is not None:
         data = '{'
         for n, i in enumerate(response):

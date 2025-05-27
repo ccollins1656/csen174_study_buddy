@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Layout from './Layout';
 import './GroupForum.css';
 import axios from "axios";
+import { Link } from 'react-router-dom';
 
 async function getCurrentGroupList(){
     const response = await axios.post('http://localhost:5000/find-groups', {
@@ -13,11 +14,11 @@ async function getCurrentGroupList(){
     if (response.status === 200) {
         if (response.data)
         {
-            let keys = Object.keys(response.data)
-            let values = Object.values(response.data)
+            let groups = Object.keys(response.data)
+            let classes = Object.values(response.data)
             let result = []
-            for (let i = 0; i < values.length; i++) {
-                result.push({id: keys[i], name: values[i]})
+            for (let i = 0; i < groups.length; i++) {
+                result.push({id: i, groupName: groups[i], className: classes[i]})
             }
             return result;
         }
@@ -159,7 +160,7 @@ const GroupForum = () => {
     return (
         <Layout>
             <h1>Group Forum!</h1>
-            <p>This is the group forum for Study Buddy. Select an option from the sidebar.</p>
+            <p>This is the group forum for Study Buddy. Enter a class and group name to get started.</p>
             <div className="search-container">
                 <div className="search-inner">
                     <input
@@ -192,10 +193,13 @@ const GroupForum = () => {
                 ) : (
                     <div className="group-grid">
                         {yourGroups.map(group => (
-                            <div key={group.id} className="group-card">
-                                <h3>{group.name}</h3>
-                                {/* Add more info/buttons here if needed */}
-                            </div>
+                            <Link to={'/groupinfo'} key={group.id} style={{ textDecoration: 'none', color: 'inherit' }} state={{groupName: group.groupName, className: group.className}}>
+                                <div key={group.id} className="group-card">
+                                    <h3>Class: {group.className}</h3>
+                                    <h3>Group: {group.groupName}</h3>
+                                    {/* Add more info/buttons here if needed */}
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 )}

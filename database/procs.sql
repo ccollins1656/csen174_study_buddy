@@ -60,7 +60,7 @@ DROP PROCEDURE IF EXISTS find_groups;
 @delimiter %%%
 CREATE PROCEDURE find_groups(in in_user_id varchar(10))
 BEGIN
-	SELECT group_name FROM groupMembers
+	SELECT group_name, class_name FROM groupMembers
     WHERE user_id = in_user_id;
 END;
 %%%
@@ -68,10 +68,11 @@ END;
 
 DROP PROCEDURE IF EXISTS find_group_members;
 @delimiter %%%
-CREATE PROCEDURE find_group_members(in in_group_name varchar(40))
+CREATE PROCEDURE find_group_members(in in_group_name varchar(40), in_class_name varchar(10))
 BEGIN
 	SELECT user_id FROM groupMembers
-    WHERE group_name = in_group_name;
+    WHERE group_name = in_group_name
+    AND class_name = in_class_name;
 END;
 %%%
 @delimiter ;
