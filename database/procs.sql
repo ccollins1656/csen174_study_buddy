@@ -15,6 +15,18 @@ END;
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS change_password;
+@delimiter %%%
+CREATE PROCEDURE change_password(IN in_user_id VARCHAR(10), in_password VARCHAR(64), in_salt VARCHAR(64))
+BEGIN
+	UPDATE user
+    SET password = in_password
+    AND salt = in_salt
+    WHERE user_id = in_user_id;
+END;
+%%%
+@delimiter ;
+
 DROP PROCEDURE IF EXISTS delete_from_user;
 @delimiter %%%
 CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
