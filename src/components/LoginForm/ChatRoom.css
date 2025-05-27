@@ -86,67 +86,47 @@
     opacity: 1;
 } 
 
-.search-container {
+.chat-input-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;  
     align-items: center;
-    margin: 0 auto;
-    margin-top: 40px;
-}
-
-.dropdown {
-    width: 600px; 
-    border: .5px solid #ccc;
-    border-top: none;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    background-color: #fff;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    overflow: hidden;
-}
-
-.dropdown-row {
-    display: flex;
     justify-content: space-between;
     padding: 10px;
-    border-bottom: .5px solid lightgray;
+    border-top: 1px solid #ccc;
+    position: fixed;
+    bottom: 0;
+    left: 220px; /* width of your sidebar */
+    right: 0;
+    background-color: #f8f8f8;
+    z-index: 10;
 }
 
-.dropdown-row:hover {
-    background-color: #f0f0f0;
+.chat-input {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    background-color: white;
 }
 
-.dropdown-row:active {
-    background-color: #e0e0e0;
-    transform: scale(0.98);
+.chat-input:focus {
+    border-color: #6b46c1; /* optional highlight */
+    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.2);
 }
 
-.course-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 1.4rem;
-    justify-items: center;
-    margin-top: 2rem;
-}
-
-
-.course-card { 
-    border-radius: 16px;
-    padding: 2rem;
-    width: 280px;
-    height: 160px;
-    font-size: 1.4rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.chat-send-btn {
+    background-color: #7c3aed;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
     font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-.course-card:hover {
-    transform: translateY(-3px);
+.chat-send-btn:hover {
+    background-color: #5b21b6;
 }

@@ -205,7 +205,7 @@ def find_groups():
     r = request.get_json()
     response = courseManager.find_groups(r["email"])
     if response is not None:
-        return response, 204
+        return response, 200
     else:
         return '', 401
 
@@ -222,6 +222,6 @@ Expects:
 def list_groups():
     response = courseManager.list_groups()
     if response is not None:
-        return response, 204
+        return response, 200
     else:
         return '', 401
