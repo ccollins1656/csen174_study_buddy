@@ -94,6 +94,15 @@ END;
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS list_forums;
+@delimiter %%%
+CREATE PROCEDURE list_forums()
+BEGIN
+	SELECT * FROM forum;
+END;
+%%%
+@delimiter ;
+
 DROP PROCEDURE IF EXISTS join_forum;
 @delimiter %%%
 CREATE PROCEDURE join_forum(in in_user_id varchar(10), in_class_name varchar(10))

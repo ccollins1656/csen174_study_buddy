@@ -4,6 +4,7 @@ import loginManager as loginManager
 import courseManager as courseManager
 import secrets
 import time
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -225,3 +226,18 @@ def list_groups():
         return response, 200
     else:
         return '', 401
+
+
+"""
+API request to courseManager.update_courses().
+Expects:
+{
+    "email": user's email address,
+    "courses": their full course selection
+}
+"""
+
+@app.route('/update-courses', methods=['GET'])
+def update_courses():
+    new_courses = courseManager.update_courses('hevers@scu.edu', ['CSEN 122'])
+    return json.dumps(new_courses), 200

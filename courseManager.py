@@ -56,6 +56,34 @@ def connect_to_db():
 
 
 """
+Helper function to get a user view from their email address.
+Returns the view tuple on success, False if the user does not exist or
+it cannot connect to the database.
+
+connection is your current connection
+email is the user's email address
+"""
+
+
+def get_user_view_from_email(connection, email=str):
+    if connection is None:
+        return None
+    
+    connection[1].callproc("get_user_view_by_email", (email, ))
+
+    try:
+        user = next(connection[1].stored_results()).fetchall()
+    except mysql.connector.Error as err:
+        print(err)
+        return False
+
+    if user[0]:
+        return user[0]
+    else:
+        return False
+
+
+"""
 This function enables a user to join a group
 Returns True on success, False if the group does not exits, the user is already in the group, 
 or it cannot connect to database
@@ -183,3 +211,71 @@ def list_groups():
     connection[0].close()
 
     return groups
+
+
+"""
+This function updates a user's course selection.
+
+email is the user's email address
+courses is a list of their enrolled courses
+"""
+
+
+def update_courses(email=str, courses=[str]):
+    connection = connect_to_db()
+    if connection is None:
+        return None
+
+    user_id = get_user_view_from_email(connection, email)[0]
+
+    if user_id is None:
+        connection[1].close()
+        connection[0].close()
+        return None
+    
+    try:
+        # Get the courses the user is already enrolled in
+        connection[1].callproc("get_user_forums", (user_id, ))
+        old_courses = []
+        for result in connection[1].stored_results():
+            old_courses = result.fetchall()
+
+        connection[1].callproc("list_forums")
+        forums = []
+        for result in connection[1].stored_results():
+            forums = result.fetchall()
+        
+        # Add courses the user wants to be enrolled in but isn't
+        for course in courses:
+            if not course in old_courses:
+                if not course in forums:
+                    connection[1].callproc("create_forum", (course, ))
+                    connection[0].commit() # is this skippable?
+                    print("Created course forum: " + course)
+                connection[1].callproc("join_forum", (user_id, course, )) # breaking because forum must be made first
+                connection[0].commit()
+                print("Added course: " + course)
+
+        # Remove courses the user doesn't want to be enrolled in but is
+        for course in old_courses:
+            if not course in courses:
+                connection[1].callproc("drop_user_from_course", (user_id, course, ))
+                connection[0].commit()
+                print("Dropped course: " + course)
+    
+    except mysql.connector.Error as err:
+        print(err)
+
+    # Respond with current course list
+    connection[1].callproc("get_user_forums", (user_id, ))
+    try:
+        new_courses = next(connection[1].stored_results()).fetchall()
+    except mysql.connector.Error as err:
+        print(err)
+        connection[1].close()
+        connection[0].close()
+        return False
+
+    connection[1].close()
+    connection[0].close()
+    return new_courses

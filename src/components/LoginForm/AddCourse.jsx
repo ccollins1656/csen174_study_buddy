@@ -2,7 +2,22 @@ import Layout from './Layout';
 import { courseData } from './courseData_output';
 import { useEffect, useState } from 'react';
 import "./AddCourse.css";
-import { FaExchangeAlt } from 'react-icons/fa';
+import axios from 'axios';
+
+async function tryUpdateCourses(email, courses) {
+    const response = await axios.post('http://localhost:5000/update-courses', {
+        "email": email,
+        "courses": courses
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 204) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 const AddCourse = () => {
     const [value, setValue] = useState('');
@@ -32,6 +47,7 @@ const AddCourse = () => {
             const updatedCourses = [...yourCourses, course];
             setYourCourses(updatedCourses);
             localStorage.setItem('yourCourses', JSON.stringify(updatedCourses));
+            tryUpdateCourses(localStorage.getItem('currentUser'), localStorage.getItem('yourCourses'));
         }
         setSearchTerm('');
     };
