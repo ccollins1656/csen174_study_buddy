@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import Layout from './Layout';
 import courseData from './courseData_output.json' with { type: 'json' };
 import './GroupForum.css';
 import axios from "axios";
 import { Link } from 'react-router-dom';
+import { useSessionAuth } from './useSessionAuth.js';
 
 async function getCurrentGroupList(){
     const response = await axios.post('http://localhost:5000/find-groups', {
@@ -86,6 +87,8 @@ const GroupForum = () => {
     const [className, setClass] = useState('');
     const [displayMessage, setMessage] = useState('');
     const [yourGroups, setYourGroups] = useState([]);
+
+    useSessionAuth();
 
     useEffect(() => {
         updateGroupsList();
