@@ -6,17 +6,57 @@ import secrets
 import time
 import json
 
-app = Flask(__name__)
-CORS(app)
-
-
-loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
-courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
-sessions = {}
 EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
 EXPIRY_TIME_REMEMBER = EXPIRY_TIME * 7 # If "remember me" is checked
-print('Setup completed')
+
+SESSIONS_FPATH = 'sessions.json'
+
+
+"""
+Helper function to load session information from a local json file.
+"""
+
+def load_sessions():
+    try:
+        with open(SESSIONS_FPATH, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+    except Exception as e:
+        print(f'Error loading saved session tokens: {e}')
+        return {}
+
+
+"""
+Helper function to save session infromation to a local json file.
+"""
+
+def save_sessions(sessions):
+    try:
+        with open(SESSIONS_FPATH, 'w') as file:
+            json.dump(sessions, file, indent=4)
+    except Exception as e:
+        print(f'Error saving session tokens: {e}')
+
+
+"""
+Performs server setup.
+"""
+
+def main():
+    global app, sessions
+
+    app = Flask(__name__)
+    CORS(app)
+
+    sessions = load_sessions()
+
+    loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
+    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
+    courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
+
+    print('Setup completed')
+main()
 
 
 """
@@ -37,6 +77,7 @@ def token_auth(token):
     else:
         # Session exists but is expired
         sessions.pop(response)
+        save_sessions(sessions)
         return False
 
 
@@ -82,6 +123,7 @@ def login():
             "email": r["email"],
             "expires": expires
         }
+        save_sessions(sessions)
         return '{"token": "' + token + '"}', 200
     else:
         return '', 401
@@ -99,6 +141,7 @@ Expects:
 def logout():
     r = request.get_json()
     sessions.pop(r["token"])
+    save_sessions(sessions)
     return '', 204
 
 
@@ -346,7 +389,6 @@ def update_courses():
     try:
         with open('./src/Components/LoginForm/courseData_output.json') as file:
             course_data = json.load(file)["courses"]
-            file.close()
     except:
         return '', 500
     

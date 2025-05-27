@@ -57,7 +57,7 @@ def connect_to_db():
 
 """
 This function returns the user view given the email account
-User view described in database/views.sql.
+User view described in database/views.sql
 Returns None if user is not found
 
 email is the user's email address
@@ -89,7 +89,6 @@ def get_user_view_from_email(email, connection=None):
 
 """
 This function returns the email given the userid
-User view described in database/views.sql.
 Returns None if user is not found
 
 userid is the user's email address
