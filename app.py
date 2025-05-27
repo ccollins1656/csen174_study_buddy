@@ -296,7 +296,6 @@ def find_groups():
     response = courseManager.find_groups(email)
     if response is not None:
         data = json.dumps(response)
-        print(data)
         return data, 200
     else:
         return '', 500
@@ -319,7 +318,6 @@ def get_user_view_from_email():
     user_email = courseManager.get_user_email_from_id(r["user_id"])
     if user_email:
         data = courseManager.get_user_view_from_email(user_email)
-        print(data)
         if data:
             response = '{ \"display_name\": \"' + data[1] + '\", \"email\": \"' + data[2] + '\" }'
             return response, 200
