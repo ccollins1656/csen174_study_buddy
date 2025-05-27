@@ -26,9 +26,6 @@ const WelcomePage = () => {
             <h1>Dashboard</h1>
             <hr />
             <br />
-            {yourCourses.length === 0 ? (
-                <p></p>
-        ) : (
             <div className="course-grid">
                 {yourCourses.length ? yourCourses.map(course => (
                     <Link to={`/chat/${course.id}`} key={course.id} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -46,7 +43,6 @@ const WelcomePage = () => {
                     </Link>
                 )) : <div></div>}
             </div>
-        )}
         </Layout>
     );
 };
