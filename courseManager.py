@@ -138,7 +138,7 @@ def join_group(email=str, groupname=str, class_name=str):
 
     groups = list_groups()
     current_groups = find_groups(email)
-    if groupname in groups and groupname not in current_groups:
+    if (groupname, class_name) in groups and (groupname, class_name) not in current_groups:
         connection[1].callproc("join_group", (user_id, groupname, class_name))
         connection[0].commit()
 
@@ -191,7 +191,7 @@ def create_group(groupname=str, class_name=str):
         return False
 
     groups = list_groups()
-    if groupname not in groups:
+    if (groupname, class_name) not in groups:
         connection[1].callproc("create_group", (groupname, class_name))
         connection[0].commit()
 
