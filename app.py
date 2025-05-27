@@ -183,6 +183,30 @@ def create_account():
     else:
         return '', 401
 
+
+"""
+API request to loginManager.change_password().
+Expects:
+{
+    "token": session token,
+    "password": user's new password
+}
+"""
+
+@app.route('/change-password', methods=['POST'])
+def change_password():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
+    response = loginManager.change_password(email, r["password"])
+    if response:
+        return '', 204
+    else:
+        return '', 500
+
+
 """
 API request to courseManager.create_group().
 Expects:
