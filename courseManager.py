@@ -57,7 +57,7 @@ def connect_to_db():
 
 """
 This function returns the user view given the email account
-User view described in database/views.sql.
+User view described in database/views.sql
 Returns None if user is not found
 
 email is the user's email address
@@ -75,15 +75,46 @@ def get_user_view_from_email(email, connection=None):
 
     connection[1].callproc("get_user_view_by_email", (email, ))
     for result in connection[1].stored_results():
-        data = result.fetchall()
+        data = result.fetchone()
         if local_connection:
             connection[1].close()
             connection[0].close()
-        return data[0]
+        return data
 
     if local_connection:
         connection[1].close()
         connection[0].close()
+    return None
+
+
+"""
+This function returns the email given the userid
+Returns None if user is not found
+
+userid is the user's email address
+connection is a DB connection, if you already have one
+"""
+
+
+def get_user_email_from_id(userid=str, connection=None):
+    local_connection = False
+    if connection is None:
+        connection = connect_to_db()
+        local_connection = True
+        if connection is None:
+            return None
+
+    query = "SELECT email FROM user WHERE user_id = %s"
+    connection[1].execute(query, (userid, ))
+    data = connection[1].fetchone()
+
+    if local_connection:
+        connection[1].close()
+        connection[0].close()
+
+    if data:
+        return data[0]
+
     return None
 
 
@@ -106,7 +137,7 @@ def join_group(email=str, groupname=str, class_name=str):
     user_id = get_user_view_from_email(email, connection)[0]
 
     groups = list_groups()
-    current_groups = find_groups(user_id)
+    current_groups = find_groups(email)
     if groupname in groups and groupname not in current_groups:
         connection[1].callproc("join_group", (user_id, groupname, class_name))
         connection[0].commit()
@@ -161,6 +192,16 @@ def create_group(groupname=str, class_name=str):
 
     groups = list_groups()
     if groupname not in groups:
+        connection[1].callproc("list_forums")
+        forums = []
+        for result in connection[1].stored_results():
+            forums_list = result.fetchall()
+            for seq in forums_list:
+                forums.append(seq[0])
+        
+        if not class_name in forums:
+            connection[1].callproc("create_forum", (class_name, ))
+        
         connection[1].callproc("create_group", (groupname, class_name))
         connection[0].commit()
 
@@ -192,14 +233,40 @@ def find_groups(email=str):
     connection[1].callproc("find_groups", (user_id, ))
     for result in connection[1].stored_results():
         data = result.fetchall()
-        for groupname in data:
-            groups.append(groupname[0])     #   we want first (and only) item in tuple
+        for groupname, classname in data:
+            groups.append((groupname, classname))     #   we want first and second item in tuple
 
     connection[1].close()
     connection[0].close()
 
     return groups
 
+
+"""
+This function creates returns the list members in a group
+Returns None if cannot connect to database
+
+group is the name of the group
+class_name is the name of the associated class
+"""
+
+
+def find_group_members(group=str, class_name=str):
+    connection = connect_to_db()
+    if connection is None:
+        return None
+
+    members = []
+    connection[1].callproc("find_group_members", (group, class_name))
+    for result in connection[1].stored_results():
+        data = result.fetchall()
+        for user_id in data:
+            members.append(user_id[0])     #   we want first (and only) item in tuple
+
+    connection[1].close()
+    connection[0].close()
+
+    return members
 
 """
 This function creates returns the list of existing groups
@@ -237,8 +304,6 @@ def update_courses(email=str, courses=[str]):
     connection = connect_to_db()
     if connection is None:
         return None
-    
-    print(courses)
 
     user_id = get_user_view_from_email(email, connection)[0]
 
@@ -252,12 +317,17 @@ def update_courses(email=str, courses=[str]):
         connection[1].callproc("get_user_forums", (user_id, ))
         old_courses = []
         for result in connection[1].stored_results():
-            old_courses = result.fetchall()[0]
+            courses_list = result.fetchall()
+            for seq in courses_list:
+                old_courses.append(seq[0])
 
+        # Get the existing forums
         connection[1].callproc("list_forums")
         forums = []
         for result in connection[1].stored_results():
-            forums = result.fetchall()[0]
+            forums_list = result.fetchall()
+            for seq in forums_list:
+                forums.append(seq[0])
         
         # Add courses the user wants to be enrolled in but isn't
         for course in courses:
@@ -265,26 +335,26 @@ def update_courses(email=str, courses=[str]):
                 # Make sure forum exists before enrolling
                 if not course in forums:
                     connection[1].callproc("create_forum", (course, ))
-                    connection[0].commit() # is this skippable?
-                    print("Created course forum: " + course)
                 connection[1].callproc("join_forum", (user_id, course, ))
                 connection[0].commit()
-                print("Added course: " + course)
 
         # Remove courses the user doesn't want to be enrolled in but is
         for course in old_courses:
             if not course in courses:
                 connection[1].callproc("drop_user_from_course", (user_id, course, ))
                 connection[0].commit()
-                print("Dropped course: " + course)
     
     except mysql.connector.Error as err:
         print(err)
 
     # Respond with current course list
-    connection[1].callproc("get_user_forums", (user_id, ))
     try:
-        new_courses = next(connection[1].stored_results()).fetchall()[0]
+        connection[1].callproc("get_user_forums", (user_id, ))
+        new_courses = []
+        for result in connection[1].stored_results():
+            courses_list = result.fetchall()
+            for seq in courses_list:
+                new_courses.append(seq[0])
     except mysql.connector.Error as err:
         print(err)
         connection[1].close()
@@ -318,7 +388,11 @@ def get_courses(email=str):
             return False
         
         connection[1].callproc("get_user_forums", (user_id, ))
-        forums = next(connection[1].stored_results()).fetchall()[0]
+        forums = []
+        for result in connection[1].stored_results():
+            forums_list = result.fetchall()
+            for seq in forums_list:
+                forums.append(seq[0])
     
     except mysql.connector.Error as err:
         print(err)
@@ -326,5 +400,7 @@ def get_courses(email=str):
         connection[0].close()
         return False
     
+    connection[1].close()
+    connection[0].close()
     return forums
 

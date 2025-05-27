@@ -24,3 +24,6 @@ yarn-error.log*
 
 /__pycache__
 /.idea
+
+# local cache
+sessions.json

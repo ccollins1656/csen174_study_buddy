@@ -105,45 +105,73 @@ html, body {
     margin-top: 60px;
 }
 
-.settings-container {
-  max-width: 400px;
-  margin-top: 40px;
+.logout-button {
+    all: unset;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    width: 100%;
+    text-align: left;
+    color: #fff;
+    font-size: 1rem;
 }
 
-.settings-field {
-  margin-bottom: 20px;
+.logout-button:hover {
+    background-color: #ff4d4d;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.settings-field label {
-  font-weight: bold;
-  margin-bottom: 5px;
+.modal {
+  background-color: #fff;
+  padding: 20px 30px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.settings-field input {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
 
-.settings-button {
-  background-color: slateblue;
+.confirm-button {
+  background-color: #ff4d4d;
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  border-radius: 6px;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.settings-button:hover {
-  background-color: darkslateblue;
+.cancel-button {
+  background-color: #ccc;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.settings-message {
-  margin-top: 10px;
-  color: green;
-  font-weight: bold;
+.confirm-button:hover {
+  background-color: #e60000;
+}
+
+.cancel-button:hover {
+  background-color: #999;
 }

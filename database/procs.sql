@@ -15,6 +15,18 @@ END;
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS change_password;
+@delimiter %%%
+CREATE PROCEDURE change_password(IN in_user_id VARCHAR(10), in_password VARCHAR(64), in_salt VARCHAR(64))
+BEGIN
+	UPDATE user
+    SET password = in_password
+    AND salt = in_salt
+    WHERE user_id = in_user_id;
+END;
+%%%
+@delimiter ;
+
 DROP PROCEDURE IF EXISTS delete_from_user;
 @delimiter %%%
 CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
@@ -60,7 +72,7 @@ DROP PROCEDURE IF EXISTS find_groups;
 @delimiter %%%
 CREATE PROCEDURE find_groups(in in_user_id varchar(10))
 BEGIN
-	SELECT group_name FROM groupMembers
+	SELECT group_name, class_name FROM groupMembers
     WHERE user_id = in_user_id;
 END;
 %%%
@@ -68,10 +80,11 @@ END;
 
 DROP PROCEDURE IF EXISTS find_group_members;
 @delimiter %%%
-CREATE PROCEDURE find_group_members(in in_group_name varchar(40))
+CREATE PROCEDURE find_group_members(in in_group_name varchar(40), in_class_name varchar(10))
 BEGIN
 	SELECT user_id FROM groupMembers
-    WHERE group_name = in_group_name;
+    WHERE group_name = in_group_name
+    AND class_name = in_class_name;
 END;
 %%%
 @delimiter ;
