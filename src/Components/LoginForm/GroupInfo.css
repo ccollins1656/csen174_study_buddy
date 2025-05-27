@@ -1,0 +1,87 @@
+.main {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f5f5f5;
+    position: relative;
+}
+
+.user-icon {
+    font-size: 24px;
+    color: slateblue;
+    cursor: pointer;
+}
+
+.content {
+    margin-top: 40px;
+}
+
+.user-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: max-content;
+    max-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    top: -35px;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.user-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.title-section {
+    width: 50%;
+    margin: auto;
+}
+
+.names-section {
+    width: 95%;
+    margin: auto;
+}
+
+.matching-groups {
+    text-align: left;
+}
+
+.member-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.4rem;
+    justify-items: center;
+    margin-top: 2rem;
+}
+
+
+.member-card {
+    border-radius: 16px;
+    padding: 2rem;
+    width: 500px;
+    height: 160px;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.member-card:hover {
+    transform: translateY(-3px);
+}

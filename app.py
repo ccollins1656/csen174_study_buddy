@@ -240,6 +240,32 @@ def find_groups():
 
 
 """
+API request to courseManager.get_user_view_from_email() that returns the display_name and email.
+Expects:
+{
+    "token": session token
+    "user_id": user id
+{"""
+@app.route('/get-user-view', methods=['POST'])
+def get_user_view_from_email():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    user_email = courseManager.get_user_email_from_id(r["user_id"])
+    if user_email:
+        data = courseManager.get_user_view_from_email(user_email)
+        print(data)
+        if data:
+            response = '{ \"display_name\": \"' + data[1] + '\", \"email\": \"' + data[2] + '\" }'
+            return response, 200
+    return '', 500
+
+
+
+
+"""
 API request to courseManager.find_group_members().
 Expects:
 {

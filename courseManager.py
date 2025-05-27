@@ -79,11 +79,43 @@ def get_user_view_from_email(email, connection=None):
         if local_connection:
             connection[1].close()
             connection[0].close()
-        return data[0]
+        return data
 
     if local_connection:
         connection[1].close()
         connection[0].close()
+    return None
+
+
+"""
+This function returns the email given the userid
+User view described in database/views.sql.
+Returns None if user is not found
+
+userid is the user's email address
+connection is a DB connection, if you already have one
+"""
+
+
+def get_user_email_from_id(userid=str, connection=None):
+    local_connection = False
+    if connection is None:
+        connection = connect_to_db()
+        local_connection = True
+        if connection is None:
+            return None
+
+    query = "SELECT email FROM user WHERE user_id = %s"
+    connection[1].execute(query, (userid, ))
+    data = connection[1].fetchone()
+
+    if local_connection:
+        connection[1].close()
+        connection[0].close()
+
+    if data:
+        return data[0]
+
     return None
 
 
