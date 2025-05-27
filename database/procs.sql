@@ -36,10 +36,10 @@ END;
 
 DROP PROCEDURE IF EXISTS join_group;
 @delimiter %%%
-CREATE PROCEDURE join_group(in in_user_id varchar(10), in in_group_name varchar(40))
+CREATE PROCEDURE join_group(in in_user_id varchar(10), in_group_name varchar(40), in_class_name varchar(10))
 BEGIN
-	INSERT INTO groupMembers(user_id, group_name)
-	VALUES (in_user_id, in_group_name);
+	INSERT INTO groupMembers(user_id, group_name, class_name)
+	VALUES (in_user_id, in_group_name, in_class_name);
 END;
 %%%
 @delimiter ;

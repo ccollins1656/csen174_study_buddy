@@ -37,10 +37,12 @@ drop table if exists groupMembers;
 create table groupMembers(
     user_id varchar(40) not null,
 	group_name varchar(40) not null,
+    class_name varchar(10) not null,
     
 	primary key(user_id, group_name),
 	foreign key (user_id) references user(user_id) on delete cascade,
-    foreign key (group_name) references groupList(group_name) on delete cascade
+    foreign key (group_name) references groupList(group_name) on delete cascade,
+    foreign key (class_name) references forum(class_name) on delete cascade
 );
 
 drop table if exists joined_forum;
