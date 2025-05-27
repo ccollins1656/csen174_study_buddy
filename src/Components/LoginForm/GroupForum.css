@@ -102,20 +102,34 @@ button {
     margin-left: 10px;
 }
 
-.dropdown {
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid gray
-}
-
-.dropdown-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid lightgray;
-}
-
 .matching-groups {
     text-align: left;
+}
+
+.group-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.4rem;
+    justify-items: center;
+    margin-top: 2rem;
+}
+
+
+.group-card {
+    border-radius: 16px;
+    padding: 2rem;
+    width: 280px;
+    height: 160px;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.group-card:hover {
+    transform: translateY(-3px);
 }

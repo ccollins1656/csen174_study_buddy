@@ -192,7 +192,7 @@ const GroupForum = () => {
                 ) : (
                     <div className="group-grid">
                         {yourGroups.map(group => (
-                            <div key={group.id} className="course-card">
+                            <div key={group.id} className="group-card">
                                 <h3>{group.name}</h3>
                                 {/* Add more info/buttons here if needed */}
                             </div>
