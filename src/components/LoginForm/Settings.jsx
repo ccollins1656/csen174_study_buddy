@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
+import { useSessionAuth } from './useSessionAuth.js';
 
 const Settings = () => {
+  useSessionAuth();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState(''); // Existing password (from localStorage)
   const [newPassword, setNewPassword] = useState('');

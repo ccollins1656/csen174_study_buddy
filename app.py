@@ -11,8 +11,8 @@ CORS(app)
 
 
 loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
-courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
+loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
+courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
 sessions = {}
 EXPIRY_TIME = 86400 # Session length in seconds if "remember me" not checked
 EXPIRY_TIME_REMEMBER = EXPIRY_TIME * 7 # If "remember me" is checked
@@ -25,16 +25,18 @@ Will delete the session if it is expired.
 """
 
 def token_auth(token):
-    response = sessions[token]
-    if response and (response["expires"] == -1 or response["expires"] > time.time()):
-        # Session exists and is current
-        return True
-    elif response:
-        # Session exists but is expired
-        sessions.pop(response)
-        return False
+    if token in sessions:
+        response = sessions[token]
     else:
         # Session does not exist
+        return False
+    
+    if (response["expires"] == -1 or response["expires"] > time.time()):
+        # Session exists and is current
+        return response["email"]
+    else:
+        # Session exists but is expired
+        sessions.pop(response)
         return False
 
 
@@ -142,25 +144,31 @@ def create_account():
 API request to courseManager.create_group().
 Expects:
 {
-    "group_name": name of the new group
+    "token": session token,
+    "group_name": name of the new group,
+    "class_name": class associated with the group
 }
 """
 
 @app.route('/create-group', methods=['POST'])
 def create_group():
     r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
     response = courseManager.create_group(r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
-        return '', 401
+        return '', 500
 
 
 """
 API request to courseManager.join_group().
 Expects:
 {
-    "email": user's email address,
+    "token": session token
     "group_name": name of the group
 }
 """
@@ -168,19 +176,22 @@ Expects:
 @app.route('/join-group', methods=['POST'])
 def join_group():
     r = request.get_json()
-    user_id = courseManager.get_user_id_from_email(r["email"])
-    response = courseManager.join_group(user_id, r["group_name"], r["class_name"])
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
+    response = courseManager.join_group(email, r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
-        return '', 401
+        return '', 500
 
 
 """
 API request to courseManager.leave_group().
 Expects:
 {
-    "email": user's email address,
+    "token": session token
     "group_name": name of the group
 }
 """
@@ -188,42 +199,53 @@ Expects:
 @app.route('/leave-group', methods=['POST'])
 def leave_group():
     r = request.get_json()
-    user_id = courseManager.get_user_id_from_email(r["email"])
-    response = courseManager.leave_group(user_id, r["group_name"], r["class_name"])
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
+    response = courseManager.leave_group(email, r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
-        return '', 401
+        return '', 500
 
 """
 API request to courseManager.find_groups().
 Expects:
 {
-    "email": user's email address,
+    "token": session token
 }
 """
 
 @app.route('/find-groups', methods=['POST'])
 def find_groups():
     r = request.get_json()
-    user_id = courseManager.get_user_id_from_email(r["email"])
-    response = courseManager.find_groups(user_id)
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
+    response = courseManager.find_groups(email)
     if response is not None:
         return response, 204
     else:
-        return '', 401
+        return '', 500
 
 
 """
 API request to courseManager.list_groups().
 Expects:
 {
-    
+    "token": session token
 }
 """
 
 @app.route('/list-groups', methods=['POST'])
 def list_groups():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
     response = courseManager.list_groups()
     if response is not None:
         data = '{'
@@ -234,19 +256,58 @@ def list_groups():
         print(data)
         return data, 200
     else:
-        return '', 401
+        return '', 500
 
 
 """
 API request to courseManager.update_courses().
 Expects:
 {
-    "email": user's email address,
-    "courses": their full course selection
+    "token": session token,
+    "courses": ["their full course selection as a list of string names", ]
 }
 """
 
-@app.route('/update-courses', methods=['GET'])
+@app.route('/update-courses', methods=['POST'])
 def update_courses():
-    new_courses = courseManager.update_courses('hevers@scu.edu', ['CSEN 122'])
-    return json.dumps(new_courses), 200
+    r = request.get_json()
+    courses = json.loads(r["courses"])
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
+    new_courses = list(courseManager.update_courses(email, courses))
+
+    if new_courses == courses:
+        return json.dumps(new_courses), 200
+    elif new_courses == False:
+        return '', 400
+    elif new_courses != courses:
+        print("new_courses:")
+        print(new_courses)
+        print("courses:")
+        print(courses)
+        return '', 500
+
+
+"""
+API request to courseManager.get_courses().
+Expects:
+{
+    "token": session token
+}
+"""
+
+@app.route('/get-courses', methods=['POST'])
+def get_courses():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
+    courses = courseManager.get_courses(email)
+
+    if courses:
+        return json.dumps(courses), 200
+    else:
+        return '', 500
