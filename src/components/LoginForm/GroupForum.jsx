@@ -14,11 +14,13 @@ async function getCurrentGroupList(){
     if (response.status === 200) {
         if (response.data)
         {
-            let groups = Object.keys(response.data)
-            let classes = Object.values(response.data)
             let result = []
-            for (let i = 0; i < groups.length; i++) {
-                result.push({id: i, groupName: groups[i], className: classes[i]})
+            for (let i = 0; i < response.data.length; i++) {
+                result.push({
+                    id: i,
+                    groupName: response.data[i][0],
+                    className: response.data[i][1]
+                });
             }
             return result;
         }
