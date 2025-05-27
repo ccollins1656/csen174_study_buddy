@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 import { useSessionAuth } from './useSessionAuth.js';
+import axios from 'axios';
+
+
+async function tryChangePassword(password) {
+    const response = await axios.post('http://localhost:5000/change-password', {
+        "token": localStorage.getItem("session"),
+        "password": password
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    return response.status === 204;
+}
 
 const Settings = () => {
   useSessionAuth();
@@ -20,7 +33,7 @@ const Settings = () => {
     }
   }, []);
 
-  const handleChangePassword = (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       setMessage('Passwords do not match.');
@@ -29,10 +42,15 @@ const Settings = () => {
     // Update password in localStorage (just for learning, NOT safe for real apps!)
     const updatedUser = { email, password: newPassword };
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    let result = await tryChangePassword(newPassword);
+    if (result) {
+      setMessage('Password updated successfully.');
+    } else {
+      setMessage('There was an error updating your password.');
+    }
     setPassword(newPassword);
     setNewPassword('');
     setConfirmPassword('');
-    setMessage('Password updated successfully.');
   };
 
   return (

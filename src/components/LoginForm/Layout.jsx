@@ -22,6 +22,7 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('session');
     navigate('/');
   };
 
