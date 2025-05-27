@@ -93,15 +93,15 @@ groupname is the name of the group to join
 """
 
 
-def join_group(email=str, groupname=str):
+def join_group(user_id=str, groupname=str, class_name=str):
     connection = connect_to_db()
     if connection is None:
         return False
 
     groups = list_groups()
-    current_groups = find_groups(email)
+    current_groups = find_groups(user_id)
     if groupname in groups and groupname not in current_groups:
-        connection[1].callproc("join_group", (email, groupname))
+        connection[1].callproc("join_group", (user_id, groupname, class_name))
         connection[0].commit()
 
         connection[1].close()
@@ -122,12 +122,12 @@ groupname is the name of the group to leave
 """
 
 
-def leave_group(user_id=str, groupname=str):
+def leave_group(user_id=str, groupname=str, class_name=str):
     connection = connect_to_db()
     if connection is None:
         return False
 
-    connection[1].callproc("leave_group", (user_id, groupname))
+    connection[1].callproc("leave_group", (user_id, groupname, class_name))
     connection[0].commit()
 
     connection[1].close()

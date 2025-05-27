@@ -46,11 +46,12 @@ END;
 
 DROP PROCEDURE IF EXISTS leave_group;
 @delimiter %%%
-CREATE PROCEDURE leave_group(in in_user_id varchar(10), in in_group_name varchar(40))
+CREATE PROCEDURE leave_group(in in_user_id varchar(10), in in_group_name varchar(40), in_class_name varchar(10))
 BEGIN
 	DELETE FROM groupMembers
     WHERE user_id = in_user_id
-    AND group_name = in_group_name;
+    AND group_name = in_group_name,
+    AND class_name = in_class_name;
 END;
 %%%
 @delimiter ;

@@ -160,15 +160,16 @@ def create_group():
 API request to courseManager.join_group().
 Expects:
 {
-    "email": user's email address,
+    "user_id": users user_id
     "group_name": name of the group
+    "class_name": name of class with that group
 }
 """
 
 @app.route('/join-group', methods=['POST'])
 def join_group():
     r = request.get_json()
-    response = courseManager.join_group(r["email"], r["group_name"])
+    response = courseManager.join_group(r["user_id"], r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
@@ -179,15 +180,16 @@ def join_group():
 API request to courseManager.leave_group().
 Expects:
 {
-    "email": user's email address,
+    "user_id": users user_id
     "group_name": name of the group
+    "class_name": name of class with that group
 }
 """
 
 @app.route('/leave-group', methods=['POST'])
 def leave_group():
     r = request.get_json()
-    response = courseManager.leave_group(r["email"], r["group_name"])
+    response = courseManager.leave_group(r["user_id"], r["group_name"], r["class_name"])
     if response:
         return '', 204
     else:
@@ -197,14 +199,14 @@ def leave_group():
 API request to courseManager.find_groups().
 Expects:
 {
-    "email": user's email address,
+    "user_id": users user_id
 }
 """
 
 @app.route('/find-groups', methods=['POST'])
 def find_groups():
     r = request.get_json()
-    response = courseManager.find_groups(r["email"])
+    response = courseManager.find_groups(r["user_id"])
     if response is not None:
         return response, 200
     else:
