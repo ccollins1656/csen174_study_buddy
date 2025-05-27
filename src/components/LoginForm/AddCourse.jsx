@@ -20,6 +20,12 @@ const AddCourse = () => {
         setValue(event.target.value);
     };
 
+    const handleRemove = (e, id) => {
+        e.preventDefault();
+        const updated = yourCourses.filter((c) => c.id !== id);
+        updateCourses(updated);
+    };
+
     // Filter dropdown list based on input
     const filteredCourses = courseData.courses.filter((course) =>
         course.full_name.toLowerCase().includes(value.toLowerCase())
@@ -77,6 +83,13 @@ const AddCourse = () => {
                 <div className="course-grid">
                     {yourCourses.length ? yourCourses.map(course => (
                         <div key={course.id} className="course-card">
+                            <button
+                                className="remove-btn"
+                                onClick={(e) => handleRemove(e, course.id)}
+                                aria-label="Remove Course"
+                            >
+                                &times;
+                            </button>
                             <h3>{course.full_name}</h3>
                             {/* Add more info/buttons here if needed */}
                         </div>
