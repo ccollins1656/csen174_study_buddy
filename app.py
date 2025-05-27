@@ -52,8 +52,8 @@ def main():
     sessions = load_sessions()
 
     loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
-    courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
+    loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
+    courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
 
     print('Setup completed')
 main()
@@ -376,12 +376,7 @@ def list_groups():
     
     response = courseManager.list_groups()
     if response is not None:
-        data = '{'
-        for n, i in enumerate(response):
-            data += f'"{n}": {i}, '
-        if len(response) > 0:
-            data = data[:-2]
-        data += '}'
+        data = json.dumps(response)
         return data, 200
     else:
         return '', 500

@@ -5,12 +5,6 @@
     position: relative;
 }
 
-.user-icon {
-    font-size: 24px;
-    color: slateblue;
-    cursor: pointer;
-}
-
 .content {
     margin-top: 40px;
 }

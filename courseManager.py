@@ -273,8 +273,8 @@ def list_groups():
     connection[1].callproc("list_groups")   #   might update to search by class name
     for result in connection[1].stored_results():
         data = result.fetchall()
-        for groupname in data:
-            groups.append(groupname[0])     #   we want first (and only) item in tuple
+        for groupname, classname in data:
+            groups.append((groupname, classname))     #   we want first and second item in tuple
 
     connection[1].close()
     connection[0].close()

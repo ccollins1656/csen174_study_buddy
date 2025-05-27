@@ -93,7 +93,7 @@ DROP PROCEDURE IF EXISTS list_groups;
 @delimiter %%%
 CREATE PROCEDURE list_groups()
 BEGIN
-	SELECT * FROM groupList;
+	SELECT group_name, class_name FROM groupList;
 END;
 %%%
 @delimiter ;

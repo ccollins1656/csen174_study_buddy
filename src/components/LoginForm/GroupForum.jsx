@@ -72,8 +72,17 @@ async function searchGroups () {
         return false;
     })
     if (response.status === 200) {
-        if (response.data)
-            return Object.values(response.data);
+        if (response.data) {
+            let result = []
+            for (let i = 0; i < response.data.length; i++) {
+                result.push({
+                    id: i,
+                    groupName: response.data[i][0],
+                    className: response.data[i][1]
+                });
+            }
+            return result;
+        }
     }
 
     return false;
@@ -106,8 +115,8 @@ const GroupForum = () => {
 
     const handleCreate = async () => {
         let create = await createGroup(name, className)
-        let join = await joinGroup(name, className)
         if(create) {
+            let join = await joinGroup(name, className)
             if(join)
             {
                 setMessage("Group successfully created and joined!")
@@ -129,10 +138,11 @@ const GroupForum = () => {
             setMessage("Error finding groups")
         }
         else {
-            setMessage("There is no group by that name")
+            setMessage("There is no group by that name in class: " + className)
+            console.log(groups)
             for (let i = 0; i < groups.length; i++) {
-                if(groups[i].toString() === name)
-                    setMessage("This group already exists")
+                if(groups[i].groupName === name && groups[i].className === className)
+                    setMessage("This group already exists in class: " + className)
             }
         }
     };
