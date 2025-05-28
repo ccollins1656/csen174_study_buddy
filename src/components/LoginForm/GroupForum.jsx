@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Layout from './Layout';
 import courseData from './courseData_output.json' with { type: 'json' };
 import './GroupForum.css';
@@ -97,6 +97,7 @@ const GroupForum = () => {
     const onChangeGroup = (event) => {
         setName(event.target.value);
     };
+
     const onChangeClass = (event) => {
         setClass(event.target.value);
     };
@@ -134,10 +135,11 @@ const GroupForum = () => {
         else {
             console.log(groups);
             console.log(name);
-            setMessage("There is no group by that name")
+            setMessage("There is no group by that name in class: " + className);
             for (let i = 0; i < groups.length; i++) {
-                if(groups[i].toString() === name)
-                    setMessage("This group already exists");
+                if(groups[i][0] === name && groups[i][1] === className) {
+                    setMessage("This group already exists in class: " + className);
+                }
             }
         }
     };
@@ -164,10 +166,10 @@ const GroupForum = () => {
         await updateGroupsList();
     };
 
-    const handleRemove = async (e, groupName, className) => {
+    const handleRemoveClick = async (e, groupName, className) => {
         e.preventDefault();
-        let join = await leaveGroup(groupName, className);
-        if(join) {
+        let leave = await leaveGroup(groupName, className);
+        if(leave) {
             setMessage("Group successfully left!");
         }
         else {
@@ -259,9 +261,9 @@ const GroupForum = () => {
                             <Link to={'/groupinfo'} key={group.id} style={{ textDecoration: 'none', color: 'inherit' }} state={{groupName: group.groupName, className: group.className}}>
                                 <div key={group.id} className="group-card">
                                     <button
-                                        className="remove-btn"
-                                        onClick={(e) => handleRemove(e, group.groupName, group.className)}
-                                        aria-label="Remove Course"
+                                        className="remove-group-btn"
+                                        onClick={(e) => handleRemoveClick(e, group.groupName, group.className)}
+                                        aria-label="Leave Group"
                                     >
                                         &times;
                                     </button>

@@ -9,35 +9,6 @@
     margin-top: 40px;
 }
 
-.user-tooltip {
-    position: relative;
-    display: inline-block;
-}
-
-.tooltip-text {
-    visibility: hidden;
-    width: max-content;
-    max-width: 250px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 6px 10px;
-    border-radius: 6px;
-    position: absolute;
-    z-index: 1;
-    top: -35px;
-    right: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 12px;
-    white-space: nowrap;
-}
-
-.user-tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
-
 .title-section {
     width: 60%;
     margin: auto;
@@ -78,4 +49,21 @@
 
 .member-card:hover {
     transform: translateY(-3px);
+}
+
+.remove-group-btn {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: transparent;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.2s ease;
+}
+
+.remove-group-btn:hover {
+    color: #f02b2b;
 }

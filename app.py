@@ -346,13 +346,7 @@ def find_group_members():
 
     response = courseManager.find_group_members(r["group_name"], r["class_name"])
     if response is not None:
-        data = '{'
-        for n, i in enumerate(response):
-            data += f'"{n}": {i}, '
-        if len(response) > 0:
-            data = data[:-2]
-        data += '}'
-        return data, 200
+        return json.dumps(response), 200
     else:
         return '', 500
 
@@ -374,13 +368,7 @@ def list_groups():
     
     response = courseManager.list_groups()
     if response is not None:
-        data = '{'
-        for n, i in enumerate(response):
-            data += f'"{n}": {i}, '
-        if len(response) > 0:
-            data = data[:-2]
-        data += '}'
-        return data, 200
+        return json.dumps(response), 200
     else:
         return '', 500
 
