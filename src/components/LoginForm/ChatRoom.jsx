@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import "./ChatRoom.css";
 import axios from 'axios';
 import io from "socket.io-client";
+import { root } from 'postcss';
 
 const socket = io("http://localhost:5001");
 
@@ -14,8 +15,7 @@ const ChatRoom = () => {
     const chatEndRef = useRef(null);
 
     useEffect(() => {
-        axios
-        .get(`http://localhost:5001api/messages/${courseId}`)
+        axios.get(`http://localhost:5001/api/messages/${courseId}`)
         .then(res => {
             console.log("Fetched Messages:", res.data);
             setMessages(res.data);
@@ -40,20 +40,33 @@ const ChatRoom = () => {
 
         const newMessage = {
             text: messageInput,
-            sender: 'You',
-            courseId,
+            user_id: 'You',           // Replace with real user ID if available
+            class_name: courseId
         };
 
         try {
+            // Send to backend
             await axios.post('http://localhost:5001/api/messages', {
                 text: messageInput,
-                sender: 'user123', // Use the actual user_id here
-                courseId           // This is fine as it maps to class_name
+                user_id: root,
+                class_name: courseId
             });
+
+            // Emit to other clients via socket
+            socket.emit('newMessage', {
+                text: messageInput,
+                user_id: root,
+                courseId,
+            });
+
+            // Optionally add to own UI immediately
+            setMessages(prev => [...prev, newMessage]);
+            setMessageInput('');
         } catch (err) {
             console.error('Error sending message:', err);
         }
     };
+
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -61,7 +74,7 @@ const ChatRoom = () => {
     
     return (
         <Layout>
-            <div className="chatroom-conatiner" style={{ padding: '2rem' }}>
+            <div className="chatroom-container" style={{ padding: '2rem' }}>
                 <h1>{courseId}</h1>
                 <hr />
                 <br />
@@ -72,7 +85,7 @@ const ChatRoom = () => {
                     )) : <p>No messages to display</p>}
                 </div>
 
-                <div className="chat-input">
+                <div className="chat-input-container">
                     <input
                         type="text"
                         className="chat-input"

@@ -24,19 +24,36 @@ const db = mysql.createConnection({
     database: 'coen174' // ensure this matches your schema
 });
 
+db.connect((err) => {
+    if (err) {
+        console.error('MySQL connection failed:', err);
+    } else {
+        console.log('✅ MySQL connected successfully');
+    }
+});
+
 // Get messages for a course
 app.get('/api/messages/:courseId', (req, res) => {
     const courseId = req.params.courseId;
-    const query = 'SELECT * FROM forum_message WHERE class_name = ? ORDER BY timestamp ASC';
-    db.query(query, [courseId], (err, results) => {
-        if (err) return res.status(500).send(err);
-        res.json(results);
-    });
+    db.query(
+        'SELECT user_id, text FROM forum_message WHERE class_name = ? ORDER BY timestamp ASC',
+        [courseId],
+        (err, results) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).json({ error: 'Database error' });
+            }
+            // Always return a valid JSON array
+            return res.json(results || []);
+        }
+    );
 });
 
 // Post a new message
 app.post('/api/messages', (req, res) => {
-    const { text, sender, courseId } = req.body;
+    const text = req.body.text;
+    const sender = req.body.user_id;
+    const courseId = req.body.class_name; // Assuming user_id is passed in the request body
     const timestamp = new Date();
     const query = 'INSERT INTO forum_message (user_id, class_name, timestamp, text) VALUES (?, ?, ?, ?)';
 
@@ -46,8 +63,8 @@ app.post('/api/messages', (req, res) => {
         const newMessage = {
             user_id: sender,
             class_name: courseId,
-            timestamp,
-            text
+            timestamp: timestamp,
+            text: text
         };
 
         io.to(courseId).emit('newMessage', newMessage);
@@ -63,6 +80,10 @@ io.on('connection', socket => {
         socket.join(room);
         console.log(`User joined room: ${room}`);
 });
+
+    socket.on('newMessage', (message) => {
+        io.to(message.courseId).emit('newMessage', message);
+    });
 
     socket.on('disconnect', () => {
         console.log('User disconnected');
