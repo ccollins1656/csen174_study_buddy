@@ -75,7 +75,6 @@ async function searchGroups () {
     })
     if (response.status === 200) {
         if (response.data)
-            // return Object.values(response.data);
             return response.data;
     }
 
@@ -87,6 +86,7 @@ const GroupForum = () => {
     const [className, setClass] = useState('');
     const [displayMessage, setMessage] = useState('');
     const [yourGroups, setYourGroups] = useState([]);
+    const [filteredGroups, setFilteredGroups] = useState([]);
 
     useSessionAuth();
 
@@ -94,12 +94,26 @@ const GroupForum = () => {
         updateGroupsList();
     }, []);
 
-    const onChangeGroup = (event) => {
+    const onChangeGroup = async (event) => {
         setName(event.target.value);
+        let groups = await searchGroups();
+        // Filter dropdown list based on input
+        let filtered = [];
+        for (let i = 0; i < groups.length; i++) {
+            if(groups[i][0].toLowerCase().includes(name.toLowerCase()) && groups[i][1].toLowerCase() === className.toLowerCase()) {
+                filtered.push({
+                    id: i,
+                    groupName: groups[i][0],
+                    className: groups[i][1]
+                    });
+            }
+        }
+        setFilteredGroups(filtered);
     };
 
     const onChangeClass = (event) => {
         setClass(event.target.value);
+        setFilteredGroups([{id:0, groupName: "Search out of date", className: ""}]);
     };
 
     const updateGroupsList = async () => {
@@ -210,7 +224,7 @@ const GroupForum = () => {
                         {className && (
                             <div className="dropdown">
                                 {filteredCourses.slice (0, 4).map((item) => (
-                                    <div key={item.id} className="dropdown-row" onClick={() => {setClass(item.full_name)}} style={{ cursor: 'pointer' }}>
+                                    <div key={item.id} className="dropdown-row" onClick={() => {setClass(item.full_name); setFilteredGroups([{id:0, groupName: "Search out of date", className: ""}])}} style={{ cursor: 'pointer' }}>
                                         {item.full_name}
                                     </div>
                                 ))}
@@ -225,6 +239,7 @@ const GroupForum = () => {
                             type="text"
                             value={name}
                             onChange={onChangeGroup}
+                            onClick={onChangeGroup}
                             placeholder="Enter a group name..."
                             style={{
                                 display: 'flex',
@@ -238,6 +253,18 @@ const GroupForum = () => {
                                 border: '1px solid #ccc',
                             }}
                         />
+                        {className && (
+                            <div className="dropdown">
+                                {filteredGroups.slice (0, 4).map((item) => (
+                                    <div key={item.id} className="dropdown-row" onClick={() => {setName(item.groupName)}} style={{ cursor: 'pointer' }}>
+                                        {item.groupName}
+                                    </div>
+                                ))}
+                                {filteredGroups.length === 0 && (
+                                    <div className="dropdown-row">No matching groups in class: {className}</div>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <br />
                     <button onClick={handleSearch}>Search</button>
