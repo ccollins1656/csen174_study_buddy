@@ -119,6 +119,21 @@ END;
 %%%
 @delimiter ;
 
+-- Deletes a group
+DROP PROCEDURE IF EXISTS delete_group;
+@delimiter %%%
+CREATE PROCEDURE delete_group(in in_group_name varchar(40), in_class_name varchar(10))
+BEGIN
+	DELETE FROM grouplist
+	WHERE group_name = in_group_name
+	AND class_name = in_class_name;
+	DELETE FROM groupMembers
+	WHERE group_name = in_group_name
+	AND class_name = in_class_name;
+END;
+%%%
+@delimiter ;
+
 -- Allows the creation of class forums
 DROP PROCEDURE IF EXISTS create_forum;
 @delimiter %%%

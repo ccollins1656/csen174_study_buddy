@@ -268,7 +268,7 @@ const GroupForum = () => {
                     </div>
                     <br />
                     <button onClick={handleSearch}>Search</button>
-                    <button onClick={handleCreate}>Create</button>
+                    <Link to={'/groupcreate'} state={{ className: className, groupName: name, redirected: true }} style={{ textDecoration: 'none', color: 'inherit' }}><button>Create</button></Link>
                     <button onClick={handleJoin}>Join</button>
                     <button onClick={handleLeave}>Leave</button>
                 </div>

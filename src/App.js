@@ -9,6 +9,7 @@ import Message from './Components/LoginForm/Message';
 import Settings from './Components/LoginForm/Settings';
 import ChatRoom from './Components/LoginForm/ChatRoom';
 import GroupInfo from './Components/LoginForm/GroupInfo';
+import GroupCreate from './Components/LoginForm/GroupCreate';
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
         <Route path="/messagepage" element={<Message />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/chat/:courseId" element={<ChatRoom />} />
-        <Route path="/groupinfo" element={< GroupInfo/>} />
+        <Route path="/groupinfo" element={<GroupInfo />} />
+        <Route path="/groupcreate" element={<GroupCreate />} />
       </Routes>
     </Router>
   );
