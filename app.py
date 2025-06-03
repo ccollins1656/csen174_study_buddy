@@ -255,6 +255,29 @@ def create_group():
 
 
 """
+API request to courseManager.get_id_from_email().
+Expects:
+{
+    "token": session token
+}
+"""
+
+
+@app.route('/get-id-from-email', methods=['POST'])
+def get_id_from_email():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.get_id_from_email(email)
+    if response is not None:
+        return response, 200
+    else:
+        return '', 500
+
+
+"""
 API request to courseManager.join_group().
 Expects:
 {
@@ -509,5 +532,52 @@ def get_course_members():
     response = courseManager.get_course_members(r["course"])
     if response is not None:
         return json.dumps(response), 200
+    else:
+        return '', 500
+
+"""
+API request to courseManager.get_latest_dms().
+Expects:
+{
+    "token": session token
+    "user1": the first user
+    "user2": the second user
+}
+"""
+
+@app.route('/get-direct-messages', methods=['POST'])
+def get_direct_messages():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.get_latest_dms(r["user1"], r["user2"])
+    if response is not None:
+        return json.dumps(response), 200
+    else:
+        return '', 500
+
+"""
+API request to courseManager.send_dm().
+Expects:
+{
+    "token": session token
+    "send": the sending user
+    "receive": the receiving user
+    "text": the msg text
+}
+"""
+
+@app.route('/send-direct-message', methods=['POST'])
+def send_direct_messages():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.send_dm(r["send"], r["receive"], r["text"])
+    if response:
+        return '', 204
     else:
         return '', 500

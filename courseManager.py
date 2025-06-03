@@ -119,6 +119,26 @@ def get_user_email_from_id(userid=str, connection=None):
 
 
 """
+This function returns the user_id from the email.
+Returns None if failed to connect to database or user not found.
+
+email is the user's email address
+"""
+
+
+def get_id_from_email(email=str):
+    connection = connect_to_db()
+    if connection is None:
+        return None
+
+    user_id = get_user_view_from_email(email, connection)[0]
+
+    connection[1].close()
+    connection[0].close()
+    return user_id
+
+
+"""
 This function enables a user to join a group
 Returns True on success, False if the group does not exits, the user is already in the group, 
 or it cannot connect to database
@@ -425,3 +445,62 @@ def get_course_members(course=str):
     connection[1].close()
     connection[0].close()
     return members
+
+"""
+This function gets the latest messages between the two users (order doesn't matter)
+Returns list of messages or None if user is not found/could not connect to database
+
+user1: the first user
+user2: the second user
+"""
+
+def get_latest_dms(user1=str, user2=str):
+    connection = connect_to_db()
+    if connection is None:
+        return None
+
+    messages = []
+    try:
+        connection[1].callproc("get_direct_messages", (user1, user2, "now()" ))
+        for result in connection[1].stored_results():
+            data = result.fetchall()
+            for (sendUser, recieveUser, timestamp, msgText) in data:
+                messages.append((sendUser, recieveUser, timestamp, msgText))
+
+    except mysql.connector.Error as err:
+        print(err)
+        connection[1].close()
+        connection[0].close()
+        return None
+
+    connection[1].close()
+    connection[0].close()
+    return messages
+
+"""
+This function sends a new message between the two users (user1 is the sender, user2 is recipient)
+Returns True on success, False on failure
+
+send: the sending user
+receive: the receiving user
+text: the message text
+"""
+
+def send_dm(send=str, receive=str, text=str):
+    connection = connect_to_db()
+    if connection is None:
+        return False
+
+    try:
+        connection[1].callproc("send_direct_message", (send, receive, "now()", text))
+        connection[0].commit()
+
+    except mysql.connector.Error as err:
+        print(err)
+        connection[1].close()
+        connection[0].close()
+        return False
+
+    connection[1].close()
+    connection[0].close()
+    return True
