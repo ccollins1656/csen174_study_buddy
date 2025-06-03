@@ -6,7 +6,7 @@ import axios from 'axios';
 import io from "socket.io-client";
 
 
-const socket = io("http://localhost:5001");
+const socket = io("http://localhost:5001", {transports: ['websocket']});
 async function getIdFromEmail () {
     const response = await axios.post('http://localhost:5000/get-id-from-email', {
         "token": localStorage.getItem("session")
