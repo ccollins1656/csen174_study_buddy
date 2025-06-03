@@ -27,6 +27,17 @@ END;
 %%%
 @delimiter ;
 
+DROP PROCEDURE IF EXISTS change_display_name;
+@delimiter %%%
+CREATE PROCEDURE change_display_name(IN in_user_id VARCHAR(10), in_display_name VARCHAR(20))
+BEGIN
+	UPDATE user
+	SET display_name = in_display_name
+	WHERE user_id = in_user_id;
+END;
+%%%
+@delimiter ;
+
 DROP PROCEDURE IF EXISTS delete_from_user;
 @delimiter %%%
 CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
