@@ -216,7 +216,7 @@ CREATE PROCEDURE delete_friend_req(in in_user1 varchar(10), in_user2 varchar(10)
 @delimiter ;
 
 -- Returns user view from given user id
-DROP PROCEDURE IF EXISTS get_user_view_by_id;
+DROP PROCEDURE IF EXISTS get_user_by_id;
 @delimiter %%%
 CREATE PROCEDURE get_user_by_id(in in_user_id varchar(10))
 	BEGIN
