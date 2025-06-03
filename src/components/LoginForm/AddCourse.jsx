@@ -1,40 +1,47 @@
 // AddCourse.jsx
-import Layout from './Layout';
-import courseData from './courseData_output.json' with { type: 'json' };
-import { useState } from 'react';
+import courseData from './courseData_output.json';
+import { useEffect, useState } from 'react';
 import "./AddCourse.css";
-import { useSessionAuth } from './useSessionAuth.js';
-import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
+import { FaExchangeAlt } from 'react-icons/fa';
+import Layout from './Layout.jsx';
 
 
 const AddCourse = () => {
     const [value, setValue] = useState('');
     const [yourCourses, setYourCourses] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    
-    useSessionAuth();
-    useGetCourses(setYourCourses);
-    const updateCourses = useUpdateCourses(setYourCourses);
+
+    useEffect(() => {
+    try {
+        const saved = localStorage.getItem('yourCourses');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+                setYourCourses(parsed);
+            }
+        }
+    } catch (err) {
+        console.error("Failed to parse 'yourCourses' from localStorage", err);
+        localStorage.removeItem('yourCourses'); // optional cleanup
+    }
+}, []);
+
 
     const onChange = (event) => {
         setValue(event.target.value);
     };
 
-    const handleRemove = (e, id) => {
-        e.preventDefault();
-        const updated = yourCourses.filter((c) => c.id !== id);
-        updateCourses(updated);
-    };
 
     // Filter dropdown list based on input
-    const filteredCourses = courseData.courses.filter((course) =>
+    const filteredCourses = courseData.courses.filter((course) => 
         course.full_name.toLowerCase().includes(value.toLowerCase())
     );
 
     const handleSelect = (course) => {
         if (!yourCourses.find(c => c.id === course.id)) {
             const updatedCourses = [...yourCourses, course];
-            updateCourses(updatedCourses);
+            setYourCourses(updatedCourses);
+            localStorage.setItem('yourCourses', JSON.stringify(updatedCourses));
         }
         setSearchTerm('');
     };
@@ -80,21 +87,18 @@ const AddCourse = () => {
                 <h2 style={{ marginTop: '30vh' }}>Your Courses</h2>
                 <hr />
                 <br />
-                <div className="course-grid">
-                    {yourCourses.length ? yourCourses.map(course => (
-                        <div key={course.id} className="course-card">
-                            <button
-                                className="remove-btn"
-                                onClick={(e) => handleRemove(e, course.id)}
-                                aria-label="Remove Course"
-                            >
-                                &times;
-                            </button>
-                            <h3>{course.full_name}</h3>
-                            {/* Add more info/buttons here if needed */}
-                        </div>
-                    )) : <div></div>}
-                </div>
+                {yourCourses.length === 0 ? (
+                    <p></p>
+                ) : (
+                    <div className="course-grid">
+                        {yourCourses.map(course => (
+                            <div key={course.id} className="course-card">
+                                <h3>{course.full_name}</h3>
+                                {/* Add more info/buttons here if needed */}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </Layout>
     );

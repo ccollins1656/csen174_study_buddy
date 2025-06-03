@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import "./ChatRoom.css";
 import axios from 'axios';
 import io from "socket.io-client";
-import { root } from 'postcss';
+
 
 const socket = io("http://localhost:5001");
 
@@ -40,32 +40,18 @@ const ChatRoom = () => {
 
         const newMessage = {
             text: messageInput,
-            user_id: 'You',           // Replace with real user ID if available
+            user_id: 0,
             class_name: courseId
         };
 
         try {
-            // Send to backend
-            await axios.post('http://localhost:5001/api/messages', {
-                text: messageInput,
-                user_id: root,
-                class_name: courseId
-            });
-
-            // Emit to other clients via socket
-            socket.emit('newMessage', {
-                text: messageInput,
-                user_id: root,
-                courseId,
-            });
-
-            // Optionally add to own UI immediately
-            setMessages(prev => [...prev, newMessage]);
+            await axios.post('http://localhost:5001/api/messages', newMessage);
             setMessageInput('');
         } catch (err) {
             console.error('Error sending message:', err);
         }
     };
+
 
 
     useEffect(() => {
@@ -81,7 +67,10 @@ const ChatRoom = () => {
 
                 <div className="chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
                     {Array.isArray(messages) ? messages.map((msg, index) => (
-                        <div key={index}>{msg.user_id}: {msg.text}</div>
+                        <div key={index} className={`message-bubble ${msg.user_id === 0 ? 'own-message' : 'other-message'}`}>
+                            <strong>{msg.user_id}</strong>: {msg.text}
+                        </div>
+
                     )) : <p>No messages to display</p>}
                 </div>
 

@@ -49,28 +49,35 @@ app.get('/api/messages/:courseId', (req, res) => {
     );
 });
 
+
 // Post a new message
 app.post('/api/messages', (req, res) => {
     const text = req.body.text;
     const sender = req.body.user_id;
-    const courseId = req.body.class_name; // Assuming user_id is passed in the request body
+    const courseId = req.body.class_name;
     const timestamp = new Date();
-    const query = 'INSERT INTO forum_message (user_id, class_name, timestamp, text) VALUES (?, ?, ?, ?)';
 
+    console.log("Incoming message:", { text, sender, courseId }); // ← Add this
+
+    const query = 'INSERT INTO forum_message (user_id, class_name, timestamp, text) VALUES (?, ?, ?, ?)';
     db.query(query, [sender, courseId, timestamp, text], (err, result) => {
-        if (err) return res.status(500).send(err);
+        if (err) {
+            console.error("MySQL error:", err); // ← And this
+            return res.status(500).send(err);
+        }
 
         const newMessage = {
-            user_id: sender,
+            user_id: 0,
             class_name: courseId,
-            timestamp: timestamp,
-            text: text
+            timestamp,
+            text
         };
 
         io.to(courseId).emit('newMessage', newMessage);
         res.status(200).json(newMessage);
     });
 });
+
 
 // Socket.IO chat room logic
 io.on('connection', socket => {
