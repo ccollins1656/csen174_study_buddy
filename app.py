@@ -52,8 +52,8 @@ def main():
     sessions = load_sessions()
 
     loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
-    courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
+    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
+    courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
 
     print('Setup completed')
 main()
@@ -201,6 +201,29 @@ def change_password():
         return '', 401
     
     response = loginManager.change_password(email, r["password"])
+    if response:
+        return '', 204
+    else:
+        return '', 500
+
+
+"""
+API request to loginManager.change_dname().
+Expects:
+{
+    "token": session token,
+    "dname": user's new display name
+}
+"""
+
+@app.route('/change-dname', methods=['POST'])
+def change_dname():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+    
+    response = loginManager.change_dname(email, r["dname"])
     if response:
         return '', 204
     else:
