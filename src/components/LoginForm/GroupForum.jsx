@@ -92,7 +92,7 @@ const GroupForum = () => {
 
     useEffect(() => {
         updateGroupsList();
-    }, []);
+    }, [name, className]);
 
     const onChangeGroup = async (event) => {
         setName(event.target.value);
@@ -280,28 +280,24 @@ const GroupForum = () => {
                 <h2 style={{ marginTop: '30vh' }}>Your Groups</h2>
                 <hr />
                 <br />
-                {yourGroups.length === 0 ? (
-                    <p></p>
-                ) : (
-                    <div className="group-grid">
-                        {yourGroups.map(group => (
-                            <Link to={'/groupinfo'} key={group.id} style={{ textDecoration: 'none', color: 'inherit' }} state={{groupName: group.groupName, className: group.className}}>
-                                <div key={group.id} className="group-card">
-                                    <button
-                                        className="remove-group-btn"
-                                        onClick={(e) => handleRemoveClick(e, group.groupName, group.className)}
-                                        aria-label="Leave Group"
-                                    >
-                                        &times;
-                                    </button>
-                                    <h3>Class: {group.className}</h3>
-                                    <h3>Group: {group.groupName}</h3>
-                                    {/* Add more info/buttons here if needed */}
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                <div className="course-grid">
+                    {yourGroups.length ? yourGroups.map(group => (
+                        <Link to={'/groupinfo'} key={group.id} style={{ textDecoration: 'none', color: 'inherit' }} state={{groupName: group.groupName, className: group.className}}>
+                            <div key={group.id} className="course-card">
+                                <button
+                                    className="remove-btn"
+                                    onClick={(e) => handleRemoveClick(e, group.groupName, group.className)}
+                                    aria-label="Leave Group"
+                                >
+                                    &times;
+                                </button>
+                                <h3>Class: {group.className}</h3>
+                                <h3>Group: {group.groupName}</h3>
+                                {/* Add more info/buttons here if needed */}
+                            </div>
+                        </Link>
+                    )) : <div></div>}
+                </div>
             </div>
         </Layout>
     );
