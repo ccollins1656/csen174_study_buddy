@@ -221,7 +221,7 @@ DROP PROCEDURE IF EXISTS get_user_view_by_id;
 CREATE PROCEDURE get_user_by_id(in in_user_id varchar(10))
 	BEGIN
 		SELECT * FROM user_view
-        WHERE user_id = in_user_email;
+        WHERE user_id = in_user_id;
 	END;
 %%%
 @delimiter ;
