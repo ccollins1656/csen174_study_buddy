@@ -1,9 +1,15 @@
+/* 
+	Creates indexes on various tables
+	Allows faster searching when based on specified keys
+*/
+
 CREATE INDEX user_id_index ON user(user_id) USING BTREE;
 CREATE INDEX dm_index ON direct_message(sending_user_id) USING BTREE;
 CREATE INDEX dm_index2 ON direct_message(receiving_user_id) USING BTREE;
 CREATE INDEX forum_message_index ON forum_message(class_name) USING BTREE;
 CREATE INDEX joined_index ON joined_forum(user_id) USING BTREE;
 
+-- Creates a view which restrics view of user info to public information
 CREATE VIEW user_view(user_id,
 	display_name,
 	email,

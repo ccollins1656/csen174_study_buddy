@@ -351,6 +351,33 @@ def reset_password(email):
 
 
 """
+This function is used to change the user's display name.
+
+email is the account's associated email
+dname is the user's new display name
+"""
+
+
+def change_dname(email, dname):
+    connection = connect_to_db()
+    if connection is None:
+        return False
+    
+    connection[1].callproc("get_user_view_by_email", (email, ))
+    for result in connection[1].stored_results():
+        data = result.fetchone()
+    user_id = data[0]
+
+    connection[1].callproc("change_display_name", (user_id, dname))
+    connection[0].commit()
+
+    connection[1].close()
+    connection[0].close()
+
+    return True
+
+
+"""
 This function is called to create a new account.
 It sends the authentication email to email_addr.
 
@@ -369,6 +396,10 @@ def create_account(display_name=str, email=str, password=str):
         return False
     elif email[index:] != "@scu.edu":
         return False
+    
+    # sets default display name to their email
+    if display_name == "":
+        display_name = email[:index]
 
     connection = connect_to_db()
     if connection is None:

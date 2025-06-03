@@ -24,7 +24,8 @@ function App() {
         <Route path="/messagepage" element={<Message />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/chat/:courseId" element={<ChatRoom />} />
-        <Route path="/groupinfo" element={< GroupInfo/>} />
+        <Route path="/groupinfo" element={<GroupInfo />} />
+        <Route path="/groupcreate" element={<GroupCreate />} />
       </Routes>
     </Router>
   );

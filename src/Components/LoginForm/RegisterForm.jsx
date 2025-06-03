@@ -26,6 +26,7 @@ const RegisterForm = () => {
     
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
+    const [dname, setDname] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
@@ -43,6 +44,12 @@ const RegisterForm = () => {
             setError('Only SCU email addresses are allowed.');
             return;
         }
+
+        // Display name validation
+        if (dname.length < 1) {
+            setError('Display name cannot be empty.');
+            return;
+        }
         
         // Password match check
         if (password !== confirmPassword) {
@@ -50,7 +57,7 @@ const RegisterForm = () => {
             return;
         }
 
-        let registered = await tryRegister("dname", email, password);
+        let registered = await tryRegister(dname, email, password);
 
         if (registered) {
             // Proceed with registration logic
@@ -58,6 +65,7 @@ const RegisterForm = () => {
             setError('');
             // Optionally clear inputs
             setEmail('');
+            setDname('');
             setPassword('');
             setConfirmPassword('');
             // Navigate to auth page
@@ -79,6 +87,18 @@ const RegisterForm = () => {
                         placeholder='SCU Email'
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    <FaUser className='icon' />
+                </div>
+
+                <div className="input-box">
+                    <input
+                        type="text"
+                        placeholder='Display Name'
+                        value={dname}
+                        onChange={(e) => setDname(e.target.value)}
+                        maxLength="20"
                         required
                     />
                     <FaUser className='icon' />
