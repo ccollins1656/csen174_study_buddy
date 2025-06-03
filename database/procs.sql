@@ -54,10 +54,10 @@ CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
 -- creates a study group linked to a class
 DROP PROCEDURE IF EXISTS create_group;
 @delimiter %%%
-CREATE PROCEDURE create_group(in in_group_name varchar(40), in_class_name varchar(10))
+CREATE PROCEDURE create_group(in in_group_name varchar(40), in_class_name varchar(10), in_meeting_time varchar(40), in_meeting_place varchar(40))
 BEGIN
-	INSERT INTO groupList(group_name, class_name)
-	VALUES (in_group_name, in_class_name);
+	INSERT INTO groupList(group_name, class_name, meeting_time, meeting_place)
+	VALUES (in_group_name, in_class_name, in_meeting_time, in_meeting_place);
 END;
 %%%
 @delimiter ;

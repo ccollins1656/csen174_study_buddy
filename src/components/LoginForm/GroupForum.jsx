@@ -282,7 +282,7 @@ const GroupForum = () => {
                 <br />
                 <div className="course-grid">
                     {yourGroups.length ? yourGroups.map(group => (
-                        <Link to={'/groupinfo'} key={group.id} style={{ textDecoration: 'none', color: 'inherit' }} state={{groupName: group.groupName, className: group.className}}>
+                        <Link to={'/groupinfo'} key={group.id} style={{ textDecoration: 'none', color: 'inherit' }} state={{groupName: group.groupName, className: group.className, meetingTime: group.meetingTime, meetingPlace: group.meetingPlace}}>
                             <div key={group.id} className="course-card">
                                 <button
                                     className="remove-btn"

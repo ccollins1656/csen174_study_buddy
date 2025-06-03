@@ -52,8 +52,8 @@ def main():
     sessions = load_sessions()
 
     loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
-    courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
+    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
+    courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
 
     print('Setup completed')
 main()
@@ -247,9 +247,32 @@ def create_group():
     if not email:
         return '', 401
     
-    response = courseManager.create_group(r["group_name"], r["class_name"])
+    response = courseManager.create_group(r["group_name"], r["class_name"], r["meeting_time"], r["meeting_place"])
     if response:
         return '', 204
+    else:
+        return '', 500
+
+
+"""
+API request to courseManager.get_id_from_email().
+Expects:
+{
+    "token": session token
+}
+"""
+
+
+@app.route('/get-id-from-email', methods=['POST'])
+def get_id_from_email():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.get_id_from_email(email)
+    if response is not None:
+        return response, 200
     else:
         return '', 500
 
@@ -509,5 +532,52 @@ def get_course_members():
     response = courseManager.get_course_members(r["course"])
     if response is not None:
         return json.dumps(response), 200
+    else:
+        return '', 500
+
+"""
+API request to courseManager.get_latest_dms().
+Expects:
+{
+    "token": session token
+    "user1": the first user
+    "user2": the second user
+}
+"""
+
+@app.route('/get-direct-messages', methods=['POST'])
+def get_direct_messages():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.get_latest_dms(r["user1"], r["user2"])
+    if response is not None:
+        return json.dumps(response), 200
+    else:
+        return '', 500
+
+"""
+API request to courseManager.send_dm().
+Expects:
+{
+    "token": session token
+    "send": the sending user
+    "receive": the receiving user
+    "text": the msg text
+}
+"""
+
+@app.route('/send-direct-message', methods=['POST'])
+def send_direct_messages():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.send_dm(r["send"], r["receive"], r["text"])
+    if response:
+        return '', 204
     else:
         return '', 500

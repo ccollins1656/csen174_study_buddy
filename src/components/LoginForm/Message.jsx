@@ -5,6 +5,21 @@ import tutors from './tutors_listOutput.json' with { type: 'json' };
 import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
 import axios from "axios";
 
+async function getIdFromEmail () {
+    const response = await axios.post('http://localhost:5000/get-id-from-email', {
+        "token": localStorage.getItem("session")
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    })
+    if (response.status === 200) {
+        if (response.data)
+            return response.data;
+    }
+
+    return false;
+}
+
 async function getClassMembers (course) {
     const response = await axios.post('http://localhost:5000/get-course-members', {
         "token": localStorage.getItem("session"),
@@ -21,10 +36,44 @@ async function getClassMembers (course) {
     return false;
 }
 
+async function getDirectMessages (user1, user2) {
+    const response = await axios.post('http://localhost:5000/get-direct-messages', {
+        "token": localStorage.getItem("session"),
+        "user1": user1,
+        "user2": user2
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    })
+    if (response.status === 200) {
+        if (response.data)
+            return response.data;
+    }
+
+    return false;
+}
+
+async function sendDirectMessage (send, receive, text) {
+    const response = await axios.post('http://localhost:5000/send-direct-message', {
+        "token": localStorage.getItem("session"),
+        "send": send,
+        "receive": receive,
+        "text": text
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    })
+    if (response.status === 204) {
+        return true;
+    }
+
+    return false;
+}
+
 const Message = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [senderName, setSenderName] = useState('');
+  const [senderEmail, setSenderEmail] = useState('');
   const [senderRole, setSenderRole] = useState('Student');
   const [targetList, setTargetList] = useState([]);
   const [yourCourses, setYourCourses] = useState([]);
@@ -39,7 +88,7 @@ const Message = () => {
     // Load current user email from localStorage
     const storedUser = JSON.parse(localStorage.getItem('currentUser'));
     if (storedUser && storedUser.email) {
-      setSenderName(storedUser.email.split('@')[0]); // Use email prefix as name
+      setSenderEmail(storedUser.email); // Use email
     }
     let validTargets = [];
     let idnum = 0;      //use a idnum in outer scope in case someone can tutor multiple classes
@@ -87,20 +136,27 @@ const Message = () => {
 
   console.log(targetList)
 
+  const refreshMessages = async () => {
+      //const messages = getDirectMessages(getIdFromEmail(senderEmail), getIdFromEmail(sendTarget));
+      //console.log(messages);
+  }
+
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
 
     const newMsg = {
       text: newMessage,
-      sender: senderName || 'Anonymous',
+      sender: senderEmail || 'Anonymous',
       role: senderRole,
+      target: sendTarget,
       timestamp: new Date().toLocaleString(),
     };
 
     const updatedMessages = [...messages, newMsg];
     setMessages(updatedMessages);
     localStorage.setItem('messages', JSON.stringify(updatedMessages));
+    //sendDirectMessage(getIdFromEmail(senderEmail), getIdFromEmail(sendTarget), newMessage);
     setNewMessage('');
   };
 
@@ -124,7 +180,7 @@ const Message = () => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
-
+          <button onClick={refreshMessages}>Refresh</button>
           <button type="submit">Send</button>
         </form>
 
