@@ -50,7 +50,13 @@ const Message = () => {
             (async () => {
                 try {
                     const classes = await getClassMembers(tutors.tutorData[i].className);
-                    validTargets.push.apply(validTargets, classes);
+                    for(let i = 0; i < classes.length; i++)
+                    {
+                        validTargets.push({
+                            id: i,
+                            email: classes[i]
+                        });
+                    }
                 } catch (error) {
                     console.error("Error fetching tutored students:", error);
                 }
@@ -64,7 +70,10 @@ const Message = () => {
         {
             if(yourCourses.includes(tutors.tutorData[i].className))
             {
-                validTargets.push(tutors.tutorData[i].tutorName);
+                validTargets.push({
+                    id: i,
+                    email: tutors.tutorData[i].tutorName
+                });
             }
         }
     }
@@ -72,7 +81,7 @@ const Message = () => {
   }, []);
 
   console.log(targetList)
-  
+
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
@@ -96,10 +105,13 @@ const Message = () => {
         <h1>Message Tutor/Student!</h1>
 
         <form onSubmit={handleSendMessage} className="message-form">
-          <label>Your Role:</label>
+          <label>Messaging:</label>
           <select value={senderRole} onChange={(e) => setSenderRole(e.target.value)}>
-            <option value="Student">Student</option>
-            <option value="Tutor">Tutor</option>
+            {targetList.map((target)=>(
+                <option key={target.id} value={target.email}>
+                    {target.email}
+                </option>
+                ))}
           </select>
 
           <textarea
