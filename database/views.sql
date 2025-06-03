@@ -1,3 +1,8 @@
+/* 
+	Creates indexes on various tables
+	Allows faster searching when based on specified keys
+*/
+
 CREATE INDEX user_id_index ON user(user_id) USING BTREE;
 CREATE INDEX dm_index ON direct_message(sending_user_id) USING BTREE;
 CREATE INDEX dm_index2 ON direct_message(receiving_user_id) USING BTREE;

@@ -1,5 +1,5 @@
 /* Triggers*/
-
+/* Updates friend requests into new friends or deletes them, depending on response */
 DROP TRIGGER IF EXISTS remove_friend_request
 @delimiter %%%
 CREATE TRIGGER remove_friend_request

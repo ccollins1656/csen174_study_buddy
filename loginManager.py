@@ -396,6 +396,10 @@ def create_account(display_name=str, email=str, password=str):
         return False
     elif email[index:] != "@scu.edu":
         return False
+    
+    # sets default display name to their email
+    if display_name == "":
+        display_name = email[:index]
 
     connection = connect_to_db()
     if connection is None:
