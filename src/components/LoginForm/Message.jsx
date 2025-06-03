@@ -95,6 +95,7 @@ const Message = () => {
       text: newMessage,
       sender: senderName || 'Anonymous',
       role: senderRole,
+      target: sendTarget,
       timestamp: new Date().toLocaleString(),
     };
 
