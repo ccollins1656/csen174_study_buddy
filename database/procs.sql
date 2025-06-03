@@ -119,6 +119,21 @@ END;
 %%%
 @delimiter ;
 
+-- Deletes a group
+DROP PROCEDURE IF EXISTS delete_group;
+@delimiter %%%
+CREATE PROCEDURE delete_group(in in_group_name varchar(40), in_class_name varchar(10))
+BEGIN
+	DELETE FROM grouplist
+	WHERE group_name = in_group_name
+	AND class_name = in_class_name;
+	DELETE FROM groupMembers
+	WHERE group_name = in_group_name
+	AND class_name = in_class_name;
+END;
+%%%
+@delimiter ;
+
 -- Allows the creation of class forums
 DROP PROCEDURE IF EXISTS create_forum;
 @delimiter %%%
@@ -187,7 +202,8 @@ CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user
 %%%
 @delimiter ;
 
--- 
+-- Deletes friend requests after request accepted or denied
+-- Called by "remove_friend_request"
 DROP PROCEDURE IF EXISTS delete_friend_req;
 @delimiter %%%
 CREATE PROCEDURE delete_friend_req(in in_user1 varchar(10), in_user2 varchar(10))
@@ -199,7 +215,18 @@ CREATE PROCEDURE delete_friend_req(in in_user1 varchar(10), in_user2 varchar(10)
 %%%
 @delimiter ;
 
+-- Returns user view from given user id
+DROP PROCEDURE IF EXISTS get_user_view_by_id;
+@delimiter %%%
+CREATE PROCEDURE get_user_by_id(in in_user_id varchar(10))
+	BEGIN
+		SELECT * FROM user_view
+        WHERE user_id = in_user_email;
+	END;
+%%%
+@delimiter ;
 
+-- Gets user info from email input
 DROP PROCEDURE IF EXISTS get_user_by_email;
 @delimiter %%%
 CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
@@ -210,6 +237,7 @@ CREATE PROCEDURE get_user_by_email(in user_email varchar(40))
 %%%
 @delimiter ;
 
+-- Gets user view from email input
 DROP PROCEDURE IF EXISTS get_user_view_by_email;
 @delimiter %%%
 CREATE PROCEDURE get_user_view_by_email(in user_email varchar(40))
@@ -220,6 +248,7 @@ CREATE PROCEDURE get_user_view_by_email(in user_email varchar(40))
 %%%
 @delimiter ;
 
+-- Gets number of active users
 DROP PROCEDURE IF EXISTS get_num_users;
 @delimiter %%%
 CREATE PROCEDURE get_num_users(out num_users int)
@@ -229,6 +258,7 @@ CREATE PROCEDURE get_num_users(out num_users int)
 %%%
 @delimiter ;
 
+-- Send message on forum
 DROP PROCEDURE IF EXISTS send_forum_message;
 @delimiter %%%
 CREATE PROCEDURE send_forum_message (in in_user_id varchar(10), in_class_name varchar(10), in_timestamp DATETIME, in_text varchar(256))
@@ -239,6 +269,7 @@ CREATE PROCEDURE send_forum_message (in in_user_id varchar(10), in_class_name va
 %%%
 @delimiter ;
 
+-- Returns 50 messages with timestamp before specified time
 DROP PROCEDURE IF EXISTS get_messages_by_class;
 @delimiter %%%
 CREATE PROCEDURE get_messages_by_class(in in_class_name varchar(10), in_timestamp datetime)
@@ -251,6 +282,7 @@ CREATE PROCEDURE get_messages_by_class(in in_class_name varchar(10), in_timestam
 %%%
 @delimiter ;
 
+-- Gets direct messages with user
 DROP PROCEDURE IF EXISTS get_direct_messages;
 @delimiter %%%
 CREATE PROCEDURE get_direct_messages(in in_user1 varchar(10), in_user2 varchar(10), in_timestamp datetime)
@@ -266,6 +298,7 @@ CREATE PROCEDURE get_direct_messages(in in_user1 varchar(10), in_user2 varchar(1
 %%%
 @delimiter ;
 
+-- Returns the users who are registered in a class
 DROP PROCEDURE IF EXISTS get_users_in_forum;
 @delimiter %%%
 CREATE PROCEDURE get_users_in_forum(in in_class_name varchar(10))
@@ -278,6 +311,7 @@ CREATE PROCEDURE get_users_in_forum(in in_class_name varchar(10))
 %%%
 @delimiter ;
 
+-- Allows user to drop themselves from a course
 DROP PROCEDURE IF EXISTS drop_user_from_course;
 @delimiter %%%
 CREATE PROCEDURE drop_user_from_course (in in_user_id varchar(10), in_class_name varchar(10))
@@ -289,6 +323,7 @@ CREATE PROCEDURE drop_user_from_course (in in_user_id varchar(10), in_class_name
 %%%
 @delimiter ;
 
+-- Gets the forums that a specific user is in
 DROP PROCEDURE IF EXISTS get_user_forums;
 @delimiter %%%
 CREATE PROCEDURE get_user_forums(in in_user_id varchar(10))
@@ -299,6 +334,7 @@ CREATE PROCEDURE get_user_forums(in in_user_id varchar(10))
 %%%
 @delimiter ;
 
+-- Event: clears friend requests that are over 1 day old, triggered daily
 DROP EVENT IF EXISTS clear_friend_requests;
 @delimiter %%%
 CREATE EVENT clear_friend_requests

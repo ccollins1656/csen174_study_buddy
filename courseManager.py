@@ -191,6 +191,15 @@ def leave_group(email=str, groupname=str, class_name=str):
     connection[1].callproc("leave_group", (user_id, groupname, class_name))
     connection[0].commit()
 
+    connection[1].callproc("find_group_members", (groupname, class_name))
+    for result in connection[1].stored_results():
+        data = result.fetchall()
+    
+    # Delete group if empty
+    if not data:
+        connection[1].callproc("delete_group", (groupname, class_name))
+        connection[0].commit()
+
     connection[1].close()
     connection[0].close()
     return True

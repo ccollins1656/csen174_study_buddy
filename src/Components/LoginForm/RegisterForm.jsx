@@ -14,7 +14,7 @@ async function tryRegister(displayName, email, password) {
         console.log(e);
         return false;
     });
-    if (response.status === 204) {
+    if (response && response.status === 204) {
         return true;
     } else {
         return false;

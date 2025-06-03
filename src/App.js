@@ -1,14 +1,15 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginForm from './Components/LoginForm/LoginForm';
-import RegisterForm from './Components/LoginForm/RegisterForm';
-import AuthForm from './Components/LoginForm/AuthForm';
-import WelcomePage from './Components/LoginForm/WelcomePage';
-import AddCourse from './Components/LoginForm/AddCourse';
-import GroupForum from './Components/LoginForm/GroupForum';
-import Message from './Components/LoginForm/Message';
-import Settings from './Components/LoginForm/Settings';
-import ChatRoom from './Components/LoginForm/ChatRoom';
-import GroupInfo from './Components/LoginForm/GroupInfo';
+import LoginForm from './components/LoginForm/LoginForm';
+import RegisterForm from './components/LoginForm/RegisterForm';
+import AuthForm from './components/LoginForm/AuthForm';
+import WelcomePage from './components/LoginForm/WelcomePage';
+import AddCourse from './components/LoginForm/AddCourse';
+import GroupForum from './components/LoginForm/GroupForum';
+import Message from './components/LoginForm/Message';
+import Settings from './components/LoginForm/Settings';
+import ChatRoom from './components/LoginForm/ChatRoom';
+import GroupInfo from './components/LoginForm/GroupInfo';
+import GroupCreate from './components/LoginForm/GroupCreate';
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
         <Route path="/messagepage" element={<Message />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/chat/:courseId" element={<ChatRoom />} />
-        <Route path="/groupinfo" element={< GroupInfo/>} />
+        <Route path="/groupinfo" element={<GroupInfo />} />
+        <Route path="/groupcreate" element={<GroupCreate />} />
       </Routes>
     </Router>
   );

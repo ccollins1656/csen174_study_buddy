@@ -5,6 +5,7 @@ import "./ChatRoom.css";
 import axios from 'axios';
 import io from "socket.io-client";
 
+
 const socket = io("http://localhost:5001");
 
 const ChatRoom = () => {
@@ -14,8 +15,7 @@ const ChatRoom = () => {
     const chatEndRef = useRef(null);
 
     useEffect(() => {
-        axios
-        .get(`http://localhost:5001api/messages/${courseId}`)
+        axios.get(`http://localhost:5001/api/messages/${courseId}`)
         .then(res => {
             console.log("Fetched Messages:", res.data);
             setMessages(res.data);
@@ -40,20 +40,19 @@ const ChatRoom = () => {
 
         const newMessage = {
             text: messageInput,
-            sender: 'You',
-            courseId,
+            user_id: 0,
+            class_name: courseId
         };
 
         try {
-            await axios.post('http://localhost:5001/api/messages', {
-                text: messageInput,
-                sender: 'user123', // Use the actual user_id here
-                courseId           // This is fine as it maps to class_name
-            });
+            await axios.post('http://localhost:5001/api/messages', newMessage);
+            setMessageInput('');
         } catch (err) {
             console.error('Error sending message:', err);
         }
     };
+
+
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -61,18 +60,25 @@ const ChatRoom = () => {
     
     return (
         <Layout>
-            <div className="chatroom-conatiner" style={{ padding: '2rem' }}>
+            <div className="chatroom-container" style={{ padding: '2rem' }}>
                 <h1>{courseId}</h1>
                 <hr />
                 <br />
 
                 <div className="chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
                     {Array.isArray(messages) ? messages.map((msg, index) => (
-                        <div key={index}>{msg.user_id}: {msg.text}</div>
+                        <div key={index} className={`message-wrapper ${msg.user_id === 0 ? 'own' : 'other'}`}>
+                            <div className="sender-label">{msg.user_id}</div>
+                            <div className={`message-bubble ${msg.user_id === 0 ? 'own-message' : 'other-message'}`}>
+                                {msg.text}
+                            </div>
+                        </div>
+
+
                     )) : <p>No messages to display</p>}
                 </div>
 
-                <div className="chat-input">
+                <div className="chat-input-container">
                     <input
                         type="text"
                         className="chat-input"
