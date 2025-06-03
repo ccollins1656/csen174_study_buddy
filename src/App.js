@@ -9,6 +9,7 @@ import Message from './components/LoginForm/Message';
 import Settings from './components/LoginForm/Settings';
 import ChatRoom from './components/LoginForm/ChatRoom';
 import GroupInfo from './components/LoginForm/GroupInfo';
+import GroupCreate from './components/LoginForm/GroupCreate';
 
 function App() {
   return (

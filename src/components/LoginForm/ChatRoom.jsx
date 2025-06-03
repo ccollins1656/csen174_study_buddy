@@ -67,9 +67,13 @@ const ChatRoom = () => {
 
                 <div className="chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
                     {Array.isArray(messages) ? messages.map((msg, index) => (
-                        <div key={index} className={`message-bubble ${msg.user_id === 0 ? 'own-message' : 'other-message'}`}>
-                            <strong>{msg.user_id}</strong>: {msg.text}
+                        <div key={index} className={`message-wrapper ${msg.user_id === 0 ? 'own' : 'other'}`}>
+                            <div className="sender-label">{msg.user_id}</div>
+                            <div className={`message-bubble ${msg.user_id === 0 ? 'own-message' : 'other-message'}`}>
+                                {msg.text}
+                            </div>
                         </div>
+
 
                     )) : <p>No messages to display</p>}
                 </div>
