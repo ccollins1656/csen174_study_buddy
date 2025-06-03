@@ -466,3 +466,25 @@ def get_courses():
         print('No courses')
         print(courses)
         return '', 500
+
+"""
+API request to courseManager.get_course_members().
+Expects:
+{
+    "token": session token
+    "course": the course to have its members returned
+}
+"""
+
+@app.route('/get-course-members', methods=['POST'])
+def get_course_members():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.get_course_members(r["course"])
+    if response is not None:
+        return json.dumps(response), 200
+    else:
+        return '', 500

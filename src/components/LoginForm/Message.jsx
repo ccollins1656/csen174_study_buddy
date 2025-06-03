@@ -2,12 +2,34 @@ import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 import './Message.css';
 import tutors from './tutors_listOutput.json' with { type: 'json' };
+import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
+import axios from "axios";
+
+async function getClassMembers (course) {
+    const response = await axios.post('http://localhost:5000/get-course-members', {
+        "token": localStorage.getItem("session"),
+        "course": course
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    })
+    if (response.status === 200) {
+        if (response.data)
+            return response.data;
+    }
+
+    return false;
+}
 
 const Message = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [senderName, setSenderName] = useState('');
   const [senderRole, setSenderRole] = useState('Student');
+  const [targetList, setTargetList] = useState([]);
+  const [yourCourses, setYourCourses] = useState([]);
+  useGetCourses(setYourCourses);
+
 
   useEffect(() => {
     const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
@@ -18,15 +40,39 @@ const Message = () => {
     if (storedUser && storedUser.email) {
       setSenderName(storedUser.email.split('@')[0]); // Use email prefix as name
     }
+    let validTargets = [];
     for(let i = 0; i < tutors.tutorData.length; i++)
     {
         if(tutors.tutorData[i].tutorName === storedUser.email)
         {
             setSenderRole("Tutor");
+            // populate our valid targets with the students of the class we are tutoring
+            (async () => {
+                try {
+                    const classes = await getClassMembers(tutors.tutorData[i].className);
+                    validTargets.push.apply(validTargets, classes);
+                } catch (error) {
+                    console.error("Error fetching tutored students:", error);
+                }
+            })();
         }
     }
+    //Populate our valid targets with the tutors of every class we are in
+    if(senderRole === "Student")
+    {
+        for(let i = 0; i < tutors.tutorData.length; i++)
+        {
+            if(yourCourses.includes(tutors.tutorData[i].className))
+            {
+                validTargets.push(tutors.tutorData[i].tutorName);
+            }
+        }
+    }
+    setTargetList(validTargets);
   }, []);
 
+  console.log(targetList)
+  
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;

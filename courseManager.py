@@ -394,3 +394,34 @@ def get_courses(email=str):
     connection[0].close()
     return forums
 
+
+"""
+This function returns the list emails of members in a give course.
+Returns None if no connection or if the course does not exist.
+
+course is the course in question
+"""
+
+
+def get_course_members(course=str):
+    connection = connect_to_db()
+    if connection is None:
+        return None
+
+    members = []
+    try:
+        connection[1].callproc("get_users_in_forum", (course, ))
+        for result in connection[1].stored_results():
+            data = result.fetchall()
+            for email in data:
+                members.append(email[0])
+
+    except mysql.connector.Error as err:
+        print(err)
+        connection[1].close()
+        connection[0].close()
+        return None
+
+    connection[1].close()
+    connection[0].close()
+    return members
