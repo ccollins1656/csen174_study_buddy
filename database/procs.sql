@@ -3,6 +3,7 @@ SET @@global.event_scheduler = ON;
 SET GLOBAL event_scheduler = 1;
 SET @@global.event_scheduler = 1;
 
+/* Adds info into the user table */
 DROP PROCEDURE IF EXISTS insert_into_user;
 @delimiter %%%
 CREATE PROCEDURE insert_into_user(IN in_user_id VARCHAR(10), IN in_display_name VARCHAR(20), 
@@ -15,6 +16,7 @@ END;
 %%%
 @delimiter ;
 
+--  Changes password of user
 DROP PROCEDURE IF EXISTS change_password;
 @delimiter %%%
 CREATE PROCEDURE change_password(IN in_user_id VARCHAR(10), in_password VARCHAR(64), in_salt VARCHAR(64))
@@ -27,6 +29,7 @@ END;
 %%%
 @delimiter ;
 
+-- changes display name of user on request
 DROP PROCEDURE IF EXISTS change_display_name;
 @delimiter %%%
 CREATE PROCEDURE change_display_name(IN in_user_id VARCHAR(10), in_display_name VARCHAR(20))
@@ -38,6 +41,7 @@ END;
 %%%
 @delimiter ;
 
+-- deletes a user from database
 DROP PROCEDURE IF EXISTS delete_from_user;
 @delimiter %%%
 CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
@@ -47,6 +51,7 @@ CREATE PROCEDURE delete_from_user(IN in_user_id VARCHAR(9))
 %%%
 @delimiter ;
 
+-- creates a study group linked to a class
 DROP PROCEDURE IF EXISTS create_group;
 @delimiter %%%
 CREATE PROCEDURE create_group(in in_group_name varchar(40), in_class_name varchar(10))
@@ -57,6 +62,7 @@ END;
 %%%
 @delimiter ;
 
+-- allows user to join a group
 DROP PROCEDURE IF EXISTS join_group;
 @delimiter %%%
 CREATE PROCEDURE join_group(in in_user_id varchar(10), in_group_name varchar(40), in_class_name varchar(10))
@@ -67,6 +73,7 @@ END;
 %%%
 @delimiter ;
 
+-- allows user to leave a group
 DROP PROCEDURE IF EXISTS leave_group;
 @delimiter %%%
 CREATE PROCEDURE leave_group(in in_user_id varchar(10), in in_group_name varchar(40), in_class_name varchar(10))
@@ -79,6 +86,7 @@ END;
 %%%
 @delimiter ;
 
+-- lists groups that specified user is in
 DROP PROCEDURE IF EXISTS find_groups;
 @delimiter %%%
 CREATE PROCEDURE find_groups(in in_user_id varchar(10))
@@ -89,6 +97,7 @@ END;
 %%%
 @delimiter ;
 
+-- lists the users who are in a study group
 DROP PROCEDURE IF EXISTS find_group_members;
 @delimiter %%%
 CREATE PROCEDURE find_group_members(in in_group_name varchar(40), in_class_name varchar(10))
@@ -100,15 +109,17 @@ END;
 %%%
 @delimiter ;
 
+-- lists all groups
 DROP PROCEDURE IF EXISTS list_groups;
 @delimiter %%%
 CREATE PROCEDURE list_groups()
 BEGIN
-	SELECT group_name, class_name FROM groupList;
+	SELECT * FROM groupList;
 END;
 %%%
 @delimiter ;
 
+-- Allows the creation of class forums
 DROP PROCEDURE IF EXISTS create_forum;
 @delimiter %%%
 CREATE PROCEDURE create_forum(in in_class_name varchar(10))
@@ -119,6 +130,7 @@ END;
 %%%
 @delimiter ;
 
+-- Lists all available forums
 DROP PROCEDURE IF EXISTS list_forums;
 @delimiter %%%
 CREATE PROCEDURE list_forums()
@@ -128,6 +140,7 @@ END;
 %%%
 @delimiter ;
 
+-- Adds user to a forum
 DROP PROCEDURE IF EXISTS join_forum;
 @delimiter %%%
 CREATE PROCEDURE join_forum(in in_user_id varchar(10), in_class_name varchar(10))
@@ -138,6 +151,7 @@ END;
 %%%
 @delimiter ;
 
+-- Sends a message from sending user to receiving user
 DROP PROCEDURE IF EXISTS send_direct_message;
 @delimiter %%%
 CREATE PROCEDURE send_direct_message(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10),
@@ -149,12 +163,12 @@ CREATE PROCEDURE send_direct_message(in in_sending_user_id varchar(10), in_recei
 %%%
 @delimiter ;
 
+-- Creates a friend request from one user to another
 DROP PROCEDURE IF EXISTS add_friend_request;
 @delimiter %%%
 CREATE PROCEDURE add_friend_request(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10), in in_create_time DATETIME,
 	in_response tinyint(2))
 	BEGIN
-		
 		SET in_response = IFNULL(in_response, 0);
 		INSERT INTO friend_request(user1, user2, create_time, response)
 		VALUES (in_sending_user_id, in_receiving_user_id, in_create_time, in_response);
@@ -162,6 +176,7 @@ CREATE PROCEDURE add_friend_request(in in_sending_user_id varchar(10), in_receiv
 %%%
 @delimiter ;
 
+-- Creates a friendship between two users, called by "remove_friend_request"
 DROP PROCEDURE IF EXISTS add_friend;
 @delimiter %%%
 CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user_id varchar(10))
@@ -172,6 +187,7 @@ CREATE PROCEDURE add_friend(in in_sending_user_id varchar(10), in_receiving_user
 %%%
 @delimiter ;
 
+-- 
 DROP PROCEDURE IF EXISTS delete_friend_req;
 @delimiter %%%
 CREATE PROCEDURE delete_friend_req(in in_user1 varchar(10), in_user2 varchar(10))
