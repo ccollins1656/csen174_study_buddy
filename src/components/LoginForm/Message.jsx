@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 import './Message.css';
+import tutors from './tutors_listOutput.json' with { type: 'json' };
 
 const Message = () => {
   const [messages, setMessages] = useState([]);
@@ -16,6 +17,13 @@ const Message = () => {
     const storedUser = JSON.parse(localStorage.getItem('currentUser'));
     if (storedUser && storedUser.email) {
       setSenderName(storedUser.email.split('@')[0]); // Use email prefix as name
+    }
+    for(let i = 0; i < tutors.tutorData.length; i++)
+    {
+        if(tutors.tutorData[i].tutorName === storedUser.email)
+        {
+            setSenderRole("Tutor");
+        }
     }
   }, []);
 
