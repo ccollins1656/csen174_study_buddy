@@ -49,7 +49,11 @@ const WelcomePage = () => {
                         <div key={course.id} className="course-card">
                             <button
                                 className="remove-btn"
-                                onClick={() => handleRemove(course.id)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    handleRemove(course.id);
+                                }}
                                 aria-label="Remove Course"
                             >
                                 &times;
