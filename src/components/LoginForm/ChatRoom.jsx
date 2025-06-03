@@ -37,7 +37,7 @@ const ChatRoom = () => {
         })();
         axios.get(`http://localhost:5001/api/messages/${courseId}`)
         .then(res => {
-            console.log("Fetched Messages:", res.data);
+            console.log("Fetched Messages:", res.data);                                                                                                                                                                                                             
             setMessages(res.data);
         })
         .catch(err => console.error('Error fetching messages:', err));
@@ -61,7 +61,8 @@ const ChatRoom = () => {
         const newMessage = {
             text: messageInput,
             user_id: userId,
-            class_name: courseId
+            class_name: courseId,
+            token: localStorage.getItem("session"),
         };
 
         try {

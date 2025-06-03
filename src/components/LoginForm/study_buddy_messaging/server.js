@@ -1,3 +1,4 @@
+const axios = require('axios');
 // In your Express server.js file
 const express = require('express');
 const mysql = require('mysql2');
@@ -5,9 +6,9 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 
-async function getIdFromEmail () {
+async function getIdFromEmail (token) {
     const response = await axios.post('http://localhost:5000/get-id-from-email', {
-        "token": localStorage.getItem("session")
+        "token": token
     })
     if (response.status === 200) {
         if (response.data)
@@ -69,6 +70,7 @@ app.post('/api/messages', (req, res) => {
     const sender = req.body.user_id;
     const courseId = req.body.class_name;
     const timestamp = new Date();
+    const token = req.body.token;
 
     console.log("Incoming message:", { text, sender, courseId }); // ← Add this
 
@@ -78,24 +80,24 @@ app.post('/api/messages', (req, res) => {
             console.error("MySQL error:", err); // ← And this
             return res.status(500).send(err);
         }
-        let id = 0;
+
         (async () => {
             try {
-                id = await getIdFromEmail();
-                console.log("User ID from email:", userId);
+                const id = await getIdFromEmail(token);
+                const newMessage = {
+                    user_id: id, // Assuming this function retrieves the user ID from the session
+                    class_name: courseId,
+                    timestamp,
+                    text
+                };
+                io.to(courseId).emit('newMessage', newMessage);
+                res.status(200).json(newMessage);
+                console.log("User ID from email:", id);
             } catch (error) {
                 console.error("Error fetching user ID:", error);
             }
         })();
-        const newMessage = {
-            user_id: id, // Assuming this function retrieves the user ID from the session
-            class_name: courseId,
-            timestamp,
-            text
-        };
 
-        io.to(courseId).emit('newMessage', newMessage);
-        res.status(200).json(newMessage);
     });
 });
 
