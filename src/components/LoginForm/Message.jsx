@@ -28,6 +28,7 @@ const Message = () => {
   const [senderRole, setSenderRole] = useState('Student');
   const [targetList, setTargetList] = useState([]);
   const [yourCourses, setYourCourses] = useState([]);
+  const [sendTarget, setSendTarget] = useState("");
   useGetCourses(setYourCourses);
 
 
@@ -41,6 +42,7 @@ const Message = () => {
       setSenderName(storedUser.email.split('@')[0]); // Use email prefix as name
     }
     let validTargets = [];
+    let idnum = 0;      //use a idnum in outer scope in case someone can tutor multiple classes
     for(let i = 0; i < tutors.tutorData.length; i++)
     {
         if(tutors.tutorData[i].tutorName === storedUser.email)
@@ -50,12 +52,14 @@ const Message = () => {
             (async () => {
                 try {
                     const classes = await getClassMembers(tutors.tutorData[i].className);
-                    for(let i = 0; i < classes.length; i++)
+                    for(let j = 0; j < classes.length; j++)
                     {
                         validTargets.push({
-                            id: i,
-                            email: classes[i]
+                            id: idnum,
+                            email: classes[j],
+                            className: tutors.tutorData[i].className
                         });
+                        idnum++;
                     }
                 } catch (error) {
                     console.error("Error fetching tutored students:", error);
@@ -72,7 +76,8 @@ const Message = () => {
             {
                 validTargets.push({
                     id: i,
-                    email: tutors.tutorData[i].tutorName
+                    email: tutors.tutorData[i].tutorName,
+                    className: tutors.tutorData[i].className
                 });
             }
         }
@@ -106,10 +111,10 @@ const Message = () => {
 
         <form onSubmit={handleSendMessage} className="message-form">
           <label>Messaging:</label>
-          <select value={senderRole} onChange={(e) => setSenderRole(e.target.value)}>
+          <select value={senderRole} onChange={(e) => setSendTarget(e.target.value)}>
             {targetList.map((target)=>(
                 <option key={target.id} value={target.email}>
-                    {target.email}
+                    {target.email} in class: {target.className}
                 </option>
                 ))}
           </select>

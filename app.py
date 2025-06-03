@@ -52,8 +52,8 @@ def main():
     sessions = load_sessions()
 
     loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
-    courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
+    loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
+    courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
 
     print('Setup completed')
 main()
