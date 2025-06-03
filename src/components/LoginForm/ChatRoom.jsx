@@ -7,14 +7,34 @@ import io from "socket.io-client";
 
 
 const socket = io("http://localhost:5001");
+async function getIdFromEmail () {
+    const response = await axios.post('http://localhost:5000/get-id-from-email', {
+        "token": localStorage.getItem("session")
+    })
+    if (response.status === 200) {
+        if (response.data)
+            console.log(response.data);
+            return response.data;
+    }
+    return false;
+}
 
 const ChatRoom = () => {
     const { courseId } = useParams();
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const chatEndRef = useRef(null);
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
+        (async () => {
+            try {
+                const user_num = await getIdFromEmail();
+                setUserId(user_num);
+            } catch (error) {
+                console.error("Error fetching messages:", error);
+            }
+        })();
         axios.get(`http://localhost:5001/api/messages/${courseId}`)
         .then(res => {
             console.log("Fetched Messages:", res.data);
@@ -40,7 +60,7 @@ const ChatRoom = () => {
 
         const newMessage = {
             text: messageInput,
-            user_id: 0,
+            user_id: userId,
             class_name: courseId
         };
 
@@ -67,9 +87,9 @@ const ChatRoom = () => {
 
                 <div className="chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
                     {Array.isArray(messages) ? messages.map((msg, index) => (
-                        <div key={index} className={`message-wrapper ${msg.user_id === 0 ? 'own' : 'other'}`}>
+                        <div key={index} className={`message-wrapper ${msg.user_id === userId ? 'own' : 'other'}`}>
                             <div className="sender-label">{msg.user_id}</div>
-                            <div className={`message-bubble ${msg.user_id === 0 ? 'own-message' : 'other-message'}`}>
+                            <div className={`message-bubble ${msg.user_id === userId ? 'own-message' : 'other-message'}`}>
                                 {msg.text}
                             </div>
                         </div>

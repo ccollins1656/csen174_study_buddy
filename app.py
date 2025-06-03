@@ -272,7 +272,7 @@ def get_id_from_email():
 
     response = courseManager.get_id_from_email(email)
     if response is not None:
-        return response, 200
+        return json.dumps(response), 200
     else:
         return '', 500
 

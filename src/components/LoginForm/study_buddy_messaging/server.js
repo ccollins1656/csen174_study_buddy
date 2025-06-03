@@ -5,6 +5,19 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 
+async function getIdFromEmail () {
+    const response = await axios.post('http://localhost:5000/get-id-from-email', {
+        "token": localStorage.getItem("session")
+    })
+    if (response.status === 200) {
+        if (response.data)
+            console.log(response.data);
+            return response.data;
+    }
+    return false;
+}
+
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -65,9 +78,17 @@ app.post('/api/messages', (req, res) => {
             console.error("MySQL error:", err); // ← And this
             return res.status(500).send(err);
         }
-
+        let id = 0;
+        (async () => {
+            try {
+                id = await getIdFromEmail();
+                console.log("User ID from email:", userId);
+            } catch (error) {
+                console.error("Error fetching user ID:", error);
+            }
+        })();
         const newMessage = {
-            user_id: 0,
+            user_id: id, // Assuming this function retrieves the user ID from the session
             class_name: courseId,
             timestamp,
             text
