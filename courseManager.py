@@ -211,17 +211,19 @@ Returns True on success, False if group already exists or cannot connect to data
 
 groupname is the name of the group to create
 class_name is the name of the class the group is being created in
+meeting_time is the time the group is meeting
+meeting_place is the place the group is meeting
 """
 
 
-def create_group(groupname=str, class_name=str):
+def create_group(groupname=str, class_name=str, meeting_time=str, meeting_place=str):
     connection = connect_to_db()
     if connection is None:
         return False
 
     groups = list_groups()
     if groupname not in groups:
-        connection[1].callproc("create_group", (groupname, class_name))
+        connection[1].callproc("create_group", (groupname, class_name, meeting_time, meeting_place))
         connection[0].commit()
 
         connection[1].close()
@@ -302,8 +304,8 @@ def list_groups():
     connection[1].callproc("list_groups")   #   might update to search by class name
     for result in connection[1].stored_results():
         data = result.fetchall()
-        for (groupname, classname) in data:
-            groups.append((groupname, classname))     #   we want first (and only) item in tuple
+        for (groupname, classname, meeting_time, meeting_place) in data:
+            groups.append((groupname, classname, meeting_time, meeting_place))
 
     connection[1].close()
     connection[0].close()

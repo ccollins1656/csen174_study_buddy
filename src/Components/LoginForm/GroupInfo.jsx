@@ -1,5 +1,5 @@
 import { useLocation} from 'react-router-dom';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import axios from "axios";
 import "./GroupInfo.css"
 import Layout from './Layout';
@@ -45,28 +45,57 @@ async function getNames (userid) {
     return false;
 }
 
+async function getGroupInfo (groupName, className) {
+    const response = await axios.post('http://localhost:5000/list-groups', {
+        "token": localStorage.getItem("session")
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 200) {
+        if (response.data) {
+            let keys = Object.keys(response.data);
+            let values = Object.values(response.data)
+            for (let i = 0; i < values.length; i++) {
+                if (values[keys[i]][0] === groupName && values[keys[i]][1] === className) {
+                    return values[keys[i]];
+                }
+            }
+        }
+    }
+    return false;
+}
+
 const GroupInfo = () => {
     const location = useLocation();
     const data = location.state;
     const [members, setMembers] = useState([])
+    const [meetingTime, setMeetingTime] = useState('');
+    const [meetingPlace, setMeetingPlace] = useState('');
 
     useEffect(() => {
         updateMembersList();
+
+        updateGroupData();
     }, []);
+
+    const updateGroupData = async () => {
+        let groupData = await getGroupInfo(data.groupName, data.className);
+        setMeetingTime(groupData[2]);
+        setMeetingPlace(groupData[3]);
+    }
 
     const updateMembersList = async () => {
         let membersList = await getMembers(data.groupName, data.className)
         if(membersList !== false)
         {
             let memberNames = []
-            console.log(membersList)
             for (let i = 0; i < membersList.length; i++)
             {
                 let name = await getNames(membersList[i].name)
                 console.log(JSON.stringify(name))
                 memberNames.push({id: membersList[i].id, display_name: name.display_name, email: name.email})
             }
-            console.log(memberNames)
             setMembers(memberNames)
         }
     }
@@ -75,7 +104,12 @@ const GroupInfo = () => {
         <Layout>
             <div className='info-section'>
                 <div className='title-section'>
-                    <h1>This is the info for group: {data.groupName} in class: {data.className}</h1>
+                    <h1>Study Group "{data.groupName}" in {data.className}</h1>
+                    <hr />
+                    <br />
+                    {meetingTime? (<div>Meets at {meetingTime}</div>):(<></>)}
+                    {meetingPlace? (<div>Meets in {meetingPlace}</div>):(<></>)}
+                    <br />
                     <div>
                         <h3>Members of this group:</h3>
                     </div>
