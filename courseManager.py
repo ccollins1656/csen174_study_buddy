@@ -152,22 +152,30 @@ class_name is the name of the class the group is attached to
 def join_group(email=str, groupname=str, class_name=str):
     connection = connect_to_db()
     if connection is None:
+        print("no connect")
         return False
     
     user_id = get_user_view_from_email(email, connection)[0]
 
     groups = list_groups()
     current_groups = find_groups(email)
-    if (groupname, class_name) in groups and (groupname, class_name) not in current_groups:
-        connection[1].callproc("join_group", (user_id, groupname, class_name))
-        connection[0].commit()
+    print(groups)
+    print(current_groups)
+    print(groupname)
+    print(class_name)
+    if (groupname, class_name) not in current_groups:
+        for (g, c, t, p) in groups:
+            if g == groupname and c == class_name:
+                connection[1].callproc("join_group", (user_id, groupname, class_name))
+                connection[0].commit()
 
-        connection[1].close()
-        connection[0].close()
-        return True
+                connection[1].close()
+                connection[0].close()
+                return True
 
     connection[1].close()
     connection[0].close()
+    print("didn't find group")
     return False
 
 
