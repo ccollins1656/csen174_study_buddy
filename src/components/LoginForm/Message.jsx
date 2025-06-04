@@ -155,16 +155,20 @@ const Message = () => {
                 {
                     for(let j = 0; j < yourCourses.length; j++)
                     {
-                        if(yourCourses[j].full_name == (tutors.tutorData[i].className))
+                        if(yourCourses[j].full_name == (tutors.tutorData[i].className))     // check you are in the class the tutor tutors
                         {
-                            validTargets.push({
-                                id: idnum,
-                                email: tutors.tutorData[i].tutorName,
-                                className: tutors.tutorData[i].className,
-                                displayText: ""
-                            });
-                            validTargets[idnum].displayText =tutors.tutorData[i].tutorName+" in class: "+tutors.tutorData[i].className;
-                            idnum++;
+                            const response = await getIdFromEmail(tutors.tutorData[i].tutorName);
+                            if(response !== false)      // check if tutor has an account (getIdFromEmail returns false if account not found)
+                            {
+                                validTargets.push({
+                                    id: idnum,
+                                    email: tutors.tutorData[i].tutorName,
+                                    className: tutors.tutorData[i].className,
+                                    displayText: ""
+                                });
+                                validTargets[idnum].displayText =tutors.tutorData[i].tutorName+" in class: "+tutors.tutorData[i].className;
+                                idnum++;
+                            }
                         }
                     }
                 }
