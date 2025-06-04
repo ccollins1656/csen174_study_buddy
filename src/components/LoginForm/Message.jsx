@@ -115,60 +115,62 @@ const Message = () => {
     // Get the user's id number from the email
     (async () => {
         try {
-            const id = await getIdFromEmail(senderEmail);
+            const id = await getIdFromEmail(storedUser.email);
             setSenderId(id);
-        } catch (error) {
-            console.error("Error fetching user id:", error);
-        }
-    })();
 
-    let validTargets = [];
-    let idnum = 0;      //use a idnum in outer scope in case someone can tutor multiple classes
-    for(let i = 0; i < tutors.tutorData.length; i++)
-    {
-        if(tutors.tutorData[i].tutorName === storedUser.email)
-        {
-            setSenderRole("Tutor");
-            // populate our valid targets with the students of the class we are tutoring and refresh message display
-            (async () => {
-                try {
-                    const classes = await getClassMembers(tutors.tutorData[i].className);
-                    for(let j = 0; j < classes.length; j++)
+            let validTargets = [{
+                                id: 0,
+                                email: "",
+                                className: "",
+                                displayText: "Select someone to message"
+                                }];
+            let idnum = 1;      //use a idnum in outer scope in case someone can tutor multiple classes
+            for(let i = 0; i < tutors.tutorData.length; i++)
+            {
+                if(tutors.tutorData[i].tutorName === storedUser.email)
+                {
+                    setSenderRole("Tutor");
+                    // populate our valid targets with the students of the class we are tutoring and refresh message display
+                        const classes = await getClassMembers(tutors.tutorData[i].className);
+                        for(let j = 0; j < classes.length; j++)
+                        {
+                            validTargets.push({
+                                id: idnum,
+                                email: classes[j],
+                                className: tutors.tutorData[i].className
+                            });
+                            validTargets[j+1].displayText =classes[j]+" in class: "+tutors.tutorData[i].className;
+                            idnum++;
+                        }
+                }
+            }
+            //Populate our valid targets with the tutors of every class we are in
+            if(senderRole === "Student")
+            {
+                for(let i = 0; i < tutors.tutorData.length; i++)
+                {
+                    if(yourCourses.includes(tutors.tutorData[i].className))
                     {
                         validTargets.push({
-                            id: idnum,
-                            email: classes[j],
+                            id: i,
+                            email: tutors.tutorData[i].tutorName,
                             className: tutors.tutorData[i].className
                         });
-                        idnum++;
+                        validTargets[i+1].displayText =tutors.tutorData[i].tutorName+" in class: "+tutors.tutorData[i].className;
                     }
-                } catch (error) {
-                    console.error("Error fetching tutored students:", error);
                 }
-            })();
-        }
-    }
-    //Populate our valid targets with the tutors of every class we are in
-    if(senderRole === "Student")
-    {
-        for(let i = 0; i < tutors.tutorData.length; i++)
-        {
-            if(yourCourses.includes(tutors.tutorData[i].className))
-            {
-                validTargets.push({
-                    id: i,
-                    email: tutors.tutorData[i].tutorName,
-                    className: tutors.tutorData[i].className
-                });
             }
+            setTargetList(validTargets);
+            setSendTarget("");
+        } catch (error) {
+            console.error("Error loading page:", error);
         }
-    }
-    setTargetList(validTargets);
+    })();
   }, []);
 
-  console.log(targetList)
-
    const refreshMessages = async () => {
+      if(sendTarget === "") return;     // don't load messages if no sender selected
+
       const allMessages = await getDirectMessages(senderId, sendTargetId);
       let messages = [];
       let sendEmail = "";       // email of the message sender
@@ -205,6 +207,7 @@ const Message = () => {
   const changeSendTarget = async (e) => {
     e.preventDefault();
     setSendTarget(e.target.value);
+    if(e.target.value === "") return;       // return if no recipient is selected
 
     // get id from email
     const id = await getIdFromEmail(e.target.value);
@@ -226,7 +229,7 @@ const Message = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (newMessage.trim() === '') return;
+    if (newMessage.trim() === '' || sendTarget === "") return;
 
     // send the message
     sendDirectMessage(senderId, sendTargetId, newMessage);
@@ -246,7 +249,7 @@ const Message = () => {
           <select onChange={(e) => changeSendTarget(e)}>
             {targetList.map((target)=>(
                 <option key={target.id} value={target.email}>
-                    {target.email} in class: {target.className}
+                    {target.displayText}
                 </option>
                 ))}
           </select>
