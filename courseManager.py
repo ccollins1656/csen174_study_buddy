@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
+from datetime import datetime
 
 DATABASE_NAME = "coen174"  # name of database
 database_info = ("localhost", "root", "Passed_Word")  # database login info
@@ -480,11 +481,12 @@ def get_latest_dms(user1=str, user2=str):
 
     messages = []
     try:
-        connection[1].callproc("get_direct_messages", (user1, user2, "now()" ))
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        connection[1].callproc("get_direct_messages", (user1, user2, current_time))
         for result in connection[1].stored_results():
             data = result.fetchall()
             for (sendUser, recieveUser, timestamp, msgText) in data:
-                messages.append((sendUser, recieveUser, timestamp, msgText))
+                messages.append((sendUser, recieveUser, timestamp.strftime("%m/%d/%Y, %I:%M %p"), msgText))
 
     except mysql.connector.Error as err:
         print(err)
@@ -511,7 +513,8 @@ def send_dm(send=str, receive=str, text=str):
         return False
 
     try:
-        connection[1].callproc("send_direct_message", (send, receive, "now()", text))
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        connection[1].callproc("send_direct_message", (send, receive, current_time, text))
         connection[0].commit()
 
     except mysql.connector.Error as err:

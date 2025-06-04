@@ -5,15 +5,37 @@ import tutors from './tutors_listOutput.json' with { type: 'json' };
 import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
 import axios from "axios";
 
-async function getIdFromEmail () {
-    const response = await axios.post('http://localhost:5000/get-id-from-email', {
-        "token": localStorage.getItem("session")
+/*
+This function returns the display name and email associated with a user id
+*/
+async function getEmailAndDname (userid) {
+    const response = await axios.post('http://localhost:5000/get-user-view', {
+        "token": localStorage.getItem("session"),
+        "user_id": userid
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 200) {
+        if (response.data)
+        {
+            return response.data;
+        }
+    }
+    return false;
+}
+
+async function getIdFromEmail (email) {
+    const response = await axios.post('http://localhost:5000//get-id-from-selected-email', {
+        "token": localStorage.getItem("session"),
+        "email": email
     }).catch(function (e) {
         console.log(e);
         return false;
     })
     if (response.status === 200) {
         if (response.data)
+            console.log(response.data);
             return response.data;
     }
 
@@ -71,25 +93,35 @@ async function sendDirectMessage (send, receive, text) {
 }
 
 const Message = () => {
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [senderEmail, setSenderEmail] = useState('');
-  const [senderRole, setSenderRole] = useState('Student');
-  const [targetList, setTargetList] = useState([]);
-  const [yourCourses, setYourCourses] = useState([]);
-  const [sendTarget, setSendTarget] = useState("");
+  const [messages, setMessages] = useState([]);             // the messages we are displaying
+  const [newMessage, setNewMessage] = useState('');         // the message we have entered
+  const [senderEmail, setSenderEmail] = useState('');       // our email address
+  const [senderId, setSenderId] = useState(0);              // our user id
+  const [senderRole, setSenderRole] = useState('Student');  // our role: Tutor or Student
+  const [targetList, setTargetList] = useState([]);     // the list of people we are allowed to message
+  const [yourCourses, setYourCourses] = useState([]);   // our courses
+  const [sendTarget, setSendTarget] = useState("");     // email of who we are messaging
+  const [sendTargetId, setSendTargetId] = useState(0);  // id of who we are messaging
   useGetCourses(setYourCourses);
 
-
   useEffect(() => {
-    const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
-    setMessages(storedMessages);
 
     // Load current user email from localStorage
     const storedUser = JSON.parse(localStorage.getItem('currentUser'));
     if (storedUser && storedUser.email) {
       setSenderEmail(storedUser.email); // Use email
     }
+
+    // Get the user's id number from the email
+    (async () => {
+        try {
+            const id = await getIdFromEmail(senderEmail);
+            setSenderId(id);
+        } catch (error) {
+            console.error("Error fetching user id:", error);
+        }
+    })();
+
     let validTargets = [];
     let idnum = 0;      //use a idnum in outer scope in case someone can tutor multiple classes
     for(let i = 0; i < tutors.tutorData.length; i++)
@@ -97,7 +129,7 @@ const Message = () => {
         if(tutors.tutorData[i].tutorName === storedUser.email)
         {
             setSenderRole("Tutor");
-            // populate our valid targets with the students of the class we are tutoring
+            // populate our valid targets with the students of the class we are tutoring and refresh message display
             (async () => {
                 try {
                     const classes = await getClassMembers(tutors.tutorData[i].className);
@@ -136,28 +168,72 @@ const Message = () => {
 
   console.log(targetList)
 
-  const refreshMessages = async () => {
-      //const messages = getDirectMessages(getIdFromEmail(senderEmail), getIdFromEmail(sendTarget));
-      //console.log(messages);
+   const refreshMessages = async () => {
+      const allMessages = await getDirectMessages(senderId, sendTargetId);
+      let messages = [];
+      let sendEmail = "";       // email of the message sender
+      let targetEmail = "";     // email of the message recipient
+      console.log(allMessages);
+      //format the messages in json that can be displayed
+      for(let i = 0; i < allMessages.length; i++)
+      {
+            //get the emails of senders and receivers
+            if(senderId == allMessages[i][0])  // this case we sent the message
+            {
+                sendEmail = senderEmail;
+                targetEmail = sendTarget;
+            }
+            else if(senderId == allMessages[i][1])        // this case we received the message
+            {
+                sendEmail = sendTarget;
+                targetEmail = senderEmail;
+            }
+
+            const newMsg = {
+              text: allMessages[i][3],
+              sender: sendEmail || 'Anonymous',
+              role: senderRole,
+              target: targetEmail,
+              timestamp: allMessages[i][2],
+            };
+            messages.push(newMsg);
+      }
+      console.log(messages);
+      setMessages(messages);
   }
 
-  const handleSendMessage = (e) => {
+  const changeSendTarget = async (e) => {
+    e.preventDefault();
+    setSendTarget(e.target.value);
+
+    // get id from email
+    const id = await getIdFromEmail(e.target.value);
+    console.log(id);
+    setSendTargetId(id);
+  };
+
+  useEffect(() => {
+    (async () => {
+        try {
+            // refresh to show messages with recipient
+            await refreshMessages();
+            console.log(sendTarget);
+        } catch (error) {
+            console.error("Error fetching tutored students:", error);
+        }
+    })();
+  }, [sendTarget, sendTargetId]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
 
-    const newMsg = {
-      text: newMessage,
-      sender: senderEmail || 'Anonymous',
-      role: senderRole,
-      target: sendTarget,
-      timestamp: new Date().toLocaleString(),
-    };
-
-    const updatedMessages = [...messages, newMsg];
-    setMessages(updatedMessages);
-    localStorage.setItem('messages', JSON.stringify(updatedMessages));
-    //sendDirectMessage(getIdFromEmail(senderEmail), getIdFromEmail(sendTarget), newMessage);
+    // send the message
+    sendDirectMessage(senderId, sendTargetId, newMessage);
     setNewMessage('');
+
+    // refresh the messages
+    await refreshMessages();
   };
 
   return (
@@ -167,7 +243,7 @@ const Message = () => {
 
         <form onSubmit={handleSendMessage} className="message-form">
           <label>Messaging:</label>
-          <select value={senderRole} onChange={(e) => setSendTarget(e.target.value)}>
+          <select onChange={(e) => changeSendTarget(e)}>
             {targetList.map((target)=>(
                 <option key={target.id} value={target.email}>
                     {target.email} in class: {target.className}

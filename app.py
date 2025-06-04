@@ -52,8 +52,8 @@ def main():
     sessions = load_sessions()
 
     loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
-    courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
+    loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
+    courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
 
     print('Setup completed')
 main()
@@ -262,7 +262,6 @@ Expects:
 }
 """
 
-
 @app.route('/get-id-from-email', methods=['POST'])
 def get_id_from_email():
     r = request.get_json()
@@ -271,6 +270,32 @@ def get_id_from_email():
         return '', 401
 
     response = courseManager.get_id_from_email(email)
+    if response is not None:
+        return json.dumps(response), 200
+    else:
+        return '', 500
+
+
+"""
+API request to courseManager.get_id_from_email().
+This version allows you to select the input email rather than using the one in the session cookie.
+The above API request really should have worked like this but by the time I realized my mistake
+a bunch of people were already using it and changing it would have broken too much stuff...
+Expects:
+{
+    "token": session token
+    "email": the email that is being looked up
+}
+"""
+
+@app.route('/get-id-from-selected-email', methods=['POST'])
+def get_id_from_selected_email():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.get_id_from_email(r["email"])
     if response is not None:
         return json.dumps(response), 200
     else:

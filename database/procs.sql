@@ -287,7 +287,7 @@ DROP PROCEDURE IF EXISTS get_direct_messages;
 @delimiter %%%
 CREATE PROCEDURE get_direct_messages(in in_user1 varchar(10), in_user2 varchar(10), in_timestamp datetime)
 	BEGIN
-		SELECT * FROM direct_messages
+		SELECT * FROM direct_message
         WHERE timestamp < in_timestamp
         AND (sending_user_id = in_user1
         AND receiving_user_id = in_user2)

@@ -34,7 +34,7 @@ app.use(express.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // change to your user
-    password: 'Passed_Word',
+    password: '100%TheBestMYSQLPassword',
     database: 'coen174' // ensure this matches your schema
 });
 
