@@ -168,8 +168,34 @@ const Message = () => {
     })();
   }, []);
 
+  /*
+   This useEffect will periodically refresh the messages in case any arrive
+   Polling > holding a connection because it means I don't have to learn to use socket-io
+   What does efficiency even matter anyways...
+  */
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      (async () => {
+        try {
+            // refresh to show messages with recipient
+            await refreshMessages();
+        } catch (error) {
+            console.error("Error fetching tutored students:", error);
+        }
+    })();
+    }, 5000);
+
+    return () => {
+        clearInterval(intervalId)
+        };
+  }, [sendTarget, senderId, sendTargetId]);     // depends on these values as they are used in refreshMessages()
+
    const refreshMessages = async () => {
-      if(sendTarget === "") return;     // don't load messages if no sender selected
+      if(sendTarget === "")     // don't load messages if no sender selected
+      {
+          setMessages([]);
+          return;
+      }
 
       const allMessages = await getDirectMessages(senderId, sendTargetId);
       let messages = [];
