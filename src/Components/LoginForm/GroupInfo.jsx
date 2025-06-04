@@ -184,7 +184,6 @@ const GroupInfo = () => {
             };
             messages.push(newMsg);
         }
-        console.log(messages);
         setMessages(messages);
     }
 
@@ -203,12 +202,12 @@ const GroupInfo = () => {
                 console.error("Error messages:", error);
             }
         })();
-    }, 3000);
+    }, 1000);
 
     return () => {
         clearInterval(intervalId)
     };
-    }, []);
+    }, [senderEmail]);      // refreshMessages relies on the sender email to be correct
 
     return (
         <Layout>
@@ -231,8 +230,8 @@ const GroupInfo = () => {
                     <div className="member-grid">
                         {members.map(group => (
                             <div key={group.id} className="member-card">
-                                <div>Name: {group.display_name}</div>
-                                <div>Email: {group.email}</div>
+                                <div className="name-display">Name: {group.display_name}</div>
+                                <div className="email-display">Email: {group.email}</div>
                                 {/* Add more info/buttons here if needed */}
                             </div>
                         ))}

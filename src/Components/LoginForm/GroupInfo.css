@@ -69,12 +69,16 @@
     color: #f02b2b;
 }
 
-.message-item.other {
+.name-display {
+    margin-right: 20px;
+}
+
+.message-item.mine {
   background-color: #e0f7fa;
   border-left: 4px solid #00acc1;
 }
 
-.message-item.mine {
+.message-item.other {
   background-color: #fce4ec;
   border-left: 4px solid #ec407a;
 }

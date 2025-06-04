@@ -125,11 +125,13 @@ const Message = () => {
                                 displayText: "Select someone to message"
                                 }];
             let idnum = 1;      //use a idnum in outer scope in case someone can tutor multiple classes
+            let role = "Student";
             for(let i = 0; i < tutors.tutorData.length; i++)
             {
                 if(tutors.tutorData[i].tutorName === storedUser.email)
                 {
                     setSenderRole("Tutor");
+                    role = "Tutor";
                     // populate our valid targets with the students of the class we are tutoring and refresh message display
                         const classes = await getClassMembers(tutors.tutorData[i].className);
                         for(let j = 0; j < classes.length; j++)
@@ -137,26 +139,33 @@ const Message = () => {
                             validTargets.push({
                                 id: idnum,
                                 email: classes[j],
-                                className: tutors.tutorData[i].className
+                                className: tutors.tutorData[i].className,
+                                displayText: ""
                             });
-                            validTargets[j+1].displayText =classes[j]+" in class: "+tutors.tutorData[i].className;
+                            validTargets[idnum].displayText =classes[j]+" in class: "+tutors.tutorData[i].className;
                             idnum++;
                         }
                 }
             }
-            //Populate our valid targets with the tutors of every class we are in
-            if(senderRole === "Student")
+            // Populate our valid targets with the tutors of every class we are in
+            if(role === "Student")
             {
+                console.log(yourCourses);
                 for(let i = 0; i < tutors.tutorData.length; i++)
                 {
-                    if(yourCourses.includes(tutors.tutorData[i].className))
+                    for(let j = 0; j < yourCourses.length; j++)
                     {
-                        validTargets.push({
-                            id: i,
-                            email: tutors.tutorData[i].tutorName,
-                            className: tutors.tutorData[i].className
-                        });
-                        validTargets[i+1].displayText =tutors.tutorData[i].tutorName+" in class: "+tutors.tutorData[i].className;
+                        if(yourCourses[j].full_name == (tutors.tutorData[i].className))
+                        {
+                            validTargets.push({
+                                id: idnum,
+                                email: tutors.tutorData[i].tutorName,
+                                className: tutors.tutorData[i].className,
+                                displayText: ""
+                            });
+                            validTargets[idnum].displayText =tutors.tutorData[i].tutorName+" in class: "+tutors.tutorData[i].className;
+                            idnum++;
+                        }
                     }
                 }
             }
@@ -166,7 +175,7 @@ const Message = () => {
             console.error("Error loading page:", error);
         }
     })();
-  }, []);
+  }, [yourCourses]);
 
   /*
    This useEffect will periodically refresh the messages in case any arrive
@@ -183,7 +192,7 @@ const Message = () => {
             console.error("Error fetching messages:", error);
         }
     })();
-    }, 3000);
+    }, 1000);
 
     return () => {
         clearInterval(intervalId)
@@ -201,6 +210,7 @@ const Message = () => {
       let messages = [];
       let sendEmail = "";       // email of the message sender
       let targetEmail = "";     // email of the message recipient
+      let role = "";            // the role of the sender
       console.log(allMessages);
       //format the messages in json that can be displayed
       for(let i = 0; i < allMessages.length; i++)
@@ -210,17 +220,27 @@ const Message = () => {
             {
                 sendEmail = senderEmail;
                 targetEmail = sendTarget;
+                role = senderRole;
+
             }
             else if(senderId == allMessages[i][1])        // this case we received the message
             {
                 sendEmail = sendTarget;
                 targetEmail = senderEmail;
+                if(senderRole == "Tutor")       // if we didn't send, then the sender's role must be opposite to ours
+                {                               // only students can message tutors and vice versa
+                    role = "Student";
+                }
+                else
+                {
+                    role = "Tutor";
+                }
             }
 
             const newMsg = {
               text: allMessages[i][3],
               sender: sendEmail || 'Anonymous',
-              role: senderRole,
+              role: role,
               target: targetEmail,
               timestamp: allMessages[i][2],
             };
