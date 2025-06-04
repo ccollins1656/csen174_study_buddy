@@ -298,6 +298,32 @@ CREATE PROCEDURE get_direct_messages(in in_user1 varchar(10), in_user2 varchar(1
 %%%
 @delimiter ;
 
+-- Sends a message to a group
+DROP PROCEDURE IF EXISTS send_group_message;
+@delimiter %%%
+CREATE PROCEDURE send_group_message(in in_group_name varchar(40), in_class_name varchar(10), in_sender_email varchar(40),
+	in_timestamp datetime, in_text varchar(256))
+	BEGIN
+		INSERT INTO group_messages(group_name, class_name, sender_email, timestamp, message) 
+		VALUES (in_group_name, in_class_name, in_sender_email, in_timestamp, in_text);
+	END;
+%%%
+@delimiter ;
+
+-- Gets group messages from group
+DROP PROCEDURE IF EXISTS get_group_messages;
+@delimiter %%%
+CREATE PROCEDURE get_group_messages(in in_group_name varchar(40), in_class_name varchar(10), in_timestamp datetime)
+	BEGIN
+		SELECT * FROM group_messages
+        WHERE timestamp < in_timestamp
+        AND in_group_name = group_name
+        AND in_class_name = class_name
+        order by timestamp desc limit 50;
+	END;
+%%%
+@delimiter ;
+
 -- Returns the users who are registered in a class
 DROP PROCEDURE IF EXISTS get_users_in_forum;
 @delimiter %%%

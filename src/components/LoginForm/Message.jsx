@@ -180,10 +180,10 @@ const Message = () => {
             // refresh to show messages with recipient
             await refreshMessages();
         } catch (error) {
-            console.error("Error fetching tutored students:", error);
+            console.error("Error fetching messages:", error);
         }
     })();
-    }, 5000);
+    }, 3000);
 
     return () => {
         clearInterval(intervalId)
@@ -248,7 +248,7 @@ const Message = () => {
             await refreshMessages();
             console.log(sendTarget);
         } catch (error) {
-            console.error("Error fetching tutored students:", error);
+            console.error("Error refreshing messages:", error);
         }
     })();
   }, [sendTarget, sendTargetId]);

@@ -498,6 +498,7 @@ def get_latest_dms(user1=str, user2=str):
     connection[0].close()
     return messages
 
+
 """
 This function sends a new message between the two users (user1 is the sender, user2 is recipient)
 Returns True on success, False on failure
@@ -515,6 +516,72 @@ def send_dm(send=str, receive=str, text=str):
     try:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         connection[1].callproc("send_direct_message", (send, receive, current_time, text))
+        connection[0].commit()
+
+    except mysql.connector.Error as err:
+        print(err)
+        connection[1].close()
+        connection[0].close()
+        return False
+
+    connection[1].close()
+    connection[0].close()
+    return True
+
+
+"""
+This function gets the latest messages to a specified group
+Returns list of messages or None if user is not found/could not connect to database
+
+group: the group name
+class_name: the name of the class the group is in
+"""
+
+
+def get_latest_group_messages(group=str, class_name=str):
+    connection = connect_to_db()
+    if connection is None:
+        return None
+
+    messages = []
+    try:
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        connection[1].callproc("get_group_messages", (group, class_name, current_time))
+        for result in connection[1].stored_results():
+            data = result.fetchall()
+            for (groupName, className, sender_email, timestamp, msgText) in data:
+                messages.append((groupName, className, sender_email, timestamp.strftime("%m/%d/%Y, %I:%M %p"), msgText))
+
+    except mysql.connector.Error as err:
+        print(err)
+        connection[1].close()
+        connection[0].close()
+        return None
+
+    connection[1].close()
+    connection[0].close()
+    return messages
+
+
+"""
+This function sends a new message to a group
+Returns True on success, False on failure
+
+group: the group name
+class_name: the name of the class the group is in
+sender_email: the sender email
+text: the message text
+"""
+
+
+def send_group_message(group=str, class_name=str, sender_email=str, text=str):
+    connection = connect_to_db()
+    if connection is None:
+        return False
+
+    try:
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        connection[1].callproc("send_group_message", (group, class_name, sender_email, current_time, text))
         connection[0].commit()
 
     except mysql.connector.Error as err:

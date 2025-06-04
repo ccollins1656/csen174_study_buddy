@@ -66,17 +66,67 @@ async function getGroupInfo (groupName, className) {
     return false;
 }
 
+/*
+    Calls the flask server to get the group messages from the database.
+*/
+async function getGroupMessages (group, className) {
+    const response = await axios.post('http://localhost:5000/get-group-messages', {
+        "token": localStorage.getItem("session"),
+        "groupName": group,
+        "className": className
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    })
+    if (response.status === 200) {
+        if (response.data)
+            return response.data;
+    }
+
+    return false;
+}
+
+/*
+    Calls the flask server to send a group message and put message in database.
+*/
+async function sendGroupMessage (group, className, sender, text) {
+    const response = await axios.post('http://localhost:5000/send-group-message', {
+        "token": localStorage.getItem("session"),
+        "groupName": group,
+        "className": className,
+        "senderEmail": sender,
+        "text": text
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    })
+    if (response.status === 204) {
+        return true;
+    }
+
+    return false;
+}
+
 const GroupInfo = () => {
     const location = useLocation();
-    const data = location.state;
-    const [members, setMembers] = useState([])
-    const [meetingTime, setMeetingTime] = useState('');
-    const [meetingPlace, setMeetingPlace] = useState('');
+    const data = location.state;                            // stores data passed from prev. page
+    const [members, setMembers] = useState([])              // members of group
+    const [meetingTime, setMeetingTime] = useState('');     // group meeting time
+    const [meetingPlace, setMeetingPlace] = useState('');   // group meeting place
+    const [newMessage, setNewMessage] = useState('');       // the messages entered in input field
+    const [messages, setMessages] = useState([]);           // displayed messages
+    const [senderEmail, setSenderEmail] = useState('');     // the user's email
 
     useEffect(() => {
         updateMembersList();
 
         updateGroupData();
+
+        const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (storedUser && storedUser.email) {
+          setSenderEmail(storedUser.email); // Use email
+        }
+        refreshMessages();
     }, []);
 
     const updateGroupData = async () => {
@@ -99,6 +149,66 @@ const GroupInfo = () => {
             setMembers(memberNames)
         }
     }
+
+    const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (newMessage.trim() === '') return;
+
+        // send the message
+        await sendGroupMessage(data.groupName, data.className, senderEmail, newMessage);
+        setNewMessage('');
+    };
+
+    const refreshMessages = async () => {
+        const allMessages = await getGroupMessages(data.groupName, data.className);
+        let messages = [];
+        let origin = "";
+        console.log(allMessages);
+        //format the messages in json that can be displayed
+        for(let i = 0; i < allMessages.length; i++)
+        {
+            if(senderEmail == allMessages[i][2])  // this case we sent the message
+            {
+                origin = "mine";
+            }
+            else                                    // someone else send the message
+            {
+                origin = "other";
+            }
+
+            const newMsg = {
+                text: allMessages[i][4],
+                sender: allMessages[i][2] || 'Anonymous',
+                origin: origin,
+                timestamp: allMessages[i][3],
+            };
+            messages.push(newMsg);
+        }
+        console.log(messages);
+        setMessages(messages);
+    }
+
+    /*
+    This useEffect will periodically refresh the messages in case any arrive
+    Polling > holding a connection because it means I don't have to learn to use socket-io
+    What does efficiency even matter anyways...
+    */
+    useEffect(() => {
+    const intervalId = setInterval(() => {
+        (async () => {
+            try {
+                // refresh to show messages with recipient
+                await refreshMessages();
+            } catch (error) {
+                console.error("Error messages:", error);
+            }
+        })();
+    }, 3000);
+
+    return () => {
+        clearInterval(intervalId)
+    };
+    }, []);
 
     return (
         <Layout>
@@ -129,6 +239,33 @@ const GroupInfo = () => {
                     </div>
                 )}
                 </div>
+            </div>
+            <div className="message-container">
+
+            <h1>Message Group!</h1>
+            <form onSubmit={handleSendMessage} className="message-form">
+                <textarea
+                    placeholder="Type your message here..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                />
+                <button onClick={refreshMessages}>Refresh</button>
+                <button type="submit">Send</button>
+            </form>
+
+            <div className="messages-list">
+                <h2>Messages</h2>
+                {messages.length === 0 ? (
+                    <p>No messages yet. Start a conversation!</p>
+                ) : (
+                    messages.map((msg, index) => (
+                        <div key={index} className={`message-item ${msg.origin.toLowerCase()}`}>
+                            <p><strong>{msg.sender}:</strong> {msg.text}</p>
+                            <small>{msg.timestamp}</small>
+                        </div>
+                    )
+                ))}
+            </div>
             </div>
         </Layout>
     )

@@ -625,3 +625,53 @@ def send_direct_messages():
         return '', 204
     else:
         return '', 500
+
+
+"""
+API request to courseManager.get_latest_group_messages().
+Expects:
+{
+    "token": session token
+    "groupName": the group name
+    "className": the class name
+}
+"""
+
+@app.route('/get-group-messages', methods=['POST'])
+def get_latest_group_messages():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.get_latest_group_messages(r["groupName"], r["className"])
+    if response is not None:
+        return json.dumps(response), 200
+    else:
+        return '', 500
+
+
+"""
+API request to courseManager.send_group_message().
+Expects:
+{
+    "token": session token
+    "groupName": the groupName
+    "className": the className
+    "senderEmail": the senderEmail
+    "text": the msg text
+}
+"""
+
+@app.route('/send-group-message', methods=['POST'])
+def send_group_message():
+    r = request.get_json()
+    email = token_auth(r["token"])
+    if not email:
+        return '', 401
+
+    response = courseManager.send_group_message(r["groupName"], r["className"], r["senderEmail"], r["text"])
+    if response:
+        return '', 204
+    else:
+        return '', 500

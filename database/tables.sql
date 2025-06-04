@@ -47,6 +47,20 @@ create table groupMembers(
     foreign key (class_name) references forum(class_name) on delete cascade
 );
 
+drop table if exists group_messages;
+create table group_messages(
+	group_name varchar(40) not null,
+    class_name varchar(10) not null,
+    sender_email varchar(40) not null,
+    timestamp datetime not null,
+    message varchar(256) not null,
+    
+    primary key(group_name, class_name, sender_email, timestamp),
+    foreign key(group_name) references groupList(group_name) on delete cascade,
+    foreign key(class_name) references forum(class_name) on delete cascade,
+    foreign key(sender_email) references user(email) on delete cascade
+);
+
 drop table if exists joined_forum;
 create table joined_forum(
 	user_id varchar(10) not null,
