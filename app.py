@@ -208,6 +208,25 @@ def change_password():
 
 
 """
+API request to loginManager.reset_password().
+Expects:
+{
+    "email": email of the associated account
+}
+"""
+
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    r = request.get_json()
+
+    response = loginManager.reset_password(r["email"])
+    if response:
+        return '', 204
+    else:
+        return '', 500
+
+
+"""
 API request to loginManager.change_dname().
 Expects:
 {

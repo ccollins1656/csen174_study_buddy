@@ -103,6 +103,10 @@ const LoginForm = () => {
                 <div className="authenticate-link">
                     <p>Need to authenticate? <Link to="/auth" className="link">Authenticate</Link></p>
                 </div>
+
+                <div className="forgot-password-link">
+                    <p>Forgot password? <Link to="/forgot" className="link">Reset</Link></p>
+                </div>
             </form>
         </div>
     );
