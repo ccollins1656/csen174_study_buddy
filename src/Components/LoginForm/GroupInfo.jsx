@@ -91,7 +91,7 @@ async function getGroupMessages (group, className) {
     Calls the flask server to send a group message and put message in database.
 */
 async function sendGroupMessage (group, className, sender, text) {
-    const response = await axios.post('http://localhost:5000/send-group-message', {
+    const response = await axios.post(host.domain + ':5000/send-group-message', {
         "token": localStorage.getItem("session"),
         "groupName": group,
         "className": className,
