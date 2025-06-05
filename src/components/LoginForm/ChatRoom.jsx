@@ -4,11 +4,12 @@ import { useParams } from 'react-router-dom';
 import "./ChatRoom.css";
 import axios from 'axios';
 import io from "socket.io-client";
+import host from './host.json' with { type: 'json' };
 
 
-const socket = io("http://localhost:5001", {transports: ['websocket']});
+const socket = io(host.domain + ":5001", {transports: ['websocket']});
 async function getIdFromEmail () {
-    const response = await axios.post('http://localhost:5000/get-id-from-email', {
+    const response = await axios.post(host.domain + ':5000/get-id-from-email', {
         "token": localStorage.getItem("session")
     })
     if (response.status === 200) {
@@ -52,7 +53,7 @@ const ChatRoom = () => {
                 console.error("Error fetching messages:", error);
             }
         })();
-        axios.get(`http://localhost:5001/api/messages/${courseId}`)
+        axios.get(host.domain + ':5001/api/messages/${courseId}')
         .then(res => {
             console.log("Fetched Messages:", res.data);                                                                                                                                                                                                             
             setMessages(res.data);
@@ -83,7 +84,7 @@ const ChatRoom = () => {
         };
 
         try {
-            await axios.post('http://localhost:5001/api/messages', newMessage);
+            await axios.post(host.domain + ':5001/api/messages', newMessage);
             setMessageInput('');
         } catch (err) {
             console.error('Error sending message:', err);

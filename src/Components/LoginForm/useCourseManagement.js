@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import host from './host.json' with { type: 'json' };
 
 /*
  * Get the user's course list.
@@ -13,7 +14,7 @@ export function useGetCourses(setCourseState) {
 
     useEffect(() => {
         const getCourses = async () => {
-            const response = await axios.post('http://localhost:5000/get-courses', {
+            const response = await axios.post(host.domain + ':5000/get-courses', {
                 "token": token
             }).catch(function (e) {
                 // Issue reaching the server or processing request
@@ -62,7 +63,7 @@ export function useUpdateCourses(setCourseState) {
                 course_names.push(course.full_name);
             });
 
-            const response = await axios.post('http://localhost:5000/update-courses', {
+            const response = await axios.post(host.domain + ':5000/update-courses', {
                 "token": token,
                 "courses": JSON.stringify(course_names)
             }).catch(function (e) {

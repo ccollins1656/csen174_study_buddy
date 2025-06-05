@@ -4,9 +4,10 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 import { useSessionUnauth } from './useSessionAuth.js';
+import host from './host.json' with { type: 'json' };
 
 async function tryAuth(email, authCode) {
-    const response = await axios.post('http://localhost:5000/auth-account', {
+    const response = await axios.post(host.domain + ':5000/auth-account', {
         "email": email,
         "auth_code": authCode
     }).catch(function (e) {

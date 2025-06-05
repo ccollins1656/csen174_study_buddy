@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 import { useSessionAuth } from './useSessionAuth.js';
 import axios from 'axios';
+import host from './host.json' with { type: 'json' };
 
 
 async function tryChangePassword(password) {
-    const response = await axios.post('http://localhost:5000/change-password', {
+    const response = await axios.post(host.domain + ':5000/change-password', {
         "token": localStorage.getItem("session"),
         "password": password
     }).catch(function (e) {
@@ -17,7 +18,7 @@ async function tryChangePassword(password) {
 
 
 async function tryChangeDname(dname) {
-  const response = await axios.post('http://localhost:5000/change-dname', {
+  const response = await axios.post(host.domain + ':5000/change-dname', {
     "token": localStorage.getItem("session"),
     "dname": dname
   }).catch(function (e) {
