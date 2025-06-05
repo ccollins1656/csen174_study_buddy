@@ -27,7 +27,7 @@ async function getEmailAndDname (userid) {
 }
 
 async function getIdFromEmail (email) {
-      const response = await axios.post(host.domain + ':5000/get-id-from-email', {
+      const response = await axios.post(host.domain + ':5000/get-id-from-selected-email', {
         "token": localStorage.getItem("session"),
         "email": email
     }).catch(function (e) {
@@ -163,6 +163,7 @@ const Message = () => {
                         if(yourCourses[j].full_name == (tutors.tutorData[i].className))     // check you are in the class the tutor tutors
                         {
                             const response = await getIdFromEmail(tutors.tutorData[i].tutorName);
+                            console.log("hello"+response);
                             if(response !== false)      // check if tutor has an account (getIdFromEmail returns false if account not found)
                             {
                                 validTargets.push({
@@ -178,6 +179,7 @@ const Message = () => {
                     }
                 }
             }
+            console.log(validTargets);
             setTargetList(validTargets);
             setSendTarget("");
         } catch (error) {
