@@ -21,7 +21,7 @@ async function getIdFromEmail () {
 }
 
 async function getNames (userid) {
-    const response = await axios.post('http://localhost:5000/get-user-view', {
+    const response = await axios.post(host.domain + ':5000/get-user-view', {
         "token": localStorage.getItem("session"),
         "user_id": userid
     }).catch(function (e) {

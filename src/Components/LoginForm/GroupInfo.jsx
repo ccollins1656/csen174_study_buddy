@@ -71,7 +71,7 @@ async function getGroupInfo (groupName, className) {
     Calls the flask server to get the group messages from the database.
 */
 async function getGroupMessages (group, className) {
-    const response = await axios.post('http://localhost:5000/get-group-messages', {
+    const response = await axios.post(host.domain + ':5000/get-group-messages', {
         "token": localStorage.getItem("session"),
         "groupName": group,
         "className": className
