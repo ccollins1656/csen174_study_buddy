@@ -44,6 +44,7 @@ const ChatRoom = () => {
     const chatEndRef = useRef(null);
     const [userId, setUserId] = useState(null);
     const [idTODisNameDict, setDispMap] = useState(new Map());       // stores user_id to display_name mappings for every id we encounter
+    const [messagesWithNames, setMessagesWithNames] = useState([]); // stores messages with display names
 
     useEffect(() => {
         (async () => {
@@ -98,17 +99,24 @@ const ChatRoom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         (async () => {
         try {
+            let tempMap = new Map(idTODisNameDict);
+            let tempMsgWithName = messages;
             for(let i = 0; i < messages.length; i++)        // update the display names dictionary
             {
-                if(typeof idTODisNameDict.get(messages[i].user_id) === 'undefined')
+                if(typeof tempMap.get(messages[i].user_id) === 'undefined')
                 {
                     const senderNames = await getNames(messages[i].user_id);
-                    let tempMap = new Map(idTODisNameDict);
-                    idTODisNameDict.set(messages[i].user_id, senderNames.display_name);
-                    setDispMap(tempMap);
+                    tempMap.set(messages[i].user_id, senderNames.display_name);
                 }
+                tempMsgWithName[i].dispName = tempMap.get(tempMsgWithName[i].user_id)
+                console.log(tempMap);
+                console.log(tempMsgWithName[i].dispName);
+                console.log(tempMsgWithName[i].user_id);
             }
+            setDispMap(tempMap);
             console.log(idTODisNameDict);
+            setMessagesWithNames(tempMsgWithName);
+            console.log(messagesWithNames);
         } catch (error) {
             console.error("Error fetching messages:", error);
         }
@@ -123,9 +131,9 @@ const ChatRoom = () => {
                 <br />
 
                 <div className="chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
-                    {Array.isArray(messages) ? messages.map((msg, index) => (
+                    {Array.isArray(messagesWithNames) ? messagesWithNames.map((msg, index) => (
                         <div key={index} className={`message-wrapper ${msg.user_id === userId ? 'own' : 'other'}`}>
-                            <div className="sender-label">{msg.user_id}</div>
+                            <div className="sender-label">{msg.dispName}</div>
                             <div className={`message-bubble ${msg.user_id === userId ? 'own-message' : 'other-message'}`}>
                                 {msg.text}
                             </div>
