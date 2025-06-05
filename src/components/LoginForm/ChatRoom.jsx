@@ -61,6 +61,9 @@ const ChatRoom = () => {
             setMessages(res.data);
         })
         .catch(err => console.error('Error fetching messages:', err));
+        
+        // scroll to bottom when opening messages page
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [courseId]);
 
     useEffect(() => {
@@ -96,7 +99,6 @@ const ChatRoom = () => {
 
 
     useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         (async () => {
         try {
             let tempMap = new Map(idTODisNameDict);
@@ -122,6 +124,11 @@ const ChatRoom = () => {
         }
         })();
     }, [messages]);
+
+    // scroll to bottom when new message appears
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messagesWithNames]);
     
     return (
         <Layout>
@@ -129,12 +136,12 @@ const ChatRoom = () => {
                 <h1>{courseId}</h1>
                 <hr />
                 <br />
-
                 <div className="chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
                     {Array.isArray(messagesWithNames) ? messagesWithNames.map((msg, index) => (
                         <div key={index} className={`message-wrapper ${msg.user_id === userId ? 'own' : 'other'}`}>
+
                             <div className="sender-label">{msg.dispName}</div>
-                            <div className={`message-bubble ${msg.user_id === userId ? 'own-message' : 'other-message'}`}>
+                            <div ref={chatEndRef} className={`message-bubble ${msg.user_id === userId ? 'own-message' : 'other-message'}`}>
                                 {msg.text}
                             </div>
                         </div>
