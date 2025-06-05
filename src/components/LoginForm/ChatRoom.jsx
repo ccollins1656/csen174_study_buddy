@@ -43,6 +43,7 @@ const ChatRoom = () => {
     const [messageInput, setMessageInput] = useState('');
     const chatEndRef = useRef(null);
     const [userId, setUserId] = useState(null);
+    const [idTODisNameDict, setDispMap] = useState(new Map());       // stores user_id to display_name mappings for every id we encounter
 
     useEffect(() => {
         (async () => {
@@ -53,9 +54,9 @@ const ChatRoom = () => {
                 console.error("Error fetching messages:", error);
             }
         })();
-        axios.get(host.domain + ':5001/api/messages/${courseId}')
+        axios.get(host.domain + `:5001/api/messages/${courseId}`)
         .then(res => {
-            console.log("Fetched Messages:", res.data);                                                                                                                                                                                                             
+            console.log("Fetched Messages:", res.data);
             setMessages(res.data);
         })
         .catch(err => console.error('Error fetching messages:', err));
@@ -95,6 +96,23 @@ const ChatRoom = () => {
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        (async () => {
+        try {
+            for(let i = 0; i < messages.length; i++)        // update the display names dictionary
+            {
+                if(typeof idTODisNameDict.get(messages[i].user_id) === 'undefined')
+                {
+                    const senderNames = await getNames(messages[i].user_id);
+                    let tempMap = new Map(idTODisNameDict);
+                    idTODisNameDict.set(messages[i].user_id, senderNames.display_name);
+                    setDispMap(tempMap);
+                }
+            }
+            console.log(idTODisNameDict);
+        } catch (error) {
+            console.error("Error fetching messages:", error);
+        }
+        })();
     }, [messages]);
     
     return (
