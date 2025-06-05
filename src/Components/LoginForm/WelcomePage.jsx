@@ -28,7 +28,7 @@ const WelcomePage = () => {
             <br />
             <div className="course-grid">
                 {yourCourses.length ? yourCourses.map(course => (
-                    <Link to={`/chat/${course.id}`} key={course.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={`/chat/${course.full_name}`} key={course.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <div key={course.id} className="course-card">
                             <button
                                 className="remove-btn"
