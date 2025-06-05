@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from './Layout';
+import './ChatRoom.css';
 import './Message.css';
 import tutors from './tutors_listOutput.json' with { type: 'json' };
 import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
@@ -94,6 +95,7 @@ async function sendDirectMessage (send, receive, text) {
 }
 
 const Message = () => {
+  const chatEndRef = useRef(null);
   const [messages, setMessages] = useState([]);             // the messages we are displaying
   const [newMessage, setNewMessage] = useState('');         // the message we have entered
   const [senderEmail, setSenderEmail] = useState('');       // our email address
@@ -103,6 +105,7 @@ const Message = () => {
   const [yourCourses, setYourCourses] = useState([]);   // our courses
   const [sendTarget, setSendTarget] = useState("");     // email of who we are messaging
   const [sendTargetId, setSendTargetId] = useState(0);  // id of who we are messaging
+  const [numMessages, setNumMessages] = useState(0);    // the number of messages
   useGetCourses(setYourCourses);
 
   useEffect(() => {
@@ -218,7 +221,8 @@ const Message = () => {
       }
 
       const allMessages = await getDirectMessages(senderId, sendTargetId);
-      let messages = [];
+
+      let tempMessages = [];
       let sendEmail = "";       // email of the message sender
       let targetEmail = "";     // email of the message recipient
       let role = "";            // the role of the sender
@@ -255,11 +259,20 @@ const Message = () => {
               target: targetEmail,
               timestamp: allMessages[i][2],
             };
-            messages.push(newMsg);
+            tempMessages.unshift(newMsg);
       }
-      console.log(messages);
-      setMessages(messages);
+      console.log(tempMessages);
+      setMessages(tempMessages);
   }
+
+  // scroll to bottom when new message appears
+  useEffect(() => {
+      if(numMessages !== messages.length)       // only scroll when new messages are there
+      {
+          chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          setNumMessages(messages.length);
+      }
+  }, [messages]);
 
   const refresh = async (e) => {
       e.preventDefault();
@@ -302,41 +315,54 @@ const Message = () => {
   };
 
   return (
-    <Layout>
+    <Layout className="layout">
       <div className="message-container">
-        <h1>Message Tutor/Student!</h1>
+        <div className="header-container">
+            <h1 className="message-tutor-student">Message Tutor/Student!</h1>
 
-        <form onSubmit={handleSendMessage} className="message-form">
-          <label>Messaging:</label>
-          <select onChange={(e) => changeSendTarget(e)}>
-            {targetList.map((target)=>(
-                <option key={target.id} value={target.email}>
-                    {target.displayText}
-                </option>
-                ))}
-          </select>
+            <form onSubmit={handleSendMessage} className="message-form">
+              <label>Messaging:</label>
+              <select onChange={(e) => changeSendTarget(e)}>
+                {targetList.map((target)=>(
+                    <option key={target.id} value={target.email}>
+                        {target.displayText}
+                    </option>
+                    ))}
+              </select>
+              <button onClick={(e) => refresh(e)}>Refresh</button>
+            </form>
 
-          <textarea
-            placeholder="Type your message here..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-          />
-          <button onClick={(e) => refresh(e)}>Refresh</button>
-          <button type="submit">Send</button>
-        </form>
+            <h1 className="message-header">Messages</h1>
+            <hr />
+            <br />
+        </div>
 
-        <div className="messages-list">
-          <h2>Messages</h2>
-          {messages.length === 0 ? (
-            <p>No messages yet. Start a conversation!</p>
-          ) : (
-            messages.map((msg, index) => (
-              <div key={index} className={`message-item ${msg.role.toLowerCase()}`}>
-                <p><strong>{msg.sender} ({msg.role}):</strong> {msg.text}</p>
-                <small>{msg.timestamp}</small>
-              </div>
-            ))
-          )}
+        <div className="outer">
+            <div className="chatroom-container" style={{position: 'absolute', bottom: 0, width: '100%', overflowY: 'auto', maxHeight: '75%', padding: '2rem' }}>
+                <div className="chat-messages" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
+                    {Array.isArray(messages) ? messages.map((msg, index) => (
+                        <div key={index} className={`message-wrapper ${msg.sender === senderEmail ? 'own' : 'other'}`}>
+                            <div className="sender-label">{msg.sender} ({msg.role}):</div>
+                            <div ref={chatEndRef} className={`message-bubble ${msg.sender === senderEmail ? 'own-message' : 'other-message'}`}>
+                                {msg.text}
+                            </div>
+                        </div>
+
+
+                    )) : <p>No messages to display</p>}
+                </div>
+
+                <div className="chat-input-container">
+                    <input
+                        type="text"
+                        className="chat-input"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Type a message..."
+                    />
+                    <button onClick={handleSendMessage}>Send</button>
+                </div>
+            </div>
         </div>
       </div>
     </Layout>
