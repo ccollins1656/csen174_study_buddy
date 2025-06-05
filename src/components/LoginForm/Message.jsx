@@ -106,6 +106,7 @@ const Message = () => {
   const [sendTarget, setSendTarget] = useState("");     // email of who we are messaging
   const [sendTargetId, setSendTargetId] = useState(0);  // id of who we are messaging
   const [numMessages, setNumMessages] = useState(0);    // the number of messages
+  const [title, setTite] = useState("Message Student!");  // sets the title: Message Tutor/Student!
   useGetCourses(setYourCourses);
 
   useEffect(() => {
@@ -157,6 +158,7 @@ const Message = () => {
             // Populate our valid targets with the tutors of every class we are in
             if(role === "Student")
             {
+                setTite("Message Tutor!");
                 validTargets[0].displayText = "Select a Tutor to message";
                 console.log(yourCourses);
                 for(let i = 0; i < tutors.tutorData.length; i++)
@@ -318,7 +320,7 @@ const Message = () => {
     <Layout className="layout">
       <div className="message-container">
         <div className="header-container">
-            <h1 className="message-tutor-student">Message Tutor/Student!</h1>
+            <h1 className="message-tutor-student">{title}</h1>
 
             <form onSubmit={handleSendMessage} className="message-form">
               <label>Messaging:</label>
