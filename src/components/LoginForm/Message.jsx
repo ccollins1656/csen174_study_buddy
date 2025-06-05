@@ -261,6 +261,11 @@ const Message = () => {
       setMessages(messages);
   }
 
+  const refresh = async (e) => {
+      e.preventDefault();
+      await refreshMessages();
+  };
+
   const changeSendTarget = async (e) => {
     e.preventDefault();
     setSendTarget(e.target.value);
@@ -316,7 +321,7 @@ const Message = () => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
-          <button onClick={refreshMessages}>Refresh</button>
+          <button onClick={(e) => refresh(e)}>Refresh</button>
           <button type="submit">Send</button>
         </form>
 

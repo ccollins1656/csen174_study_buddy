@@ -188,6 +188,11 @@ const GroupInfo = () => {
         setMessages(messages);
     }
 
+    const refresh = async (e) => {
+        e.preventDefault();
+        await refreshMessages();
+    };
+
     /*
     This useEffect will periodically refresh the messages in case any arrive
     Polling > holding a connection because it means I don't have to learn to use socket-io
@@ -249,7 +254,7 @@ const GroupInfo = () => {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <button onClick={refreshMessages}>Refresh</button>
+                <button onClick={refresh}>Refresh</button>
                 <button type="submit">Send</button>
             </form>
 
