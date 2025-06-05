@@ -3,9 +3,10 @@ import {useEffect, useState} from 'react';
 import axios from "axios";
 import "./GroupInfo.css"
 import Layout from './Layout';
+import host from './host.json' with { type: 'json' };
 
 async function getMembers (groupName, className) {
-    const response = await axios.post('http://localhost:5000/find-group-members', {
+    const response = await axios.post(host.domain + ':5000/find-group-members', {
         "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": className
@@ -29,7 +30,7 @@ async function getMembers (groupName, className) {
 }
 
 async function getNames (userid) {
-    const response = await axios.post('http://localhost:5000/get-user-view', {
+    const response = await axios.post(host.domain + ':5000/get-user-view', {
         "token": localStorage.getItem("session"),
         "user_id": userid
     }).catch(function (e) {
@@ -46,7 +47,7 @@ async function getNames (userid) {
 }
 
 async function getGroupInfo (groupName, className) {
-    const response = await axios.post('http://localhost:5000/list-groups', {
+    const response = await axios.post(host.domain + ':5000/list-groups', {
         "token": localStorage.getItem("session")
     }).catch(function (e) {
         console.log(e);

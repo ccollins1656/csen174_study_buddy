@@ -52,8 +52,8 @@ def main():
     sessions = load_sessions()
 
     loginManager.set_email_info("lucas3rocks@gmail.com", "flpb bmmf xchd mjdx")
-    loginManager.set_db_info("coen174", "user", "localhost", "root", "100%TheBestMYSQLPassword")
-    courseManager.set_db_info("coen174", "localhost", "root", "100%TheBestMYSQLPassword")
+    loginManager.set_db_info("coen174", "user", "localhost", "root", "Passed_Word")
+    courseManager.set_db_info("coen174", "localhost", "root", "Passed_Word")
 
     print('Setup completed')
 main()
@@ -539,23 +539,22 @@ def get_courses():
     
     # Need to return courses in the right format
     response = []
-    for course in courses:
-        r = None
-        for row in course_data:
-            if row["full_name"] == course:
-                r = row
-                break
-        response.append(r)
-        if r == None:
-            print('Could not find course in data')
-            return '', 500
-    
-    if not courses is None:
+    if courses is not None:
+        for course in courses:
+            r = None
+            for row in course_data:
+                if row["full_name"] == course:
+                    r = row
+                    break
+            response.append(r)
+            if r == None:
+                print('Could not find course in data')
+                return '', 500
         return json.dumps(response), 200
     else:
         print('No courses')
         print(courses)
-        return '', 500
+        return '', 200
 
 """
 API request to courseManager.get_course_members().

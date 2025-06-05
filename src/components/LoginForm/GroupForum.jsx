@@ -5,9 +5,10 @@ import './GroupForum.css';
 import axios from "axios";
 import { Link } from 'react-router-dom';
 import { useSessionAuth } from './useSessionAuth.js';
+import host from './host.json' with { type: 'json' };
 
 async function getCurrentGroupList(){
-    const response = await axios.post('http://localhost:5000/find-groups', {
+    const response = await axios.post(host.domain + ':5000/find-groups', {
         "token": localStorage.getItem("session")
     }).catch(function (e) {
        console.log(e);
@@ -31,7 +32,7 @@ async function getCurrentGroupList(){
 }
 
 async function createGroup (groupName, nameOfClass) {
-    const response = await axios.post('http://localhost:5000/create-group', {
+    const response = await axios.post(host.domain + ':5000/create-group', {
         "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": nameOfClass
@@ -43,7 +44,7 @@ async function createGroup (groupName, nameOfClass) {
 }
 
 async function joinGroup (groupName, nameOfClass) {
-    const response = await axios.post('http://localhost:5000/join-group', {
+    const response = await axios.post(host.domain + ':5000/join-group', {
         "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": nameOfClass
@@ -55,7 +56,7 @@ async function joinGroup (groupName, nameOfClass) {
 }
 
 async function leaveGroup (groupName, nameOfClass) {
-    const response = await axios.post('http://localhost:5000/leave-group', {
+    const response = await axios.post(host.domain + ':5000/leave-group', {
         "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": nameOfClass
@@ -67,7 +68,7 @@ async function leaveGroup (groupName, nameOfClass) {
 }
 
 async function searchGroups () {
-    const response = await axios.post('http://localhost:5000/list-groups', {
+    const response = await axios.post(host.domain + ':5000/list-groups', {
         "token": localStorage.getItem("session")
     }).catch(function (e) {
         console.log(e);

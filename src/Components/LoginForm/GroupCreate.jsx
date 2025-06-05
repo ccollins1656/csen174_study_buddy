@@ -3,10 +3,11 @@ import Layout from './Layout';
 import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSessionAuth } from './useSessionAuth.js';
+import host from './host.json' with { type: 'json' };
 
 
 async function searchGroups () {
-    const response = await axios.post('http://localhost:5000/list-groups', {
+    const response = await axios.post(host.domain + ':5000/list-groups', {
         "token": localStorage.getItem("session")
     }).catch(function (e) {
         console.log(e);
@@ -22,7 +23,7 @@ async function searchGroups () {
 
 
 async function tryCreateGroup (groupName, className, meetingTime, meetingPlace) {
-    const response = await axios.post('http://localhost:5000/create-group', {
+    const response = await axios.post(host.domain + ':5000/create-group', {
         "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": className,
@@ -37,7 +38,7 @@ async function tryCreateGroup (groupName, className, meetingTime, meetingPlace) 
 
 
 async function tryJoinGroup (groupName, className) {
-    const response = await axios.post('http://localhost:5000/join-group', {
+    const response = await axios.post(host.domain + ':5000/join-group', {
         "token": localStorage.getItem("session"),
         "group_name": groupName,
         "class_name": className

@@ -4,9 +4,10 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { FaUser } from "react-icons/fa";
 import axios from 'axios';
 import { useSessionUnauth } from './useSessionAuth.js';
+import host from './host.json' with { type: 'json' };
 
 async function tryReset(email) {
-    const response = await axios.post('http://localhost:5000/reset-password', {
+    const response = await axios.post(host.domain + ':5000/reset-password', {
         "email": email
     }).catch(function (e) {
         console.log(e);

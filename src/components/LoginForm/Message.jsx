@@ -4,12 +4,13 @@ import './Message.css';
 import tutors from './tutors_listOutput.json' with { type: 'json' };
 import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
 import axios from "axios";
+import host from './host.json' with { type: 'json' };
 
 /*
 This function returns the display name and email associated with a user id
 */
 async function getEmailAndDname (userid) {
-    const response = await axios.post('http://localhost:5000/get-user-view', {
+    const response = await axios.post(host.domain + ':5000/get-user-view', {
         "token": localStorage.getItem("session"),
         "user_id": userid
     }).catch(function (e) {
@@ -26,7 +27,7 @@ async function getEmailAndDname (userid) {
 }
 
 async function getIdFromEmail (email) {
-    const response = await axios.post('http://localhost:5000//get-id-from-selected-email', {
+      const response = await axios.post(host.domain + ':5000/get-id-from-email', {
         "token": localStorage.getItem("session"),
         "email": email
     }).catch(function (e) {
@@ -43,7 +44,7 @@ async function getIdFromEmail (email) {
 }
 
 async function getClassMembers (course) {
-    const response = await axios.post('http://localhost:5000/get-course-members', {
+    const response = await axios.post(host.domain + ':5000/get-course-members', {
         "token": localStorage.getItem("session"),
         "course": course
     }).catch(function (e) {
@@ -59,7 +60,7 @@ async function getClassMembers (course) {
 }
 
 async function getDirectMessages (user1, user2) {
-    const response = await axios.post('http://localhost:5000/get-direct-messages', {
+    const response = await axios.post(host.domain + ':5000/get-direct-messages', {
         "token": localStorage.getItem("session"),
         "user1": user1,
         "user2": user2
@@ -76,7 +77,7 @@ async function getDirectMessages (user1, user2) {
 }
 
 async function sendDirectMessage (send, receive, text) {
-    const response = await axios.post('http://localhost:5000/send-direct-message', {
+    const response = await axios.post(host.domain + ':5000/send-direct-message', {
         "token": localStorage.getItem("session"),
         "send": send,
         "receive": receive,
