@@ -52,33 +52,16 @@
     transform: translateY(-3px);
 }
 
-.remove-group-btn {
-    position: absolute;
-    top: 6px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 2rem;
-    color: transparent;
-    cursor: pointer;
-    z-index: 1;
-    transition: color 0.2s ease;
-}
-
-.remove-group-btn:hover {
-    color: #f02b2b;
-}
-
 .name-display {
     margin-right: 20px;
 }
 
 .message-item.mine {
   background-color: #e0f7fa;
-  border-left: 4px solid #00acc1;
+  border-left: 4px solid #6be9fa;
 }
 
 .message-item.other {
-  background-color: #fce4ec;
-  border-left: 4px solid #ec407a;
+  background-color: #f1f0f0;
+  border-left: 4px solid #f59898;
 }
