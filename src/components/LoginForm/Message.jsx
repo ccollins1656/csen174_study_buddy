@@ -122,7 +122,7 @@ const Message = () => {
                                 id: 0,
                                 email: "",
                                 className: "",
-                                displayText: "Select someone to message"
+                                displayText: "Select a Student to message"
                                 }];
             let idnum = 1;      //use a idnum in outer scope in case someone can tutor multiple classes
             let role = "Student";
@@ -136,20 +136,24 @@ const Message = () => {
                         const classes = await getClassMembers(tutors.tutorData[i].className);
                         for(let j = 0; j < classes.length; j++)
                         {
-                            validTargets.push({
-                                id: idnum,
-                                email: classes[j],
-                                className: tutors.tutorData[i].className,
-                                displayText: ""
-                            });
-                            validTargets[idnum].displayText =classes[j]+" in class: "+tutors.tutorData[i].className;
-                            idnum++;
+                            if(classes[j] != senderEmail)       // don't need to message ourselves
+                            {
+                                validTargets.push({
+                                    id: idnum,
+                                    email: classes[j],
+                                    className: tutors.tutorData[i].className,
+                                    displayText: ""
+                                });
+                                validTargets[idnum].displayText =classes[j]+" in class: "+tutors.tutorData[i].className;
+                                idnum++;
+                            }
                         }
                 }
             }
             // Populate our valid targets with the tutors of every class we are in
             if(role === "Student")
             {
+                validTargets[0].displayText = "Select a Tutor to message";
                 console.log(yourCourses);
                 for(let i = 0; i < tutors.tutorData.length; i++)
                 {

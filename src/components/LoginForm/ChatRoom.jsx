@@ -19,6 +19,23 @@ async function getIdFromEmail () {
     return false;
 }
 
+async function getNames (userid) {
+    const response = await axios.post('http://localhost:5000/get-user-view', {
+        "token": localStorage.getItem("session"),
+        "user_id": userid
+    }).catch(function (e) {
+        console.log(e);
+        return false;
+    });
+    if (response.status === 200) {
+        if (response.data)
+        {
+            return response.data;
+        }
+    }
+    return false;
+}
+
 const ChatRoom = () => {
     const { courseId } = useParams();
     const [messages, setMessages] = useState([]);
