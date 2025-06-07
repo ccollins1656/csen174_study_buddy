@@ -5,7 +5,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 import { useSessionUnauth } from './useSessionAuth.js';
 import host from './host.json' with { type: 'json' };
-
+// attempt to login from through flask server (which communicates with the database)
 async function tryLogin(email, password, remember) {
     const response = await axios.post(host.domain + ':5000/login', {
         "email": email,
@@ -26,10 +26,10 @@ const LoginForm = () => {
     useSessionUnauth();
 
     const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(false);
-    const [error, setError] = useState('');
+    const [email, setEmail] = useState('');     // entered email
+    const [password, setPassword] = useState('');       // entered password
+    const [remember, setRemember] = useState(false);        // whether user selected remember me
+    const [error, setError] = useState('');     // the error message to display
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -55,7 +55,7 @@ const LoginForm = () => {
     };
 
     const handleRemember = () => {
-        setRemember(!remember);
+        setRemember(!remember);     // set remember me
     };
 
     return (

@@ -8,20 +8,20 @@ import { useGetCourses, useUpdateCourses } from './useCourseManagement.js';
 
 
 const AddCourse = () => {
-    const [value, setValue] = useState('');
-    const [yourCourses, setYourCourses] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [value, setValue] = useState('');     // the course selected
+    const [yourCourses, setYourCourses] = useState([]);     // joined courses
+    const [searchTerm, setSearchTerm] = useState('');       // search entry
     
     useSessionAuth();
     useGetCourses(setYourCourses);
     const updateCourses = useUpdateCourses(setYourCourses);
 
-    const onChange = (event) => {
+    const onChange = (event) => {   // update selected course
         setValue(event.target.value);
     };
 
-    const handleRemove = (e, id) => {
-        e.preventDefault();
+    const handleRemove = (e, id) => {       // remove a course
+        e.preventDefault();     // prevent overlapping buttons from both triggering
         const updated = yourCourses.filter((c) => c.id !== id);
         updateCourses(updated);
     };
@@ -31,7 +31,7 @@ const AddCourse = () => {
         course.full_name.toLowerCase().includes(value.toLowerCase())
     );
 
-    const handleSelect = (course) => {
+    const handleSelect = (course) => {      // select a course
         if (!yourCourses.find(c => c.id === course.id)) {
             const updatedCourses = [...yourCourses, course];
             updateCourses(updatedCourses);

@@ -5,7 +5,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 import { useSessionUnauth } from './useSessionAuth.js';
 import host from './host.json' with { type: 'json' };
-
+// attempt to register a new user
 async function tryRegister(displayName, email, password) {
     const response = await axios.post(host.domain + ':5000/create-account', {
         "display_name": displayName,
@@ -26,12 +26,12 @@ const RegisterForm = () => {
     useSessionUnauth();
     
     const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [dname, setDname] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [email, setEmail] = useState('');     // entered email address
+    const [dname, setDname] = useState('');     // entered display name
+    const [password, setPassword] = useState('');       // entered password
+    const [confirmPassword, setConfirmPassword] = useState('');     // entered password (second one)
+    const [error, setError] = useState('');     // error message for user
+    const [success, setSuccess] = useState('');     // success message for user
 
     const handleSubmit = async (e) => {
         e.preventDefault();

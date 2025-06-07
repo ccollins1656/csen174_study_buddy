@@ -4,7 +4,7 @@ import { useSessionAuth } from './useSessionAuth.js';
 import axios from 'axios';
 import host from './host.json' with { type: 'json' };
 
-
+// attempt to change the password to the new one
 async function tryChangePassword(password) {
     const response = await axios.post(host.domain + ':5000/change-password', {
         "token": localStorage.getItem("session"),
@@ -16,7 +16,7 @@ async function tryChangePassword(password) {
     return response.status === 204;
 }
 
-
+// attempt to change the display name to the new one
 async function tryChangeDname(dname) {
   const response = await axios.post(host.domain + ':5000/change-dname', {
     "token": localStorage.getItem("session"),
@@ -31,16 +31,16 @@ async function tryChangeDname(dname) {
 const Settings = () => {
   useSessionAuth();
   
-  const [dname, setDname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [newDname, setNewDname] = useState('');
-  const [message, setMessage] = useState('');
+  const [dname, setDname] = useState('');       // entered display name
+  const [email, setEmail] = useState('');       // entered email address
+  const [password, setPassword] = useState('');     // entered password
+  const [newPassword, setNewPassword] = useState('');       // entered new password
+  const [confirmPassword, setConfirmPassword] = useState('');       // entered new password again
+  const [newDname, setNewDname] = useState('');         // entered new display name
+  const [message, setMessage] = useState('');       // feedback message for user
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('currentUser');
+    const storedUser = localStorage.getItem('currentUser');     // initialize info for page
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
       if (parsed.email) setEmail(parsed.email);
@@ -69,7 +69,7 @@ const Settings = () => {
     setConfirmPassword('');
   };
 
-  const handleChangeDname = async (e) => {
+  const handleChangeDname = async (e) => {      // change the user display name
     e.preventDefault();
     const updatedUser = { email: email, password: password, dname: newDname };
     let result = await tryChangeDname(newDname);

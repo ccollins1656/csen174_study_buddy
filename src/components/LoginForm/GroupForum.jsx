@@ -6,7 +6,7 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 import { useSessionAuth } from './useSessionAuth.js';
 import host from './host.json' with { type: 'json' };
-
+// returns the list of all groups
 async function getCurrentGroupList(){
     const response = await axios.post(host.domain + ':5000/find-groups', {
         "token": localStorage.getItem("session")
@@ -18,7 +18,7 @@ async function getCurrentGroupList(){
         if (response.data)
         {
             let result = []
-            for (let i = 0; i < response.data.length; i++) {
+            for (let i = 0; i < response.data.length; i++) {        // package data for display by dropdown menu
                 result.push({
                     id: i,
                     groupName: response.data[i][0],
@@ -30,7 +30,7 @@ async function getCurrentGroupList(){
     }
     return false;
 }
-
+// creates a group
 async function createGroup (groupName, nameOfClass) {
     const response = await axios.post(host.domain + ':5000/create-group', {
         "token": localStorage.getItem("session"),
@@ -42,7 +42,7 @@ async function createGroup (groupName, nameOfClass) {
     });
     return response.status === 204;
 }
-
+// joins a group
 async function joinGroup (groupName, nameOfClass) {
     const response = await axios.post(host.domain + ':5000/join-group', {
         "token": localStorage.getItem("session"),
@@ -54,7 +54,7 @@ async function joinGroup (groupName, nameOfClass) {
     });
     return response.status === 204;
 }
-
+// leaves a group
 async function leaveGroup (groupName, nameOfClass) {
     const response = await axios.post(host.domain + ':5000/leave-group', {
         "token": localStorage.getItem("session"),
@@ -66,7 +66,7 @@ async function leaveGroup (groupName, nameOfClass) {
     });
     return response.status === 204;
 }
-
+// returns list of all groups user is in
 async function searchGroups () {
     const response = await axios.post(host.domain + ':5000/list-groups', {
         "token": localStorage.getItem("session")
@@ -83,16 +83,16 @@ async function searchGroups () {
 }
 
 const GroupForum = () => {
-    const [name, setName] = useState('');
-    const [className, setClass] = useState('');
-    const [displayMessage, setMessage] = useState('');
-    const [yourGroups, setYourGroups] = useState([]);
-    const [filteredGroups, setFilteredGroups] = useState([]);
+    const [name, setName] = useState('');       // name of the group
+    const [className, setClass] = useState('');     // name of the class the group is in
+    const [displayMessage, setMessage] = useState('');      // message to display to users
+    const [yourGroups, setYourGroups] = useState([]);       // list of all your groups
+    const [filteredGroups, setFilteredGroups] = useState([]);       // list of groups for dropdown select
 
     useSessionAuth();
 
     useEffect(() => {
-        updateGroupsList();
+        updateGroupsList();     // load all groups
     }, [name, className]);
 
     const onChangeGroup = async (event) => {
@@ -113,21 +113,21 @@ const GroupForum = () => {
     };
 
     const onChangeClass = (event) => {
-        setClass(event.target.value);
+        setClass(event.target.value);       // reset the dropdown menu
         setFilteredGroups([{id:0, groupName: "Search out of date", className: ""}]);
     };
 
     const updateGroupsList = async () => {
-        let groupList = await getCurrentGroupList();
+        let groupList = await getCurrentGroupList();    // update group dropdown based on what search user enters
         if(groupList !== false) {
             setYourGroups(groupList);
         }
     }
 
     const handleCreate = async () => {
-        let create = await createGroup(name, className);
+        let create = await createGroup(name, className);        // create a group
         if(create) {
-            let join = await joinGroup(name, className);
+            let join = await joinGroup(name, className);        // join that group
             if(join) {
                 setMessage("Group successfully created and joined!");
             }
@@ -143,7 +143,7 @@ const GroupForum = () => {
     };
 
     const handleSearch = async () => {
-        let groups = await searchGroups();
+        let groups = await searchGroups();      // get all groups
         if(groups === false) {
             setMessage("Error finding groups");
         }
@@ -151,7 +151,7 @@ const GroupForum = () => {
             console.log(groups);
             console.log(name);
             setMessage("There is no group by that name in class: " + className);
-            for (let i = 0; i < groups.length; i++) {
+            for (let i = 0; i < groups.length; i++) {       // check if group exists
                 if(groups[i][0] === name && groups[i][1] === className) {
                     setMessage("This group already exists in class: " + className);
                 }
@@ -160,42 +160,42 @@ const GroupForum = () => {
     };
 
     const handleJoin = async () => {
-        let join = await joinGroup(name, className);
+        let join = await joinGroup(name, className);        // join group
         if(join) {
             setMessage("Group successfully joined!");
         }
         else {
             setMessage("Error joining group, perhaps the group does not exist or you are already a member");
         }
-        await updateGroupsList();
+        await updateGroupsList();       // update list
     };
 
     const handleLeave = async () => {
-        let join = await leaveGroup(name, className);
-        if(join) {
-            setMessage("Group successfully left!");
-        }
-        else {
-            setMessage("Error leaving group");
-        }
-        await updateGroupsList();
-    };
-
-    const handleRemoveClick = async (e, groupName, className) => {
-        e.preventDefault();
-        let leave = await leaveGroup(groupName, className);
+        let leave = await leaveGroup(name, className);       // leave the group
         if(leave) {
             setMessage("Group successfully left!");
         }
         else {
             setMessage("Error leaving group");
         }
-        await updateGroupsList();
+        await updateGroupsList();       // update list
+    };
+
+    const handleRemoveClick = async (e, groupName, className) => {
+        e.preventDefault();     // prevent remove button from also triggering the group info button it overlaps
+        let leave = await leaveGroup(groupName, className);     // leave group
+        if(leave) {
+            setMessage("Group successfully left!");
+        }
+        else {
+            setMessage("Error leaving group");
+        }
+        await updateGroupsList();       // update list
     };
 
     // Filter dropdown list based on input
     const filteredCourses = courseData.courses.filter((course) =>
-        course.full_name.toLowerCase().includes(className.toLowerCase())
+        course.full_name.toLowerCase().includes(className.toLowerCase())        // list of groups to display in dropdown
     );
 
     return (

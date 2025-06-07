@@ -5,7 +5,7 @@ import { FaUser } from "react-icons/fa";
 import axios from 'axios';
 import { useSessionUnauth } from './useSessionAuth.js';
 import host from './host.json' with { type: 'json' };
-
+// reset password (handles password change and sends the email)
 async function tryReset(email) {
     const response = await axios.post(host.domain + ':5000/reset-password', {
         "email": email
@@ -24,10 +24,10 @@ const ForgotForm = () => {
     useSessionUnauth();
 
     const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
+    const [email, setEmail] = useState('');     // entered email
+    const [error, setError] = useState('');     // error message
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {     // attempt to change the password
         e.preventDefault();
 
         let authed = await tryReset(email);

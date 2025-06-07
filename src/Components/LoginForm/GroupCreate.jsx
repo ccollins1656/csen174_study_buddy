@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSessionAuth } from './useSessionAuth.js';
 import host from './host.json' with { type: 'json' };
 
-
+// returns the list of all groups that the use is in (user provided by email stored in session token)
 async function searchGroups () {
     const response = await axios.post(host.domain + ':5000/list-groups', {
         "token": localStorage.getItem("session")
@@ -21,7 +21,7 @@ async function searchGroups () {
     return false;
 }
 
-
+// attempts to create a group based on the information passed in
 async function tryCreateGroup (groupName, className, meetingTime, meetingPlace) {
     const response = await axios.post(host.domain + ':5000/create-group', {
         "token": localStorage.getItem("session"),
@@ -36,7 +36,7 @@ async function tryCreateGroup (groupName, className, meetingTime, meetingPlace) 
     return response.status === 204;
 }
 
-
+// attempts to join specified group based on info passed in
 async function tryJoinGroup (groupName, className) {
     const response = await axios.post(host.domain + ':5000/join-group', {
         "token": localStorage.getItem("session"),
@@ -51,13 +51,13 @@ async function tryJoinGroup (groupName, className) {
 
 
 const GroupCreate = () => {
-    const [className, setClassName] = useState('');
-    const [groupName, setGroupName] = useState('');
-    const [displayMessage, setDisplayMessage] = useState('');
-    const [meetingTime, setMeetingTime] = useState('');
-    const [meetingPlace, setMeetingPlace] = useState('');
+    const [className, setClassName] = useState('');         // name of class selected
+    const [groupName, setGroupName] = useState('');         // name of group selected
+    const [displayMessage, setDisplayMessage] = useState('');       // the info message for user
+    const [meetingTime, setMeetingTime] = useState('');         // meeting time for the group
+    const [meetingPlace, setMeetingPlace] = useState('');       // meeting place for the group
     const location = useLocation();
-    const state = location.state;
+    const state = location.state;               // info passed in from previous page
 
     useSessionAuth();
     
@@ -87,18 +87,18 @@ const GroupCreate = () => {
     };
 
     const createGroup = async (e) => {
-        e.preventDefault();
+        e.preventDefault();     // create the group
         let done = await tryCreateGroup(groupName, className, meetingTime, meetingPlace);
         if (!done) {
             setDisplayMessage('Group could not be created.');
             return;
         }
-        done = await tryJoinGroup(groupName, className);
+        done = await tryJoinGroup(groupName, className);        // join the new group
         if (!done) {
             setDisplayMessage('Group created, but could not join.');
             return;
         }
-        setDisplayMessage('Group successfully created and joined.');
+        setDisplayMessage('Group successfully created and joined.');        // move to group info page
         navigate('/groupinfo', { state: { groupName: groupName, className: className, meetingTime: meetingTime, meetingPlace: meetingPlace }})
     }
 

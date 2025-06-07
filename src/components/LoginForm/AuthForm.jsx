@@ -5,7 +5,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import axios from 'axios';
 import { useSessionUnauth } from './useSessionAuth.js';
 import host from './host.json' with { type: 'json' };
-
+// attempt to authenticate the account
 async function tryAuth(email, authCode) {
     const response = await axios.post(host.domain + ':5000/auth-account', {
         "email": email,
@@ -25,20 +25,20 @@ const AuthForm = () => {
     useSessionUnauth();
     
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [email, setEmail] = useState('');
-    const [authCode, setAuthCode] = useState('');
-    const [error, setError] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();      // get the url parameters
+    const [email, setEmail] = useState('');     // the entered email
+    const [authCode, setAuthCode] = useState('');       // the entered authentication code
+    const [error, setError] = useState('');     // the error message
 
-    const code = searchParams.get('code') || '';
+    const code = searchParams.get('code') || '';        // get the authentication code and email from URL
     const userEmail = searchParams.get('email') || '';
-    useEffect(() => {
+    useEffect(() => {       // set the fields automatically from URL (if available)
         setAuthCode(code);
         setEmail(userEmail);
     }, []);
     
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();     // authenticate account
 
         let authed = await tryAuth(email, authCode);
 

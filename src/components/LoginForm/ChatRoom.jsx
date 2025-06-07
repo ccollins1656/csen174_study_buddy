@@ -6,7 +6,7 @@ import axios from 'axios';
 import io from "socket.io-client";
 import host from './host.json' with { type: 'json' };
 
-
+// used to get user id from user email so we can search the database for messages
 const socket = io(host.domain + ":5001", {transports: ['websocket']});
 async function getIdFromEmail () {
     const response = await axios.post(host.domain + ':5000/get-id-from-email', {
@@ -19,7 +19,7 @@ async function getIdFromEmail () {
     }
     return false;
 }
-
+// gets the user display name and email from a user id. This former is needed for display purposes
 async function getNames (userid) {
     const response = await axios.post(host.domain + ':5000/get-user-view', {
         "token": localStorage.getItem("session"),
@@ -38,24 +38,24 @@ async function getNames (userid) {
 }
 
 const ChatRoom = () => {
-    const { courseId } = useParams();
-    const [messages, setMessages] = useState([]);
-    const [messageInput, setMessageInput] = useState('');
-    const chatEndRef = useRef(null);
-    const [userId, setUserId] = useState(null);
+    const { courseId } = useParams();       // gets the name of the course as passed form last page
+    const [messages, setMessages] = useState([]);       // the messages to be displayed
+    const [messageInput, setMessageInput] = useState('');       // what is typed in the message box
+    const chatEndRef = useRef(null);        // pointer for automatic scrolling
+    const [userId, setUserId] = useState(null);     // id of the user
     const [idTODisNameDict, setDispMap] = useState(new Map());       // stores user_id to display_name mappings for every id we encounter
     const [messagesWithNames, setMessagesWithNames] = useState([]); // stores messages with display names
 
     useEffect(() => {
         (async () => {
             try {
-                const user_num = await getIdFromEmail();
+                const user_num = await getIdFromEmail();        // get user id
                 setUserId(user_num);
             } catch (error) {
                 console.error("Error fetching messages:", error);
             }
         })();
-        axios.get(host.domain + `:5001/api/messages/${courseId}`)
+        axios.get(host.domain + `:5001/api/messages/${courseId}`)       // load previous messages
         .then(res => {
             console.log("Fetched Messages:", res.data);
             setMessages(res.data);
@@ -69,7 +69,7 @@ const ChatRoom = () => {
     useEffect(() => {
         socket.emit('joinRoom', courseId);
 
-        socket.on('newMessage', (message) => {
+        socket.on('newMessage', (message) => {      // get the messages when course room changed
             setMessages(prev => [...prev, message]);
         });
 
@@ -81,7 +81,7 @@ const ChatRoom = () => {
     const handleSend = async () => {
         if (!messageInput.trim()) return;
 
-        const newMessage = {
+        const newMessage = {        // create the new message
             text: messageInput,
             user_id: userId,
             class_name: courseId,
@@ -89,7 +89,7 @@ const ChatRoom = () => {
         };
 
         try {
-            await axios.post(host.domain + ':5001/api/messages', newMessage);
+            await axios.post(host.domain + ':5001/api/messages', newMessage);       // send message
             setMessageInput('');
         } catch (err) {
             console.error('Error sending message:', err);
@@ -97,7 +97,7 @@ const ChatRoom = () => {
     };
 
 
-
+    // updates display_name dictionary with new users when we encounter a new user
     useEffect(() => {
         (async () => {
         try {
@@ -105,7 +105,7 @@ const ChatRoom = () => {
             let tempMsgWithName = messages;
             for(let i = 0; i < messages.length; i++)        // update the display names dictionary
             {
-                if(typeof tempMap.get(messages[i].user_id) === 'undefined')
+                if(typeof tempMap.get(messages[i].user_id) === 'undefined')     // add new user mapping if new user encountered
                 {
                     const senderNames = await getNames(messages[i].user_id);
                     tempMap.set(messages[i].user_id, senderNames.display_name);

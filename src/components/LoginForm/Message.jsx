@@ -26,7 +26,7 @@ async function getEmailAndDname (userid) {
     }
     return false;
 }
-
+// returns user id based on the email passed in
 async function getIdFromEmail (email) {
       const response = await axios.post(host.domain + ':5000/get-id-from-selected-email', {
         "token": localStorage.getItem("session"),
@@ -43,7 +43,7 @@ async function getIdFromEmail (email) {
 
     return false;
 }
-
+// return the class members in a course
 async function getClassMembers (course) {
     const response = await axios.post(host.domain + ':5000/get-course-members', {
         "token": localStorage.getItem("session"),
@@ -59,7 +59,7 @@ async function getClassMembers (course) {
 
     return false;
 }
-
+// get the direct messages between two users (order of users is irrelevant)
 async function getDirectMessages (user1, user2) {
     const response = await axios.post(host.domain + ':5000/get-direct-messages', {
         "token": localStorage.getItem("session"),
@@ -76,7 +76,7 @@ async function getDirectMessages (user1, user2) {
 
     return false;
 }
-
+// send a direct message between two users
 async function sendDirectMessage (send, receive, text) {
     const response = await axios.post(host.domain + ':5000/send-direct-message', {
         "token": localStorage.getItem("session"),
@@ -95,7 +95,7 @@ async function sendDirectMessage (send, receive, text) {
 }
 
 const Message = () => {
-  const chatEndRef = useRef(null);
+  const chatEndRef = useRef(null);      // pointer for automatic scrolling
   const [messages, setMessages] = useState([]);             // the messages we are displaying
   const [newMessage, setNewMessage] = useState('');         // the message we have entered
   const [senderEmail, setSenderEmail] = useState('');       // our email address
@@ -120,10 +120,10 @@ const Message = () => {
     // Get the user's id number from the email
     (async () => {
         try {
-            const id = await getIdFromEmail(storedUser.email);
+            const id = await getIdFromEmail(storedUser.email);      // load user's email
             setSenderId(id);
 
-            let validTargets = [{
+            let validTargets = [{       // default no user selected option
                                 id: 0,
                                 email: "",
                                 className: "",
@@ -131,7 +131,7 @@ const Message = () => {
                                 }];
             let idnum = 1;      //use a idnum in outer scope in case someone can tutor multiple classes
             let role = "Student";
-            for(let i = 0; i < tutors.tutorData.length; i++)
+            for(let i = 0; i < tutors.tutorData.length; i++)        // see if user is a tutor
             {
                 if(tutors.tutorData[i].tutorName === storedUser.email)
                 {
@@ -156,22 +156,22 @@ const Message = () => {
                 }
             }
             // Populate our valid targets with the tutors of every class we are in
-            if(role === "Student")
+            if(role === "Student")      // only if we are a student
             {
                 setTite("Message Tutor!");
                 validTargets[0].displayText = "Select a Tutor to message";
                 console.log(yourCourses);
-                for(let i = 0; i < tutors.tutorData.length; i++)
+                for(let i = 0; i < tutors.tutorData.length; i++)        // get all tutors
                 {
-                    for(let j = 0; j < yourCourses.length; j++)
+                    for(let j = 0; j < yourCourses.length; j++)     // for each of our classes
                     {
-                        if(yourCourses[j].full_name == (tutors.tutorData[i].className))     // check you are in the class the tutor tutors
+                        if(yourCourses[j].full_name == (tutors.tutorData[i].className))     // check you are in the class the tutor
                         {
                             const response = await getIdFromEmail(tutors.tutorData[i].tutorName);
                             console.log("hello"+response);
                             if(response !== false)      // check if tutor has an account (getIdFromEmail returns false if account not found)
                             {
-                                validTargets.push({
+                                validTargets.push({     // add tutor to you message list
                                     id: idnum,
                                     email: tutors.tutorData[i].tutorName,
                                     className: tutors.tutorData[i].className,
@@ -254,7 +254,7 @@ const Message = () => {
                 }
             }
 
-            const newMsg = {
+            const newMsg = {        // create a new message
               text: allMessages[i][3],
               sender: sendEmail || 'Anonymous',
               role: role,
@@ -278,10 +278,10 @@ const Message = () => {
 
   const refresh = async (e) => {
       e.preventDefault();
-      await refreshMessages();
+      await refreshMessages();      // refresh messages if button selected
   };
 
-  const changeSendTarget = async (e) => {
+  const changeSendTarget = async (e) => {       // change the target sent
     e.preventDefault();
     setSendTarget(e.target.value);
     if(e.target.value === "") return;       // return if no recipient is selected
